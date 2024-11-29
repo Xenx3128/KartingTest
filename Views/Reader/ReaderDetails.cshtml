@@ -1,0 +1,54 @@
+@model TestMVC.Models.Reader
+@{
+    ViewData["Title"] = "Details";
+}
+
+<head>
+
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <th>  
+                @Html.DisplayNameFor(model => model.Id)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.LastName)  
+            </th> 
+            <th>  
+                @Html.DisplayNameFor(model => model.FirstName)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.Address)  
+            </th> 
+            <th>  
+                @Html.DisplayNameFor(model => model.BirthDate)  
+            </th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => model.Id);
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.LastName);
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.FirstName);
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Address);
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.BirthDate);
+                </td>
+                <td>  
+                    @Html.ActionLink("Edit", "Edit", new { id=Model.Id  }) |  
+                </td>
+                <td>
+                    <a asp-action="GetReaders">Back to List</a>  
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>

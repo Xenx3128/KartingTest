@@ -1,0 +1,55 @@
+@model IEnumerable<TestMVC.Models.Book>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <th>  
+                @Html.DisplayNameFor(model => model.Isbn)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.Title)  
+            </th> 
+            <th>  
+                @Html.DisplayNameFor(model => model.Author)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.PagesNum)  
+            </th> 
+            <th>  
+                @Html.DisplayNameFor(model => model.PubYear)  
+            </th>
+        </thead>
+        <tbody>
+            @foreach (var item in Model){
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Isbn);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Author);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PagesNum);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PubYear);
+                    </td>
+                    <td>  
+                        @Html.ActionLink("Edit", "Edit", new { isbn=item.Isbn  }) |  
+                        @Html.ActionLink("Details", "BookDetails", new {  isbn=item.Isbn }) |  
+                        @Html.ActionLink("Delete", "Delete", new {  isbn=item.Isbn  })  
+                    </td>  
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>

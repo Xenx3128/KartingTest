@@ -1,0 +1,37 @@
+@model IEnumerable<TestMVC.Models.Category>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <th>  
+                @Html.DisplayNameFor(model => model.CatName)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.ParentCat)  
+            </th>
+        </thead>
+        <tbody>
+            @foreach (var item in Model){
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CatName);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ParentCat);
+                    </td>
+                    <td>  
+                        @Html.ActionLink("Edit", "Edit", new { categoryName=item.CatName  }) |  
+                        @Html.ActionLink("Details", "CategoryDetails", new {  categoryName=item.CatName }) |  
+                        @Html.ActionLink("Delete", "Delete", new {  categoryName=item.CatName  })  
+                    </td>  
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>

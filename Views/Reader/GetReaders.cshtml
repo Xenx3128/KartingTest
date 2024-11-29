@@ -1,0 +1,55 @@
+@model IEnumerable<TestMVC.Models.Reader>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <th>  
+                @Html.DisplayNameFor(model => model.Id)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.LastName)  
+            </th> 
+            <th>  
+                @Html.DisplayNameFor(model => model.FirstName)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.Address)  
+            </th> 
+            <th>  
+                @Html.DisplayNameFor(model => model.BirthDate)  
+            </th>
+        </thead>
+        <tbody>
+            @foreach (var item in Model){
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastName);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address);
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BirthDate);
+                    </td>
+                    <td>  
+                        @Html.ActionLink("Edit", "Edit", new { Id=item.Id  }) |  
+                        @Html.ActionLink("Details", "ReaderDetails", new {  Id=item.Id }) |  
+                        @Html.ActionLink("Delete", "Delete", new {  Id=item.Id  })  
+                    </td>  
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>

@@ -1,0 +1,37 @@
+@model TestMVC.Models.Category
+@{
+    ViewData["Title"] = "Details";
+}
+
+<head>
+
+</head>
+<body>
+    <table class="table">
+        <thead>
+            <th>  
+                @Html.DisplayNameFor(model => model.CatName)  
+            </th>  
+            <th>  
+                @Html.DisplayNameFor(model => model.ParentCat)  
+            </th> 
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => model.CatName);
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.ParentCat);
+                </td>
+                <td>  
+                    @Html.ActionLink("Edit", "Edit", new { id=Model.CatName  }) |  
+                </td>
+                <td>
+                    <a asp-action="GetCategories">Back to List</a>  
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
