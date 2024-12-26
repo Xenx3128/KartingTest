@@ -1,132 +1,46 @@
 ﻿@page
 @model TestMVC.Pages.IndexModel
 @{
-    ViewData["Title"] = "Patient";
+    ViewData["Title"] = "Orders";
 }
 
-<script src="~/lib/daypilot/all.min.js"></script>
+<h1>Simple Form</h1>
+<form method="post" class="mt-4" id="orderForm">
+    <div class="mb-3">
+        <input id="inputdate" class="form-control" name="date" type="text" placeholder="Выберите дату" required readonly>
+    </div>
+    <div class="mb-3">
+        <input id="inputtime" class="form-control" name="time" type="text" placeholder="Выберите время" required readonly>
+    </div>
+    <div id="RaceTypeGlobalContainer" style="visibility: hidden;">
+        <h3>Тип заезда:</h3>
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioUniform" value="uniform">
+            <label class="form-check-label" for="RaceTypeRadioUniform">Один тип заездов для всех слотов</label>
+            </div>
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioDivided" value="divided">
+            <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
+            </div>
+        </div>
+        <div class="mb-3" id="RaceTypeContainer">
+        </div>
+    </div>
 
-<div class="column-left">
-    <div id="nav"></div>
-</div>
-<div class="column-main">
-    <div class="toolbar">Available time slots:</div>
-    <div id="calendar"></div>
-</div>
+    <button id="submitForm" type="button" class="btn btn-secondary">Submit</button>
+</form>
 
-<script>
-const app = {
-    get patientId() {
-        if (!localStorage["patientId"]) {
-            localStorage["patientId"] = DayPilot.guid();
-        }
-        return localStorage["patientId"];
-    },
-    async loadEvents(day) {
-        const start = nav.visibleStart() > DayPilot.Date.now() ? nav.visibleStart() : DayPilot.Date.now();
-        const end = nav.visibleEnd();
-        const patient = app.patientId;
+<link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">
+<script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
 
-        const {data} = await DayPilot.Http.get(`/api/appointments/free?start=${start}&end=${end}&patient=${patient}`);
+<link rel="stylesheet" href="~/lib/air-datepicker/air-datepicker.css">
+<script src="~/lib/air-datepicker/air-datepicker.js"></script>
 
-        if (day) {
-            calendar.startDate = day;
-        }
-        calendar.events.list = data;
-        calendar.update();
+<script src="~/lib/axios/dist/axios.min.js"></script>
 
-        nav.events.list = data;
-        nav.update();
-    },
-    init() {
-        app.loadEvents();
-    }
-};
 
-const nav = new DayPilot.Navigator("nav", {
-    selectMode: "week",
-    showMonths: 3,
-    skipMonths: 3,
-    onTimeRangeSelected: (args) => {
-        const weekStarts = DayPilot.Locale.find(nav.locale).weekStarts;
-        const start = args.start.firstDayOfWeek(weekStarts);
-        const end = args.start.addDays(7);
-        app.loadEvents(start, end);
-    }
+@section Scripts{
+    <script type="module" src='@Url.Content("~/js/appointment.js")'></script>
+}
 
-});
-nav.init();
-
-const calendar = new DayPilot.Calendar("calendar", {
-    viewType: "Week",
-    timeRangeSelectedHandling: "Disabled",
-    eventMoveHandling: "Disabled",
-    eventResizeHandling: "Disabled",
-    eventArrangement: "SideBySide",
-    onBeforeEventRender: (args) => {
-        switch (args.data.status) {
-          case "free":
-            args.data.backColor = "#3d85c6";  // blue
-            args.data.barHidden = true;
-            args.data.borderColor = "darker";
-            args.data.fontColor = "white";
-            args.data.html = `Available<br/>${args.data.doctorName}`;
-            args.data.toolTip = "Click to request this time slot";
-            break;
-          case "waiting":
-            args.data.backColor = "#e69138";  // orange
-            args.data.barHidden = true;
-            args.data.borderColor = "darker";
-            args.data.fontColor = "white";
-            args.data.html = "Your appointment, waiting for confirmation";
-            break;
-          case "confirmed":
-            args.data.backColor = "#6aa84f";  // green
-            args.data.barHidden = true;
-            args.data.borderColor = "darker";
-            args.data.fontColor = "white";
-            args.data.html = "Your appointment, confirmed";
-            break;
-        }
-    },
-    onEventClick: async (args) => {
-        if (args.e.data.status !== "free") {
-          calendar.message("Please use a free slot to request an appointment.");
-          return;
-        }
-
-        const form = [
-          {name: "Request an Appointment"},
-          {name: "From", id: "start", dateFormat: "MMMM d, yyyy h:mm tt", disabled: true},
-          {name: "To", id: "end", dateFormat: "MMMM d, yyyy h:mm tt", disabled: true},
-          {name: "Name", id: "name"},
-        ];
-
-        const data = {
-          id: args.e.id(),
-          start: args.e.start(),
-          end: args.e.end(),
-          patient: app.patientId
-        };
-
-        const options = {
-          focus: "name"
-        };
-
-        const modal = await DayPilot.Modal.form(form, data, options);
-        if (modal.canceled) {
-          return;
-        }
-
-        await DayPilot.Http.put(`/api/appointments/${data.id}/request`, modal.result);
-
-        args.e.data.status = "waiting";
-        calendar.events.update(args.e.data);
-
-    }
-});
-calendar.init();
-
-app.init();
-
-</script>

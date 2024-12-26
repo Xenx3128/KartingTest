@@ -1,0 +1,46 @@
+@page
+@model TestMVC.Pages.OrdersModel
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1>Simple Form</h1>
+<form method="post" class="mt-4" id="orderForm">
+    <div class="mb-3">
+        <input id="inputdate" class="form-control" name="date" type="text" placeholder="Выберите дату" required readonly>
+    </div>
+    <div class="mb-3">
+        <input id="inputtime" class="form-control" name="time" type="text" placeholder="Выберите время" required readonly>
+    </div>
+    <div id="RaceTypeGlobalContainer" style="visibility: hidden;">
+        <h3>Тип заезда:</h3>
+        <div class="mb-3">
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioUniform" value="uniform">
+            <label class="form-check-label" for="RaceTypeRadioUniform">Один тип заездов для всех слотов</label>
+            </div>
+            <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioDivided" value="divided">
+            <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
+            </div>
+        </div>
+        <div class="mb-3" id="RaceTypeContainer">
+        </div>
+    </div>
+
+    <button id="submitForm" type="button" class="btn btn-secondary">Submit</button>
+</form>
+
+<link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">
+<script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
+
+<link rel="stylesheet" href="~/lib/air-datepicker/air-datepicker.css">
+<script src="~/lib/air-datepicker/air-datepicker.js"></script>
+
+<script src="~/lib/axios/dist/axios.min.js"></script>
+
+
+@section Scripts{
+    <script type="module" src='@Url.Content("~/js/appointment.js")'></script>
+}
+

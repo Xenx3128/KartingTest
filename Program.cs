@@ -1,6 +1,8 @@
 using TestMVC.Data;
 using TestMVC.Models;
 using Microsoft.EntityFrameworkCore;
+using Dapper;
+using Npgsql;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -27,6 +30,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
 app.MapControllers();
 
 

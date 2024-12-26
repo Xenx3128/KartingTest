@@ -5,9 +5,9 @@ namespace TestMVC.Service;
 public class Timeline
 {
 
-    public static int SlotDurationMinutes = 60;
+    public static int SlotDurationMinutes = 15;
 
-    public static int MorningShiftStarts = 9;
+    public static int MorningShiftStarts = 8;
     public static int MorningShiftEnds = 13;
 
     public static int AfternoonShiftStarts = 13;
@@ -28,8 +28,8 @@ public class Timeline
                     var slotEnd = slotStart.AddMinutes(SlotDurationMinutes);
 
                     var slot = new AppointmentSlot();
-                    slot.SlotStart = slotStart;
-                    slot.SlotEnd = slotEnd;
+                    //slot.SlotStart = slotStart;
+                    //slot.SlotEnd = slotEnd;
                     slot.Status = "free";
 
                     result.Add(slot);

@@ -4,7 +4,6 @@
     ViewData["Title"] = "Manager";
 }
 
-
 <div class="column-left">
     <div id="nav"></div>
 </div>
@@ -21,10 +20,11 @@
     <div id="scheduler"></div>
 </div>
 
-<script src="~/lib/daypilot/all.min.js"></script>
+<script src="~/lib/daypilot/daypilot-all.min.js?v=1"></script>
 
 <script>
-    
+
+
 const app = {
     elements: {
         get businessOnly() { return  document.querySelector("#business-only"); },
@@ -39,8 +39,8 @@ const app = {
             from = new DayPilot.Date(day).firstDayOfMonth();
             to = from.addMonths(1);
         }
-
         const {data} = await DayPilot.Http.get(`/api/appointments?start=${from}&end=${to}`);
+        
 
         const options = {
             events: data
@@ -189,7 +189,7 @@ nav.init();
 
 const scheduler = new DayPilot.Scheduler("scheduler", {
     visible: false, // will be displayed after loading the resources
-    scale: "Manual",
+        : "Manual",
     timeline: app.getTimeline(),
     timeHeaders: app.getTimeHeaders(),
     useEventBoxes: "Never",

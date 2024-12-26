@@ -1,0 +1,29 @@
+@page
+@model TestMVC.Pages.AdminUsersDetailModel
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<h1>User Details</h1>
+
+<dl class="row">
+    <dt class="col-sm-2">ID</dt>
+    <dd class="col-sm-10">@Model.CUser.Id</dd>
+    <dt class="col-sm-2">User Name</dt>
+    <dd class="col-sm-10">@Model.CUser.UserName</dd>
+    <dt class="col-sm-2">Birth Date</dt>
+    <dd class="col-sm-10">@Model.CUser.BirthDate.ToString("yyyy-MM-dd")</dd>
+    <dt class="col-sm-2">Phone Number</dt>
+    <dd class="col-sm-10">@Model.CUser.PhoneNum</dd>
+    <dt class="col-sm-2">Email</dt>
+    <dd class="col-sm-10">@Model.CUser.Email</dd>
+    <dt class="col-sm-2">User Role</dt>
+    <dd class="col-sm-10">@Model.CUser.UserRole</dd>
+    <dt class="col-sm-2">From Where Found Out</dt>
+    <dd class="col-sm-10">@Model.CUser.FromWhereFoundOut</dd>
+    <dt class="col-sm-2">Status</dt>
+    <dd class="col-sm-10">@Model.CUser.Status</dd>
+</dl>
+<a asp-page="./Users">Back to List</a>
+@section Scripts{
+}

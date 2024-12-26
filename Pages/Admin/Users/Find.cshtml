@@ -1,0 +1,17 @@
+@page
+@model TestMVC.Pages.AdminUsersFindModel
+@{
+    ViewData["Title"] = "Find User by Email";
+}
+
+<h1>Find User by Email</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label for="SearchEmail">Email</label>
+        <input asp-for="SearchEmail" class="form-control" />
+        <span asp-validation-for="SearchEmail" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-secondary">Search</button>
+    <a asp-page="./Users" class="btn btn-light">Back to List</a>
+</form>

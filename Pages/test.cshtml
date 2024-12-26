@@ -1,0 +1,162 @@
+@page
+@model TestMVC.Pages.IndexModel
+@{
+    ViewData["Title"] = "Patient";
+}
+
+<script src="~/lib/daypilot/daypilot-all.min.js?v=1"></script>
+
+<div class="column-left">
+    <div id="nav"></div>
+</div>
+<div class="column-main">
+    <div class="toolbar">Available time slots:</div>
+    <div id="calendar"></div>
+</div>
+
+<script>
+
+const app = {
+    get patientId() {
+        if (!localStorage["patientId"]) {
+            localStorage["patientId"] = DayPilot.guid();
+        }
+        return localStorage["patientId"];
+    },
+    async loadEvents(day) {
+        const start = calendar.visibleStart() > DayPilot.Date.today() ? calendar.visibleStart() : DayPilot.Date.today();
+        const end = calendar.visibleEnd();
+        const patient = app.patientId;
+
+        const {data} = await DayPilot.Http.get(`/api/appointments/all?start=${start}&end=${end}`);
+        if (day) {
+            calendar.startDate = day;
+        }
+        /*for (let i = 0; i < data.length; i++){
+          let elem = data[i];
+          console.log(typeof elem);
+          console.log(elem);
+          console.log(elem.slotStart);
+          calendar.events.add({
+            start: elem.slotStart, 
+            end: elem.slotEnd,
+            id: patient,
+            text: ""
+          });
+        }*/
+
+        calendar.update();
+
+        nav.update();
+    },
+    init() {
+        app.loadEvents();
+    }
+};
+
+const nav = new DayPilot.Navigator("nav", {
+    selectMode: "week",
+    showMonths: 3,
+    skipMonths: 3,
+    onTimeRangeSelected: (args) => {
+        const weekStarts = DayPilot.Locale.find(nav.locale).weekStarts;
+        const start = args.start.firstDayOfWeek(weekStarts);
+        const end = args.start.addDays(7);
+        app.loadEvents(start, end);
+    }
+
+});
+nav.init();
+
+const calendar = new DayPilot.Calendar("calendar", {
+    viewType: "Day",
+    timeRangeSelectedHandling: "Disabled",
+    eventMoveHandling: "Disabled",
+    eventResizeHandling: "Disabled",
+    eventArrangement: "SideBySide",
+    onBeforeEventRender: (args) => {
+        switch (args.data.status) {
+          case "free":
+            args.data.backColor = "#3d85c6";  // blue
+            args.data.barHidden = true;
+            args.data.borderColor = "darker";
+            args.data.fontColor = "white";
+            args.data.html = `Available<br/>${args.data.doctorName}`;
+            args.data.toolTip = "Click to request this time slot";
+            break;
+          case "waiting":
+            args.data.backColor = "#e69138";  // orange
+            args.data.barHidden = true;
+            args.data.borderColor = "darker";
+            args.data.fontColor = "white";
+            args.data.html = "Your appointment, waiting for confirmation";
+            break;
+          case "confirmed":
+            args.data.backColor = "#6aa84f";  // green
+            args.data.barHidden = true;
+            args.data.borderColor = "darker";
+            args.data.fontColor = "white";
+            args.data.html = "Your appointment, confirmed";
+            break;
+        }
+    },
+    onEventClick: async (args) => {
+        @* if (args.e.data.status !== "free") {
+          calendar.message("Please use a free slot to request an appointment.");
+          return;
+        } *@
+
+        const form = [
+          {name: "Request an Appointment"},
+          {name: "From", id: "start", dateFormat: "MMMM d, yyyy h:mm tt", disabled: true},
+          {name: "To", id: "end", dateFormat: "MMMM d, yyyy h:mm tt", disabled: true},
+          {name: "Name", id: "name"},
+        ];
+
+        const data = {
+          id: args.e.id(),
+          start: args.e.start(),
+          end: args.e.end(),
+          patient: app.patientId
+        };
+
+        const options = {
+          focus: "name"
+        };
+
+        const modal = await DayPilot.Modal.form(form, data, options);
+        if (modal.canceled) {
+          return;
+        }
+
+        await DayPilot.Http.put(`/api/appointments/${data.id}/request`, modal.result);
+
+        args.e.data.status = "waiting";
+        calendar.events.update(args.e.data);
+ 
+    },
+
+    /*onTimeRangeSelected: async (args) => {
+        const dp = calendar;
+        const scale = "hours";
+
+        const params = {
+            start: args.start.toString(),
+            end: args.end.toString(),
+            resource: args.resource,
+            scale: scale
+        };
+
+        dp.clearSelection();
+
+        const {data} = await DayPilot.Http.post("/api/appointments/create", params);
+        app.loadEvents();
+        //dp.message(data.message);
+    }*/
+});
+calendar.cellDuration = 15;
+calendar.init();
+
+app.init();
+
+</script>

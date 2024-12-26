@@ -1,0 +1,19 @@
+@page
+@model TestMVC.Pages.LoginModel
+<h1>Login</h1>
+<form method="post">
+    <div>
+        <label>Email:</label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div>
+        <label>Password:</label>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+@section Scripts{
+}

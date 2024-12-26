@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "air-datepicker": "^3.5.3",
+    "axios": "^1.7.8"
+  }
+}

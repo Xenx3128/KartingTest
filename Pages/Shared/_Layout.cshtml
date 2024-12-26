@@ -5,28 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ASP.NET Core Doctor Appointment Scheduling Tutorial</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Project.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="header">
-        <h1>Test</h1>
-        <div><h3>Testing in progress</h3></div>
+        <h1>Karting Centre</h1>
+        <div><h3>Administrative Panel</h3></div>
     </div>
-
-    <nav>
-        <a href="./">Patient</a>
-        |
-        <a href="./Doctor">Doctor</a>
-        |
-        <a href="./Manager">Manager</a>
-    </nav>
 
     <div class="main">
         @RenderBody()
     </div>
-
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

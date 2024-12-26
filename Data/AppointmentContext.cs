@@ -1,36 +1,127 @@
+using Dapper;
 using Npgsql;
 using TestMVC.Models;
 using TestMVC.Service;
+
 namespace TestMVC.Data;
 
 
-public class AppointmentSlotLayer{
+public class AppointmentContext{
     private readonly string connectionString;
-    private NpgsqlDataSource DataSource { get; set; }
     private NpgsqlConnection Conn { get; set; }
 
-    public AppointmentSlotLayer(string connectionString)
+    public AppointmentContext(string connectionString)
     {
         this.connectionString = connectionString;
-        this.DataSource = NpgsqlDataSource.Create(connectionString);
         this.Conn = new NpgsqlConnection(this.connectionString);
     }
-
-    public async void CreateSlots(){
-        await using var cmd = DataSource.CreateCommand(
-            """
-            create table slots(
-                id integer primary key,
-                slotStart timestamp,
-                slotEnd timestamp,
-                patientId integer,
-                status varchar 
-            );
-            """
-        );
+    public async Task<IEnumerable<DateTime>> GetPlannedRaces(DateTime date)
+    {
+        var sql = " SELECT dateStart from races where startDate::date = @Date::date ";
+        var args = new {
+            Date = date
+        };
+        var res = await Conn.QueryAsync<DateTime>(sql, args);
+        return res;
     }
 
-    public async Task<IEnumerable<AppointmentSlot>> GetSlots(DateTime start, DateTime end)
+    public async Task<IEnumerable<DateTime>> GetTechBreaks(DateTime date)
+    {
+        var sql = " SELECT dateStart from technicalBreaks where startDate::date = @Date::date ";
+        var args = new {
+            Date = date
+        };
+        var res = await Conn.QueryAsync<DateTime>(sql, args);
+        return res;
+    }
+
+    /*public async Task<IEnumerable<AppointmentSlot>> GetOccupiedSlots(DateTime date)
+    {
+        
+        var techBreaksSql = 
+        var args = new {
+            Date = date
+        };
+        
+        var res2 = await Conn.QueryAsync<TechnicalBreaks>(racesSql, args);
+        
+        var result = new List<AppointmentSlot>();
+        await using var cmd = DataSource.CreateCommand(
+            
+        );
+        cmd.Parameters.Add(new NpgsqlParameter("", date));
+        await using (var reader = await cmd.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {   
+                AppointmentSlot instance = new AppointmentSlot();
+                instance.Id = Convert.ToInt32(reader["id"]);
+                instance.SlotDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["slotDate"]));
+                instance.SlotStart = TimeOnly.Parse(reader["slotStart"].ToString());
+                if (reader["orderId"] != DBNull.Value) instance.OrderId =  Convert.ToInt32(reader["orderId"]);
+                if (reader["status"] != DBNull.Value) instance.Status = reader["status"].ToString();
+                if (reader["raceType"] != DBNull.Value) instance.RaceType = reader["raceType"].ToString();
+                result.Add(instance); // Adjust the index based on your data schema
+            }
+        }        
+        return result;
+    }*/
+    public async void PostOrder(DateOnly date, List<TimeOnly> times, string raceTypeMode, List<string> modes){
+        // Insert new order
+        await using var cmd = DataSource.CreateCommand(
+            """
+            Insert into orders (orderDate, userId, price, status)
+            Values ($1, $2, $3, $4)
+            Returning id;
+            """
+        );
+        var orderDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time"));
+        var userId = 1;
+        var price = 0.0;
+        cmd.Parameters.Add(new NpgsqlParameter("", orderDate));
+        cmd.Parameters.Add(new NpgsqlParameter("", userId));
+        cmd.Parameters.Add(new NpgsqlParameter("", price));
+        cmd.Parameters.Add(new NpgsqlParameter("", "test"));
+
+        var orderId = await cmd.ExecuteScalarAsync();
+
+        await using var idCmd = DataSource.CreateCommand(
+            """
+            Select id
+            from orders
+            where orderDate = $1 and userId = $2;
+            """
+        );
+        idCmd.Parameters.Add(new NpgsqlParameter("", orderDate));
+        idCmd.Parameters.Add(new NpgsqlParameter("", userId));
+
+        //var orderId = await cmd.ExecuteScalarAsync();
+        Console.WriteLine(orderId);
+        for (int i = 0; i < times.Count; i++){
+            await using var slotCmd = DataSource.CreateCommand(
+                """
+                Insert into slots (slotDate, slotStart, status, orderId, raceType)
+                Values ($1, $2, $3, $4, $5);
+                """
+            );
+            slotCmd.Parameters.Add(new NpgsqlParameter("", date));
+            slotCmd.Parameters.Add(new NpgsqlParameter("", times[i]));
+            slotCmd.Parameters.Add(new NpgsqlParameter("", "booked"));
+            slotCmd.Parameters.Add(new NpgsqlParameter("", orderId));
+            if (raceTypeMode == "uniform"){
+                slotCmd.Parameters.Add(new NpgsqlParameter("", modes[0]));
+            }
+            else if (raceTypeMode == "divided") {
+                slotCmd.Parameters.Add(new NpgsqlParameter("", modes[i]));
+            }
+
+            await slotCmd.ExecuteNonQueryAsync();
+        }
+
+        
+    }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public async Task<IList<AppointmentSlot>> GetSlots(DateTime start, DateTime end)
     {
         var result = new List<AppointmentSlot>();
         await using var cmd = DataSource.CreateCommand(
@@ -47,10 +138,11 @@ public class AppointmentSlotLayer{
             {   
                 AppointmentSlot instance = new AppointmentSlot();
                 instance.Id = Convert.ToInt32(reader["id"]);
-                instance.SlotStart = Convert.ToDateTime(reader["slotStart"]);
-                instance.SlotEnd = Convert.ToDateTime(reader["slotEnd"]);
-                instance.PatientId = reader["patientId"].ToString();
+                instance.SlotDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["slotDate"]));
+                instance.SlotStart = TimeOnly.Parse(reader["slotStart"].ToString()); 
+                instance.OrderId =  Convert.ToInt32(reader["orderId"]);
                 instance.Status = reader["status"].ToString();
+                instance.RaceType = reader["raceType"].ToString();
                 result.Add(instance); // Adjust the index based on your data schema
             }
         }        
@@ -75,10 +167,11 @@ public class AppointmentSlotLayer{
             {   
                 AppointmentSlot instance = new AppointmentSlot();
                 instance.Id = Convert.ToInt32(reader["id"]);
-                instance.SlotStart = Convert.ToDateTime(reader["start"]);
-                instance.SlotEnd = Convert.ToDateTime(reader["slotEnd"]);
-                instance.PatientId = reader["patientId"].ToString();
+                instance.SlotDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["slotDate"]));
+                instance.SlotStart = TimeOnly.Parse(reader["slotStart"].ToString()); 
+                instance.OrderId =  Convert.ToInt32(reader["orderId"]);
                 instance.Status = reader["status"].ToString();
+                instance.RaceType = reader["raceType"].ToString();
                 result.Add(instance); // Adjust the index based on your data schema
             }
         }   
@@ -100,11 +193,12 @@ public class AppointmentSlotLayer{
             while (await reader.ReadAsync())
             {   
                 instance.Id = Convert.ToInt32(reader["id"]);
-                instance.SlotStart = Convert.ToDateTime(reader["slotStart"]);
-                instance.SlotEnd = Convert.ToDateTime(reader["slotEnd"]);
-                instance.PatientId = reader["patientId"].ToString();
+                instance.SlotDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["slotDate"]));
+                instance.SlotStart = TimeOnly.Parse(reader["slotStart"].ToString()); 
+                instance.OrderId =  Convert.ToInt32(reader["orderId"]);
                 instance.Status = reader["status"].ToString();
-                
+                instance.RaceType = reader["raceType"].ToString();
+
             }
         }
         if (instance.Id != null){
@@ -133,7 +227,7 @@ public class AppointmentSlotLayer{
             cmd.Parameters.Add(new NpgsqlParameter("", update.PatientId));
         }
         else{
-            cmd.Parameters.Add(new NpgsqlParameter("", appSlot.PatientId));
+            cmd.Parameters.Add(new NpgsqlParameter("", appSlot.OrderId));
         }
         if (update.Status != null){
             cmd.Parameters.Add(new NpgsqlParameter("", update.Status));
@@ -144,20 +238,6 @@ public class AppointmentSlotLayer{
         await cmd.ExecuteNonQueryAsync();
     }
 
-    public async void PostAppointmentSlot(AppointmentSlot slot){
-        await using var cmd = DataSource.CreateCommand(
-            """
-            Insert into slots (id, slotStart, slotEnd, patientId, status)
-            Values ($1, $2, $3, $4, $5);
-            """
-        );
-        cmd.Parameters.Add(new NpgsqlParameter("", slot.Id));
-        cmd.Parameters.Add(new NpgsqlParameter("", slot.SlotStart));
-        cmd.Parameters.Add(new NpgsqlParameter("", slot.SlotEnd));
-        cmd.Parameters.Add(new NpgsqlParameter("", slot.PatientId));
-        cmd.Parameters.Add(new NpgsqlParameter("", slot.Status));
-        await cmd.ExecuteNonQueryAsync();
-    }
     public async void PostAppointmentSlots(AppointmentSlotRange range){
         
         var slots = Timeline.GenerateSlots(range.Start, range.End, range.Scale);
@@ -165,12 +245,12 @@ public class AppointmentSlotLayer{
         foreach (var slot in slots){
             await using var cmd = DataSource.CreateCommand(
                 """
-                Insert into slots (slotStart, slotEnd, patientId)
+                Insert into slots (slotStart, slotEnd, status)
                 Values ($1, $2, $3);
                 """
             );
+            cmd.Parameters.Add(new NpgsqlParameter("", slot.SlotDate));
             cmd.Parameters.Add(new NpgsqlParameter("", slot.SlotStart));
-            cmd.Parameters.Add(new NpgsqlParameter("", slot.SlotEnd));
             cmd.Parameters.Add(new NpgsqlParameter("", slot.Status));
             await cmd.ExecuteNonQueryAsync();
         }

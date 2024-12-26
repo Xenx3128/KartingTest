@@ -1,0 +1,46 @@
+@page
+@model TestMVC.Pages.AdminUsersModel
+@{
+    ViewData["Title"] = "Admin Users Page";
+}
+<div class="row-fluid">
+    <a asp-page="./Create" class="btn btn-primary">Add User</a>
+    <a asp-page="./Find" class="btn btn-primary">Find User</a>
+</div>
+
+<table class="table">
+    <thead>
+        <th>ID</th>
+        <th>User Name</th>
+        <th>Birth Date</th>
+        <th>Phone Number</th>
+        <th>Email</th>
+        <th>User Role</th>
+        <th>From Where Found Out</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users){
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.UserName</td>
+                <td>@user.BirthDate.ToString("yyyy-MM-dd")</td>
+                <td>@user.PhoneNum</td>
+                <td>@user.Email</td>
+                <td>@user.UserRole</td>
+                <td>@user.FromWhereFoundOut</td>
+                <td>@user.Status</td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@user.Id">View</a> |
+                    <a asp-page="./Edit" asp-route-id="@user.Id">Edit</a> |
+                    <a asp-page="./Delete" asp-route-id="@user.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts{
+}
+
+
