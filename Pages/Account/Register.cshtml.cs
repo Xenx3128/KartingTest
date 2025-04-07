@@ -17,7 +17,7 @@ public class RegisterModel : PageModel
     }
 
     [BindProperty]
-    public CartUser MyUser { get; set; }
+    public CartUser CUser { get; set; }
 
     public async Task<IActionResult> OnPostAsync()
     {
@@ -26,7 +26,7 @@ public class RegisterModel : PageModel
             return Page();
         }
         //var  _userContext = new UserContext(connectionString);
-        await _userContext.RegisterUser(MyUser);
-        return RedirectToPage("/Account/Login");
+        await _userContext.RegisterUser(CUser);
+        return RedirectToPage("/Index");
     }
 }

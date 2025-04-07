@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Threading.Tasks;
-using TestMVC.Utility;
 using TestMVC.Data;
-
+using TestMVC.Utility;
+using TestMVC.Models;
 
 namespace TestMVC.Pages;
 public class LoginModel : PageModel

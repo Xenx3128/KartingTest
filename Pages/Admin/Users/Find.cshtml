@@ -1,17 +1,17 @@
 @page
 @model TestMVC.Pages.AdminUsersFindModel
 @{
-    ViewData["Title"] = "Find User by Email";
+    ViewData["Title"] = "Найти пользователя по электронной почте";
 }
 
-<h1>Find User by Email</h1>
+<h1>Найти пользователя по электронной почте</h1>
 
 <form method="post">
     <div class="form-group">
-        <label for="SearchEmail">Email</label>
+        <label for="SearchEmail">Электронная почта</label>
         <input asp-for="SearchEmail" class="form-control" />
         <span asp-validation-for="SearchEmail" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-secondary">Search</button>
-    <a asp-page="./Users" class="btn btn-light">Back to List</a>
+    <button type="submit" class="btn btn-secondary">Поиск</button>
+    <a asp-page="./Users" class="btn btn-light">Отмена</a>
 </form>

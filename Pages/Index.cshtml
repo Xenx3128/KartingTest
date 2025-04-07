@@ -1,46 +1,57 @@
 ﻿@page
-@model TestMVC.Pages.IndexModel
+@model TestMVC.Pages.HomeModel
 @{
-    ViewData["Title"] = "Orders";
+    ViewData["Title"] = "Домашняя страница";
 }
 
-<h1>Simple Form</h1>
-<form method="post" class="mt-4" id="orderForm">
-    <div class="mb-3">
-        <input id="inputdate" class="form-control" name="date" type="text" placeholder="Выберите дату" required readonly>
+<div class="menu">
+    <button type="button" class="btn btn-info" onclick="location.href='Orders'">Запись на квест</button>
+    <button type="button" class="btn btn-info" onclick="location.href='ClZap'">Участникам. Как записаться на квест</button>
+    <button type="button" class="btn btn-info" onclick="location.href='ClPrav'">Участникам. Правила прохождения тестов</button>
+    <button type="button" class="btn btn-info" onclick="location.href='Org'">Организаторам</button>
+    <button type="button" class="btn btn-secondary" onclick="location.href='Account/Register'">Регистрация</button>    
+    <button type="button" class="btn btn-secondary" onclick="location.href='Account/Login'">Вход</button>
+</div>
+<hr>
+
+
+<h4>Мы предлагаем уникальные квесты, которые позволят вам испытать свои силы, развить командный дух и просто отлично провести время c друзьями или семьей.</h4>
+<h4>Каждый квест — это новая история, полная загадок и неожиданных поворотов!</h4>
+<hr>
+
+<h2>
+<div class="gallery">
+    <div>
+        <img src="\img\image1.jpg" alt="Квест 1">
+        <a href="Quest1">Квест 1: "Тайна заброшенного особняка"</a>
     </div>
-    <div class="mb-3">
-        <input id="inputtime" class="form-control" name="time" type="text" placeholder="Выберите время" required readonly>
+    <hr>
+    <div>
+        <img src="\img\image2.jpg" alt="Квест 1">        
+        <a href="Quest2">Квест 2: "Спасение планеты"</a>
     </div>
-    <div id="RaceTypeGlobalContainer" style="visibility: hidden;">
-        <h3>Тип заезда:</h3>
-        <div class="mb-3">
-            <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioUniform" value="uniform">
-            <label class="form-check-label" for="RaceTypeRadioUniform">Один тип заездов для всех слотов</label>
-            </div>
-            <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioDivided" value="divided">
-            <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
-            </div>
-        </div>
-        <div class="mb-3" id="RaceTypeContainer">
-        </div>
+    <hr>
+    <div>
+        <img src="\img\image3.jpg" alt="Квест 3">        
+        <a href="Quest3">Квест 3: "Похищение драгоценностей"</a>
     </div>
-
-    <button id="submitForm" type="button" class="btn btn-secondary">Submit</button>
-</form>
-
-<link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">
-<script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
-
-<link rel="stylesheet" href="~/lib/air-datepicker/air-datepicker.css">
-<script src="~/lib/air-datepicker/air-datepicker.js"></script>
-
-<script src="~/lib/axios/dist/axios.min.js"></script>
-
-
-@section Scripts{
-    <script type="module" src='@Url.Content("~/js/appointment.js")'></script>
-}
-
+</div>
+</h2>
+<hr>
+<h5>Специальные предложения:</h5>
+<h5>• Скидка 20% на первый квест для новых участников!</h5>
+<h5>• Групповые заказы: При бронировании от 10 человек — скидка 15%.</h5>
+<hr>
+<h5>Контакты:</h5>
+<h6>Сервис квестов "КвестМания"</h6>
+<h6>• Телефон: +7 (495) 123-45-67</h6>
+<h6>• Электронная почта: info@questmania.ru</h6>
+<h6>• Адрес: г. Пермь, ул. Квестовая, д. 10, строение 5</h6>
+<br>
+<h6>• Сайт: www.perm-quest-mania.ru</h6>
+<br>
+<h6>• VK: vk.com/questmania</h6>
+<br>
+<h6>Часы работы:</h6>
+<h6>• Пн-Пт: 10:00 - 20:00</h6>
+<h6>• Сб-Вс: 11:00 - 22:00</h6>

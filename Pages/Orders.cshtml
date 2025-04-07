@@ -4,32 +4,84 @@
     ViewData["Title"] = "Orders";
 }
 
-<h1>Simple Form</h1>
-<form method="post" class="mt-4" id="orderForm">
-    <div class="mb-3">
-        <input id="inputdate" class="form-control" name="date" type="text" placeholder="Выберите дату" required readonly>
-    </div>
-    <div class="mb-3">
-        <input id="inputtime" class="form-control" name="time" type="text" placeholder="Выберите время" required readonly>
-    </div>
-    <div id="RaceTypeGlobalContainer" style="visibility: hidden;">
-        <h3>Тип заезда:</h3>
-        <div class="mb-3">
-            <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioUniform" value="uniform">
-            <label class="form-check-label" for="RaceTypeRadioUniform">Один тип заездов для всех слотов</label>
-            </div>
-            <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioDivided" value="divided">
-            <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
-            </div>
-        </div>
-        <div class="mb-3" id="RaceTypeContainer">
-        </div>
-    </div>
 
-    <button id="submitForm" type="button" class="btn btn-secondary">Submit</button>
-</form>
+<div class="orders-wrap">
+    <div class="container">
+        <form method="post" class="mt-4" id="orderForm">
+            <!-- Date Section -->
+            <div class="row">
+                <h4>Время заезда</h4>
+                <div class="input-group">
+                    <input id="inputdate" class="form-control" name="date" type="text" placeholder="Выберите дату" required readonly>
+                </div>
+                <div class="input-group">
+                    <input id="inputtime" class="form-control" name="time" type="text" placeholder="Выберите время" required readonly>
+                </div>
+            </div>
+
+            <div id="RaceTypeGlobalContainer">
+                <div class="row">
+                    <h4>Тип заезда</h4>
+                    <div class="input-group">
+                        <input id="race-type-uniform" type="radio" name="race-type" value="uniform">
+                        <label for="race-type-uniform">Один тип заездов для всех слотов</label>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <input id="race-type-divided" type="radio" name="race-type" value="divided">
+                        <label for="race-type-divided">Различные типы заездов</label>
+                    </div>
+                </div>
+                <div id="RaceTypeContainer">
+                </div>
+            </div>
+
+            @*<!-- Date of Birth & Gender -->
+            <div class="row">
+                <div class="col-half">
+                <h4>Date of Birth</h4>
+                <div class="input-group">
+                    <div class="col-third">
+                    <input type="text" placeholder="DD">
+                    </div>
+                    <div class="col-third">
+                    <input type="text" placeholder="MM">
+                    </div>
+                    <div class="col-third">
+                    <input type="text" placeholder="YYYY">
+                    </div>
+                </div>
+                </div>
+                <div class="col-half">
+                <h4>Gender</h4>
+                <div class="input-group">
+                    <input id="gender-male" type="radio" name="gender" value="male">
+                    <label for="gender-male">Male</label>
+                    <input id="gender-female" type="radio" name="gender" value="female">
+                    <label for="gender-female">Female</label>
+                </div>
+                </div>
+            </div>*@
+
+            <!-- Terms and Conditions -->
+            <div class="row">
+                <h4>Terms and Conditions</h4>
+                <div class="input-group">
+                <input id="terms" type="checkbox">
+                <label for="terms">
+                    I accept the terms and conditions for signing up to this service, and hereby confirm I have read the privacy policy.
+                </label>
+                </div>
+            </div>
+
+            <button id="submitForm" type="button" class="btn btn-success">Забронировать</button>
+        </form>
+    </div>
+</div>
+
+
 
 <link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">
 <script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
@@ -42,5 +94,11 @@
 
 @section Scripts{
     <script type="module" src='@Url.Content("~/js/appointment.js")'></script>
+    <script>
+        @*var urlParams = new URLSearchParams(window.location.search);
+        let queryString = urlParams.get('quest');
+
+        document.getElementById("questSelect").querySelector("option[value='" + queryString + "']").selected = true;*@
+    </script>
 }
 

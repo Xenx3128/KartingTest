@@ -18,11 +18,39 @@ public class UserContext{
         this.Conn = new NpgsqlConnection(this.connectionString);
     }
 
-    public async Task<int> RegisterUser(CartUser user)
+    public async Task<int> CreateUser(CartUser user)
     {
-        var sql = "INSERT INTO users (username, birthdate, phonenum, email, pwd, userrole, fromwherefoundout, status) VALUES (@UserName, @BirthDate, @PhoneNum, @Email, @Pwd, @UserRole, @FromWhereFoundOut, @Status) RETURNING id;";
-        
+        var sql = "INSERT INTO users (username, birthdate, phonenum, email, pwd, userrole, fromwherefoundout, status, note) VALUES (@UserName, @BirthDate, @PhoneNum, @Email, @Pwd, @UserRole, @FromWhereFoundOut, @Status, @Note) RETURNING id;";
+        var args = new {
+            Id = user.Id,
+            UserName = user.UserName,
+            BirthDate = user.BirthDate,
+            PhoneNum = user.PhoneNum,
+            Email = user.Email,
+            Pwd = user.Pwd,
+            UserRole = "user",
+            FromWhereFoundOut = user.FromWhereFoundOut,
+            Status = user.Status,
+            Note = user.Note,
+        };
         var id = await Conn.QuerySingleAsync<int>(sql, user);
+        return id;
+    }
+        public async Task<int> RegisterUser(CartUser user)
+    {
+        var sql = "INSERT INTO users (username, birthdate, phonenum, email, pwd, userrole, fromwherefoundout, status, note) VALUES (@UserName, @BirthDate, @PhoneNum, @Email, @Pwd, @UserRole, @FromWhereFoundOut, @Status, @Note) RETURNING id;";
+        var args = new {
+            UserName = user.UserName,
+            BirthDate = user.BirthDate,
+            PhoneNum = user.PhoneNum,
+            Email = user.Email,
+            Pwd = user.Pwd,
+            UserRole = "user",
+            FromWhereFoundOut = user.FromWhereFoundOut,
+            Status = "Active",
+            Note = user.Note
+        };
+        var id = await Conn.QuerySingleAsync<int>(sql, args);
         return id;
     }
     public async Task<IEnumerable<CartUser>> GetAllUsers()
@@ -59,12 +87,9 @@ public class UserContext{
             Pwd = user.Pwd,
             UserRole = user.UserRole,
             FromWhereFoundOut = user.FromWhereFoundOut,
-            Status = user.Status
+            Status = user.Status,
         };
-        Console.WriteLine(args.UserName);
-        
-        await Conn.QueryAsync<CartUser>(sql, args)  ;
-        Console.WriteLine("///");
+        await Conn.QueryAsync<CartUser>(sql, args);
     }
 
     public async void DeleteUser(int id)

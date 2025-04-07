@@ -1,51 +1,43 @@
 @page
 @model TestMVC.Pages.RegisterModel
-<h1>Register</h1>
-
-
-<form method="post" class="mt-4">
-    <div class="mb-3">
-        <label>Username:</label>
-        <input class="form-control" asp-for="MyUser.UserName" />
-        <span asp-validation-for="MyUser.UserName"></span>
-    </div>
-    <div class="mb-3">
-        <label >Birth Date:</label>
-        <input class="form-control" asp-for="MyUser.BirthDate" type="date" />
-        <span asp-validation-for="MyUser.BirthDate"></span>
-    </div>
-    <div class="mb-3">
-        <label>Phone Number:</label>
-        <input class="form-control" asp-for="MyUser.PhoneNum" />
-        <span asp-validation-for="MyUser.PhoneNum"></span>
-    </div>
-    <div class="mb-3">
-        <label>Email:</label>
-        <input class="form-control" asp-for="MyUser.Email" />
-        <span asp-validation-for="MyUser.Email"></span>
-    </div>
-    <div class="mb-3">
-        <label>Password:</label>
-        <input class="form-control" asp-for="MyUser.Pwd" type="password" />
-        <span asp-validation-for="MyUser.Pwd"></span>
-    </div>
-    <div class="mb-3">
-        <label>User Role:</label>
-        <input class="form-control" asp-for="MyUser.UserRole" />
-        <span asp-validation-for="MyUser.UserRole"></span>
-    </div>
-    <div class="mb-3">
-        <label>From Where Found Out:</label>
-        <input class="form-control" asp-for="MyUser.FromWhereFoundOut" />
-        <span asp-validation-for="MyUser.FromWhereFoundOut"></span>
-    </div>
-    <div class="mb-3">
-        <label>Status:</label>
-        <input class="form-control" asp-for="MyUser.Status" />
-        <span asp-validation-for="MyUser.Status"></span>
-    </div>
-    <button type="submit" class="btn btn-secondary">Register</button>
-</form>
-
-@section Scripts{
+@{
+    ViewData["Title"] = "Регистрация";
 }
+
+<h1>Регистрация</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="CUser.UserName">ФИО</label>
+        <input asp-for="CUser.UserName" class="form-control" />
+        <span asp-validation-for="CUser.UserName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.Email">Электронная почта</label>
+        <input asp-for="CUser.Email" class="form-control" />
+        <span asp-validation-for="CUser.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.PhoneNum">Номер телефона</label>
+        <input asp-for="CUser.PhoneNum" class="form-control" />
+        <span asp-validation-for="CUser.PhoneNum" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.BirthDate">Дата рождения</label>
+        <input asp-for="CUser.BirthDate" class="form-control" type="date" />
+        <span asp-validation-for="CUser.BirthDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.Pwd">Придумайте пароль</label>
+        <input asp-for="CUser.Pwd" class="form-control" type="password" />
+        <span asp-validation-for="CUser.Pwd" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.FromWhereFoundOut">Расскажите, откуда узнали о нас</label>
+        <textarea asp-for="CUser.FromWhereFoundOut" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="CUser.FromWhereFoundOut" class="text-danger"></span>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-secondary">Зарегистрироваться</button>
+    <a asp-page="/Index" class="btn btn-light">Отмена</a>
+</form>

@@ -1,52 +1,58 @@
 @page
 @model TestMVC.Pages.AdminUsersCreateModel
 @{
-    ViewData["Title"] = "Create User";
+    ViewData["Title"] = "Создать аккаунт пользователя";
 }
 
-<h1>Create User</h1>
+<h1>Создать пользователя</h1>
 
 <form method="post">
     <div class="form-group">
-        <label asp-for="CUser.UserName"></label>
+        <label asp-for="CUser.UserName">ФИО</label>
         <input asp-for="CUser.UserName" class="form-control" />
         <span asp-validation-for="CUser.UserName" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="CUser.BirthDate"></label>
-        <input asp-for="CUser.BirthDate" class="form-control" type="date" />
-        <span asp-validation-for="CUser.BirthDate" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.PhoneNum"></label>
-        <input asp-for="CUser.PhoneNum" class="form-control" />
-        <span asp-validation-for="CUser.PhoneNum" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.Email"></label>
+        <label asp-for="CUser.Email">Электронная почта</label>
         <input asp-for="CUser.Email" class="form-control" />
         <span asp-validation-for="CUser.Email" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="CUser.Pwd"></label>
+        <label asp-for="CUser.PhoneNum">Номер телефона</label>
+        <input asp-for="CUser.PhoneNum" class="form-control" />
+        <span asp-validation-for="CUser.PhoneNum" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.BirthDate">Дата рождения</label>
+        <input asp-for="CUser.BirthDate" class="form-control" type="date" />
+        <span asp-validation-for="CUser.BirthDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.Pwd">Придумайте пароль</label>
         <input asp-for="CUser.Pwd" class="form-control" type="password" />
         <span asp-validation-for="CUser.Pwd" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="CUser.UserRole"></label>
+        <label asp-for="CUser.FromWhereFoundOut">Откуда узнали</label>
+        <textarea asp-for="CUser.FromWhereFoundOut" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="CUser.FromWhereFoundOut" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.Status">Статус пользователя</label>
+        <input asp-for="CUser.Status" class="form-control" />
+        <span asp-validation-for="CUser.Status" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CUser.UserRole">Роль пользователя</label>
         <input asp-for="CUser.UserRole" class="form-control" />
         <span asp-validation-for="CUser.UserRole" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="CUser.FromWhereFoundOut"></label>
-        <input asp-for="CUser.FromWhereFoundOut" class="form-control" />
-        <span asp-validation-for="CUser.FromWhereFoundOut" class="text-danger"></span>
+        <label asp-for="CUser.Note">Примечание</label>
+        <input asp-for="CUser.Note" class="form-control" />
+        <span asp-validation-for="CUser.Note" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="CUser.Status"></label>
-        <input asp-for="CUser.Status" class="form-control" />
-        <span asp-validation-for="CUser.Status" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-secondary">Create</button>
-    <a asp-page="./Users" class="btn btn-light">Cancel</a>
+    <br>
+    <button type="submit" class="btn btn-secondary">Создать</button>
+    <a asp-page="./Users" class="btn btn-light">Отмена</a>
 </form>

@@ -1,12 +1,11 @@
 
 function updateRaceRadioButtons(slots, containerId){
-    console.log(checkValue);
     var container = document.getElementById(containerId);
     while (container.hasChildNodes()) {
         container.removeChild(container.lastChild);
     }
 
-    var RaceTypeRadios = document.getElementsByName('raceTypeRadioOptions');
+    var RaceTypeRadios = document.getElementsByName('race-type');
     var checkValue = 'None';
     RaceTypeRadios.forEach(button => {
         if (button.checked){
@@ -26,11 +25,11 @@ function updateRaceRadioButtons(slots, containerId){
 function addRaceRadioButtonsDivided(slots, container, mode=1) {
 
     /*<div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioUniform" value="option1">
+    <input class="form-check-input" type="radio" name="race-type" id="raceTypeRadioUniform" value="option1">
     <label class="form-check-label" for="RaceTypeRadioUniform">Один тип заездов для всех слотов</label>
     </div>
     <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="raceTypeRadioOptions" id="raceTypeRadioDivided" value="option2">
+    <input class="form-check-input" type="radio" name="race-type" id="raceTypeRadioDivided" value="option2">
     <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
 
     <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
@@ -39,14 +38,52 @@ function addRaceRadioButtonsDivided(slots, container, mode=1) {
     if (!mode){
         rowAmount = 1;
     }
-
+    console.log(rowAmount);
     for (var rowCount = 0; rowCount < rowAmount; rowCount++){
         // <div class="form-group row"></div>
         var rowContainer = document.createElement('div');
-        rowContainer.classList.add('form-group', 'row');
+        rowContainer.classList.add('row');
         container.appendChild(rowContainer);
         
-        // <label for="" class="col-sm-2 col-form-label">Text</label>
+        var titleContainer = document.createElement('h5');
+        if (mode){
+            titleContainer.textContent = `Слот ${slots[rowCount]}`;
+        }
+        else{
+            titleContainer.textContent = `Выберите тип заезда:`;
+        }
+        rowContainer.appendChild(titleContainer);
+
+        var inputGroupContainer = document.createElement('div');
+        inputGroupContainer.classList.add('input-group');
+        rowContainer.appendChild(inputGroupContainer);
+
+        const radioOptions = ['Взрослый', 'Детский', 'Семейный'];
+
+        for (var radioCount = 0; radioCount < radioOptions.length; radioCount++){
+            var colThirdContainer = document.createElement('div');
+            colThirdContainer.classList.add('col-third');
+
+            var inputContainer = document.createElement('input');
+            var inputContainerId = `raceTypeRadio_${slots[rowCount]}_${radioCount}`;
+            inputContainer.type = 'radio';
+            inputContainer.name = `race-type_${slots[rowCount]}`;
+            inputContainer.id = inputContainerId
+            inputContainer.value = `raceTypeRadio_${slots[rowCount]}_Option_${radioCount}`;
+            //<input id="race-type-divided" type="radio" name="race-type" value="divided">
+
+            var labelContainer = document.createElement('label');
+            labelContainer.htmlFor = inputContainerId;
+            var labelContainerText = document.createTextNode(radioOptions[radioCount]);
+            labelContainer.appendChild(labelContainerText);
+            //<label for="race-type-divided">Различные типы заездов</label>
+
+            colThirdContainer.appendChild(inputContainer);
+            colThirdContainer.appendChild(labelContainer);
+
+            inputGroupContainer.appendChild(colThirdContainer);
+        }
+        /*// <label for="" class="col-sm-2 col-form-label">Text</label>
         var label = document.createElement('label');
         label.htmlFor = '';
         label.classList.add('col-sm-2', 'col-form-label');
@@ -64,38 +101,38 @@ function addRaceRadioButtonsDivided(slots, container, mode=1) {
         var radioContainerGlobal = document.createElement('div');
         radioContainerGlobal.classList.add('col-sm-10');
 
-
+        */
         
-        const radioOptions = ['Взрослый', 'Детский', 'Семейный'];
+        //const radioOptions = ['Взрослый', 'Детский', 'Семейный'];
 
-        for (var radioCount = 0; radioCount < radioOptions.length; radioCount++){
+        /*for (var radioCount = 0; radioCount < radioOptions.length; radioCount++){
             // <div class="form-check form-check-inline">
             var radioContainer1 = document.createElement('div');
             radioContainer1.classList.add('form-check', 'form-check-inline');
 
-            // <input class="form-check-input" type="radio" name="raceTypeRadioOptions0" id="raceTypeRadio0_0" value="raceTypeRadio0Option0">
-            var radioInput1 = document.createElement('input');
-            var radioInput1Id = `raceTypeRadio_${slots[rowCount]}_${radioCount}`;
-            radioInput1.classList.add('form-check-input');
-            radioInput1.type = 'radio';
-            radioInput1.name = `raceTypeRadioOptions_${slots[rowCount]}`;
-            radioInput1.id = radioInput1Id
-            radioInput1.value = `raceTypeRadio_${slots[rowCount]}_Option_${radioCount}`;
+            // <input class="form-check-input" type="radio" name="race-type0" id="raceTypeRadio0_0" value="raceTypeRadio0Option0">
+            var inputContainer1 = document.createElement('input');
+            var inputContainer1Id = `raceTypeRadio_${slots[rowCount]}_${radioCount}`;
+            inputContainer1.classList.add('form-check-input');
+            inputContainer1.type = 'radio';
+            inputContainer1.name = `race-type_${slots[rowCount]}`;
+            inputContainer1.id = inputContainer1Id
+            inputContainer1.value = `raceTypeRadio_${slots[rowCount]}_Option_${radioCount}`;
 
             // <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
-            var radioLabel1 = document.createElement('label');
-            radioLabel1.classList.add('form-check-label');
-            radioLabel1.htmlFor = radioInput1Id;
-            var radioLabel1Text = document.createTextNode(radioOptions[radioCount]);
-            radioLabel1.appendChild(radioLabel1Text);
+            var labelContainer = document.createElement('label');
+            labelContainer.classList.add('form-check-label');
+            labelContainer.htmlFor = inputContainer1Id;
+            var labelContainerText = document.createTextNode(radioOptions[radioCount]);
+            labelContainer.appendChild(labelContainerText);
 
-            radioContainer1.appendChild(radioInput1);
-            radioContainer1.appendChild(radioLabel1);
+            radioContainer1.appendChild(inputContainer1);
+            radioContainer1.appendChild(labelContainer);
 
             radioContainerGlobal.appendChild(radioContainer1);
-        }
+        }*/
 
-        rowContainer.appendChild(radioContainerGlobal);
+        //rowContainer.appendChild(radioContainerGlobal);
 
         //container.appendChild(document.createElement('br'));
     }
@@ -104,12 +141,12 @@ function addRaceRadioButtonsDivided(slots, container, mode=1) {
 function checkSelectedSlots(slots) {
 
     var raceTypeSelection = document.getElementById('RaceTypeGlobalContainer');
-    if (slots.length == 0){
-        raceTypeSelection.style.visibility = 'hidden';
+    /*if (slots.length == 0){
+        raceTypeSelection.style.visibility = 'visible';
     }
     else{
         raceTypeSelection.style.visibility = 'visible';
-    }
+    }*/
 }
 
 
@@ -117,7 +154,7 @@ window.onload = function() {
     var timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
         interval: 15,
         startTime: 10,
-        endTime: 18,
+        endTime: 20,
         title: 'Свободные слоты',
         static: false,
         useSlotTemplate : false
@@ -155,14 +192,13 @@ window.onload = function() {
                 var disable = [];
                 //console.log(data);
                 response.data.forEach(elem => {
-                    disable.push(elem.slice(0, -3));
+                    disable.push(elem);
                 });
-                console.log(timePicker);
+                console.log(disable);
                 timePicker.destroy();
                 timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
-                    interval: 15,
                     startTime: 10,
-                    endTime: 18,
+                    endTime: 20,
                     disabled: disable,
                     title: 'Свободные слоты',
                     static: false,
@@ -181,7 +217,7 @@ window.onload = function() {
         }
     })
 
-    var RaceTypeRadios = document.getElementsByName('raceTypeRadioOptions');
+    var RaceTypeRadios = document.getElementsByName('race-type');
     RaceTypeRadios.forEach(button => {
         button.addEventListener('change', function(){
             updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer', button.value)
@@ -189,8 +225,7 @@ window.onload = function() {
         //button.onclick = updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer', button.value);
     });
 
-    document.getElementById('submitForm').onclick = postForm;
-
+    
     function postForm(event){
         var form = document.getElementById('orderForm')
         var data = new FormData(form);
@@ -211,11 +246,16 @@ window.onload = function() {
           })
             .then(function (response) {
               //handle success
+              console.log('/');
               console.log(response);
+              window.location.href = '/Index';
             })
             .catch(function (response) {
               //handle error
+              console.log('//');
               console.log(response);
             });
     }
+
+    document.getElementById('submitForm').onclick = postForm;
 }

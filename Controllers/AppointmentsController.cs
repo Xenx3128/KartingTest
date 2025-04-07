@@ -14,21 +14,16 @@ public class AppointmentController : Controller
 {
     private string connectionString = ConnectionString.CName;
 
-    [HttpGet]
-    public async Task<IEnumerable<AppointmentSlot>> GetAppointments([FromQuery] DateTime start, [FromQuery] DateTime end){
-        var _context = new AppointmentContext(connectionString); 
-        var data = await _context.GetSlots(start, end);
-        return data;
-    }
 
     [HttpGet("day")]
-    public async Task<IEnumerable<DateTime>> GetDailyAppointments([FromQuery] DateTime querydate){
+    public async Task<IEnumerable<string>> GetDailyAppointments([FromQuery] DateTime querydate){
         var _context = new AppointmentContext(connectionString); 
 
         var data1 = await _context.GetPlannedRaces(querydate);
-        var data2 = await _context.GetPlannedRaces(querydate);
+        var data2 = await _context.GetTechBreaks(querydate);
         var data = data1.Concat(data2);
-        return data;
+        var data3 = data.Select(a => a.ToString("HH:mm")).ToList();
+        return data3;
     }
 
     [HttpPost("order")]
@@ -80,51 +75,4 @@ public class AppointmentController : Controller
         _context.PostOrder(date, times, raceTypeMode, modes);  
         return NoContent();
     }
-/////////////////////////////////////////
-    [HttpGet("all")]
-    public async Task<IEnumerable<AppointmentSlot>> GetAllAppointments([FromQuery] DateTime start, [FromQuery] DateTime end){
-        var _context = new AppointmentContext(connectionString); 
-        var occupied = await _context.GetSlots(start, end);
-        var timeline = Timeline.GenerateSlots(start, end, "hours");
-        for (int i = 0; i < timeline.Count; i++){
-            for (int j = 0; j < occupied.Count; j++){
-                
-                if (occupied[j].SlotStart == occupied[i].SlotStart){
-                    timeline[i] = occupied[j];
-                    
-                }
-            } 
-        }
-        return timeline;
-    }
-
-    [HttpGet("free")]
-    public async Task<IEnumerable<AppointmentSlot>> GetAppointments([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] string patient)
-    {
-        var _context = new AppointmentContext(connectionString); 
-        var data = await _context.GetFreeSlots(start, end, patient);
-        return data;
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<AppointmentSlot>> GetAppointmentSlot(int id){
-        var _context = new AppointmentContext(connectionString); 
-        return View(await _context.GetAppointmentSlot(id));
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutAppointmentSlot(int id, AppointmentSlotUpdate update){
-        var _context = new AppointmentContext(connectionString); 
-        _context.PutAppointmentSlot(id, update);
-        return NoContent();
-    }
-
-    [HttpPost("create")]
-    public async Task<ActionResult<AppointmentSlot>> PostAppointmentSlots(AppointmentSlotRange range)
-    {
-        var _context = new AppointmentContext(connectionString);
-        _context.PostAppointmentSlots(range);
-        return NoContent();
-    }
-    
 }

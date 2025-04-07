@@ -1,29 +1,31 @@
 @page
 @model TestMVC.Pages.AdminUsersDetailModel
 @{
-    ViewData["Title"] = "User Details";
+    ViewData["Title"] = "Аккаунт пользователя";
 }
 
-<h1>User Details</h1>
+<h1>Аккаунт пользователя</h1>
 
 <dl class="row">
     <dt class="col-sm-2">ID</dt>
     <dd class="col-sm-10">@Model.CUser.Id</dd>
-    <dt class="col-sm-2">User Name</dt>
+    <dt class="col-sm-2">ФИО</dt>
     <dd class="col-sm-10">@Model.CUser.UserName</dd>
-    <dt class="col-sm-2">Birth Date</dt>
-    <dd class="col-sm-10">@Model.CUser.BirthDate.ToString("yyyy-MM-dd")</dd>
-    <dt class="col-sm-2">Phone Number</dt>
-    <dd class="col-sm-10">@Model.CUser.PhoneNum</dd>
-    <dt class="col-sm-2">Email</dt>
+    <dt class="col-sm-2">Электронная почта</dt>
     <dd class="col-sm-10">@Model.CUser.Email</dd>
-    <dt class="col-sm-2">User Role</dt>
+    <dt class="col-sm-2">Номер телефона</dt>
+    <dd class="col-sm-10">@Model.CUser.PhoneNum</dd>
+    <dt class="col-sm-2">Дата рождения</dt>
+    <dd class="col-sm-10">@Model.CUser.BirthDate.ToString("yyyy-MM-dd")</dd>
+    <dt class="col-sm-2">Роль пользователя</dt>
     <dd class="col-sm-10">@Model.CUser.UserRole</dd>
-    <dt class="col-sm-2">From Where Found Out</dt>
+    <dt class="col-sm-2">Откуда узнали</dt>
     <dd class="col-sm-10">@Model.CUser.FromWhereFoundOut</dd>
-    <dt class="col-sm-2">Status</dt>
+    <dt class="col-sm-2">Статус</dt>
     <dd class="col-sm-10">@Model.CUser.Status</dd>
+    <dt class="col-sm-2">Примечание</dt>
+    <dd class="col-sm-10">@Model.CUser.Note</dd>
 </dl>
-<a asp-page="./Users">Back to List</a>
+<a asp-page="./Users" class="btn btn-light">Обратно к списку</a>
 @section Scripts{
 }

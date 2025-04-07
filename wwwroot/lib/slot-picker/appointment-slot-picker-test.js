@@ -102,7 +102,7 @@
 
 		// Create array holding all minute permutations
 		
-		if (_this.options.interval < 60) {
+		if (_this.options.interval <= 60) {
 			for (var j = 0; j < 60 / _this.options.interval; j++) {
 				_this.intervals[j] = j * _this.options.interval;
 			}

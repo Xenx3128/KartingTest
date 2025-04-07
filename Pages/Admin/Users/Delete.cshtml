@@ -1,38 +1,38 @@
 @page
 @model TestMVC.Pages.AdminUsersDeleteModel
 @{
-    ViewData["Title"] = "Delete User";
+    ViewData["Title"] = "Удалить пользователя";
 }
 
-<h1>Delete User</h1>
+<h1>Удалить пользователя</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Вы уверены, что хотите удалить:</h3>
 <div>
-    <h4>User</h4>
+    <h4>Пользователь</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">ID</dt>
         <dd class="col-sm-10">@Model.CUser.Id</dd>
-        <dt class="col-sm-2">User Name</dt>
+        <dt class="col-sm-2">ФИО</dt>
         <dd class="col-sm-10">@Model.CUser.UserName</dd>
-        <dt class="col-sm-2">Birth Date</dt>
-        <dd class="col-sm-10">@Model.CUser.BirthDate.ToString("yyyy-MM-dd")</dd>
-        <dt class="col-sm-2">Phone Number</dt>
-        <dd class="col-sm-10">@Model.CUser.PhoneNum</dd>
-        <dt class="col-sm-2">Email</dt>
+        <dt class="col-sm-2">Электронная почта</dt>
         <dd class="col-sm-10">@Model.CUser.Email</dd>
-        <dt class="col-sm-2">User Role</dt>
+        <dt class="col-sm-2">Номер телефона</dt>
+        <dd class="col-sm-10">@Model.CUser.PhoneNum</dd>
+        <dt class="col-sm-2">Дата рождения</dt>
+        <dd class="col-sm-10">@Model.CUser.BirthDate.ToString("yyyy-MM-dd")</dd>
+        <dt class="col-sm-2">Роль пользователя</dt>
         <dd class="col-sm-10">@Model.CUser.UserRole</dd>
-        <dt class="col-sm-2">From Where Found Out</dt>
+        <dt class="col-sm-2">Откуда узнали</dt>
         <dd class="col-sm-10">@Model.CUser.FromWhereFoundOut</dd>
-        <dt class="col-sm-2">Status</dt>
+        <dt class="col-sm-2">Статус</dt>
         <dd class="col-sm-10">@Model.CUser.Status</dd>
     </dl>
 
     <form method="post">
         <input type="hidden" asp-for="CUser.Id" />
-        <button type="submit" class="btn btn-danger">Delete</button> |
-        <a asp-page="./Users" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger">Удалить</button> |
+        <a asp-page="./Users" class="btn btn-secondary">Отмена</a>
     </form>
 </div>
 @section Scripts{
