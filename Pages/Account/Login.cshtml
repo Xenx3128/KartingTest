@@ -1,6 +1,38 @@
 @page
 @model TestMVC.Pages.LoginModel
-<h1>Войти в аккаунт</h1>
+
+<div class="login-form-wrap">
+    <div class="container">
+        <form method="post">
+            <!-- Account Section -->
+            <div class="row">
+                <h4>Вход</h4>
+                <label for="login-email" class="reg-label">Электронная почта</label>
+                <div class="input-group input-group-icon">
+                    <input type="email" placeholder="Ваш адрес эл. почты" id="login-email" required>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <label for="login-password" class="reg-label">Пароль</label>
+                <div class="input-group input-group-icon">
+                    <input type="password" placeholder="Введите пароль" id="login-password" required>
+                    <div class="input-icon">
+                        <i class="fas fa-unlock"></i>
+                    </div>
+                </div>
+            </div>
+
+
+            <button id="submitForm" type="submit" class="reg-button-submit">Вход</button>
+        </form>
+    </div>
+</div>
+
+@*
 <form method="post">
     <div class="form-group">
         <label asp-for="Email">Электронная почта</label>
@@ -16,6 +48,11 @@
     <button type="submit" class="btn btn-secondary">Войти</button>
     <a asp-page="/Index" class="btn btn-light">Отмена</a>
 </form>
+*@
+
+<link rel="stylesheet" href="~/css/registration.css">
+
 
 @section Scripts{
+    <script type="module" src='@Url.Content("~/js/registration.js")'></script>
 }

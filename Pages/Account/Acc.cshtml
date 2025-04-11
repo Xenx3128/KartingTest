@@ -1,0 +1,79 @@
+@page
+@model TestMVC.Pages.AccModel
+
+
+<div class="account-wrap">
+    <div class="container">
+    <div class="view-account">
+        <section class="module">
+            <div class="module-inner">
+                <div class="side-bar">
+                    <div class="user-info">
+                        <img class="img-profile img-circle img-responsive center-block" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                        <ul class="meta list list-unstyled">
+                            <li class="name">Username</li>
+                            <li class="email">Email</li>
+                            <li class="activity"></li>
+                        </ul>
+                    </div>
+            		<nav class="side-menu">
+        				<ul class="nav">
+        					<li class="active"><a class="acc-menu-link" href="#"><span class="fa fa-user"></span> Профиль</a></li>
+        					<li><a class="acc-menu-link" href="#"><span class="fa fa-history"></span> История заездов</a></li>
+        					<li><a class="acc-menu-link" href="#"><span class="fa fa-edit"></span> Редактировать профиль</a></li>
+        				</ul>
+        			</nav>
+                </div>
+
+
+
+                <div class="content-panel">
+                    <h2 class="title">Профиль</h2>
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name"> Имя </div>
+
+                            <div class="profile-info-value">
+                                <span>Username</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <div class="profile-info-name"> Электронная почта </div>
+
+                            <div class="profile-info-value">
+                                <span>Email</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <div class="profile-info-name"> Номер телефона </div>
+
+                            <div class="profile-info-value">
+                                <span>+79123456789</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <div class="profile-info-name"> День рождения </div>
+
+                            <div class="profile-info-value">
+                                <span>2010/06/20</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="~/css/account.css">
+
+
+@section Scripts{
+    <script type="module" src='@Url.Content("~/js/registration.js")'></script>
+}
