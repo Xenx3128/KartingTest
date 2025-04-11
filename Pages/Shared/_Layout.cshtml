@@ -17,7 +17,10 @@
     <header class="header-outer">
         <div class="header-inner responsive-wrapper">
             <div class="header-logo">
-                <img src="https://static.tildacdn.com/tild3632-3130-4834-b666-646466613131/g10.svg" />
+                <a asp-page="/">
+                    <img src="https://static.tildacdn.com/tild3632-3130-4834-b666-646466613131/g10.svg" />
+                </a>
+                
             </div>
             <nav class="header-navigation">
                 <a href="#">Трасса</a>
@@ -26,7 +29,9 @@
                 <a href="#">Абонементы</a>
                 <a href="#">Как добраться</a>
                 <a href="#">+7 (342) 243-01-23</a>
-                <button href="#" class="custom-btn">Забронировать</button>
+                <a asp-page="/Orders" type="button" id="order-btn">Забронировать</a>
+                <a asp-page="/Account/Login">Вход</a>
+                <a asp-page="/Account/Register" type="button">Регистрация</a>
             </nav>
         </div>
     </header>
