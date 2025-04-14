@@ -657,4 +657,18 @@
         border-top: 1px dotted #DCEBF7;
         padding-left: 12px
     }
+
+    .edit-container {
+        max-width: 38em;
+        padding: 1em 3em 2em 5em;
+        margin: auto;
+        width: 50%;
+        background-color: #fff;
+        border-radius: 4.2px;
+    }
+
+    #raceHistory tbody th {
+        font-weight: 500 !important;
+        font-size: 14px;
+    }
 }

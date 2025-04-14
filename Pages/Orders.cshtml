@@ -10,7 +10,7 @@
         <form method="post" class="mt-4" id="orderForm">
             <!-- Date Section -->
             <div class="row">
-                <h4>Время заезда</h4>
+                <h4 class="red-heading">Время заезда</h4>
                 <div class="input-group">
                     <input id="inputdate" class="form-control" name="date" type="text" placeholder="Выберите дату" required readonly>
                 </div>
@@ -21,7 +21,7 @@
 
             <div id="RaceTypeGlobalContainer">
                 <div class="row">
-                    <h4>Тип заезда</h4>
+                    <h4 class="red-heading">Тип заезда</h4>
                     <div class="input-group">
                         <input id="race-type-uniform" type="radio" name="race-type" value="uniform">
                         <label for="race-type-uniform">Один тип заездов для всех слотов</label>
@@ -67,7 +67,7 @@
 
             <!-- Terms and Conditions -->
             <div class="row">
-                <h4>Terms and Conditions</h4>
+                <h4 class="red-heading">Terms and Conditions</h4>
                 <div class="input-group">
                 <input id="terms" type="checkbox">
                 <label for="terms">
@@ -76,10 +76,12 @@
                 </div>
             </div>
 
-            <button id="submitForm" type="button" class="btn btn-success">Забронировать</button>
+            <button id="submitForm" type="submit" class="reg-button-submit">Регистрация</button>
         </form>
     </div>
 </div>
+
+<link rel="stylesheet" href="~/css/orders.css">
 
 
 <link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">

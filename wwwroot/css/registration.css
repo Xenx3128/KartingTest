@@ -7,9 +7,6 @@
     box-sizing: border-box;
     }
 
-    h4 {
-    color: #fb3f54;
-    }
     input,
     input[type="radio"] + label,
     input[type="checkbox"] + label:before,
@@ -230,50 +227,7 @@
     }
 
 
-    .reg-button-submit {
-        display: flex;
-        margin: 0 auto;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        box-sizing: border-box;
-        padding: calc(.875rem - 1px) calc(1.5rem - 1px);
-        min-height: 3rem;
-        width: auto;
-        font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-size: 16px;
-        font-weight: 600;
-        line-height: 1.25;
-        color: #fff;
-        text-decoration: none;
-        background-color: #fb3f54;
-        background-clip: padding-box;
-        border: 1px solid transparent;
-        border-radius: .25rem;
-        box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
-        cursor: pointer;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-        vertical-align: baseline;
-        transition: all 250ms;
-    }
-    
-    .reg-button-submit:hover, 
-    .reg-button-submit:focus {
-        background-color: #fc233c;
-        box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
-    }
-    
-    .reg-button-submit:hover {
-        transform: translateY(-1px);
-    }
-    
-    .reg-button-submit:active {
-        background-color: #c21b2e;
-        box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
-        transform: translateY(0);
-    }   
+  
 
     .required {
         color: #fb3f54;

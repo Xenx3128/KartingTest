@@ -1,0 +1,114 @@
+@page
+@model TestMVC.Pages.AccEditModel
+
+
+<div class="account-wrap">
+    <div class="container">
+    <div class="view-account">
+        <section class="module">
+            <div class="module-inner">
+                <div class="side-bar">
+                    <div class="user-info">
+                        <img class="img-profile img-circle img-responsive center-block" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                        <ul class="meta list list-unstyled">
+                            <li class="name">Username</li>
+                            <li class="email">Email</li>
+                            <li class="activity"></li>
+                        </ul>
+                    </div>
+            		<nav class="side-menu">
+        				<ul class="nav">
+        					<li><a class="acc-menu-link" asp-page="/Account/Acc"><span class="fa fa-user"></span> Профиль</a></li>
+        					<li><a class="acc-menu-link" asp-page="/Account/History"><span class="fa fa-history"></span> История заездов</a></li>
+        					<li class="active"><a class="acc-menu-link" asp-page="/Account/Edit"><span class="fa fa-edit"></span> Редактировать профиль</a></li>
+        				</ul>
+        			</nav>
+                </div>
+                
+                <div class="registration-form-wrap">
+                    <div class="edit-container">
+                        <form method="post">
+                            <!-- Account Section -->
+                            <div class="row">
+                                <h4 class="red-heading">Редактировать профиль</h4>
+                                <label for="reg-name" class="reg-label">Имя <span class="required">*</span></label>
+                                <div class="input-group input-group-icon">
+                                    <input type="text" placeholder="Ваше имя" id="reg-name" required>
+                                    <div class="input-icon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
+                                <label for="reg-email" class="reg-label">Электронная почта <span class="required">*</span></label>
+                                <div class="input-group input-group-icon">
+                                    <input type="email" placeholder="Ваш адрес эл. почты" id="reg-email" required>
+                                    <div class="input-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                </div>
+                                <label for="reg-phone" class="reg-label">Номер телефона <span class="required">*</span></label>
+                                <div class="input-group input-group-icon">
+                                    <input 
+                                    type="tel" 
+                                    placeholder="Например: +79123456789" 
+                                    id="reg-phone" 
+                                    pattern="^(\+7|7|8)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$"
+                                    required>
+                                    <div class="input-icon">
+                                        <i class="fa fa-phone"></i>
+                                    </div>
+                                </div>
+                                <label for="reg-bday" class="reg-label">День рождения <span class="required">*</span></label>
+                                <div class="input-group input-group-icon">
+                                    <input type="date" placeholder="Укажите ваш день рождения" id="reg-bday" required>
+                                    <div class="input-icon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="reg-break"></div>
+                            <div class="row">
+                                <h4 class="red-heading">Смена пароля</h4>
+                                <label for="reg-password" class="reg-label">Текущий пароль <span class="required">*</span></label>
+                                <div class="input-group input-group-icon">
+                                    <input type="password" placeholder="Введите текущий пароль" id="reg-password" required>
+                                    <div class="input-icon">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                </div>
+                                <label for="reg-password" class="reg-label">Новый пароль <span class="required">*</span></label>
+                                <div class="input-group input-group-icon">
+                                    <input type="password" placeholder="Придумайте новый пароль" id="reg-password" required>
+                                    <div class="input-icon">
+                                        <i class="fas fa-unlock"></i>
+                                    </div>
+                                </div>
+                                <label for="reg-confrirm-password" class="reg-label">Подтвердите новый пароль <span class="required">*</span></label>
+                                <div class="input-group input-group-icon">
+                                    <input type="password" placeholder="Подтвердите ваш новый пароль" id="reg-confrirm-password" required>
+                                    <div class="input-icon">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button id="submitForm" type="submit" class="reg-button-submit">Сохранить изменения</button>
+                        </form>
+                    </div>
+                </div>
+
+                
+            </div>
+        </section>
+    </div>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="~/css/account.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+
+@section Scripts{
+    <script type="module" src='@Url.Content("~/js/registration.js")'></script>
+}

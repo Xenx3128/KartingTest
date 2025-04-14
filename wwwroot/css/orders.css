@@ -12,9 +12,7 @@
     color: #b9b9b9;
     background-color: #e3e3e3;
     }
-    h4, h5 {
-    color: #fb3f54;
-    }
+
     input,
     input[type="radio"] + label::before,
     input[type="checkbox"] + label:before,

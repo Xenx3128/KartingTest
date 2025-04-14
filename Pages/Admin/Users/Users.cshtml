@@ -3,46 +3,54 @@
 @{
     ViewData["Title"] = "Панель администратора: Пользователи";
 }
-<div class="row-fluid">
-    <a asp-page="./Create" class="btn btn-primary">Добавить</a>
-    <a asp-page="./Find" class="btn btn-primary">Найти</a>
+
+<div id="admin-users-main-wrap">
+    
+    <div class="row-fluid">
+        <a asp-page="./Create" class="btn btn-primary">Добавить</a>
+        <a asp-page="./Find" class="btn btn-primary">Найти</a>
+    </div>
+
+    <table id="adminUsersMain" class="cell-border stripe">
+        <thead>
+            <th>ID</th>
+            <th>ФИО</th>
+            <th>Электронная почта</th>
+            <th>Телефон</th>        
+            <th>Дата рождения</th>
+            <th>Роль</th>
+            <th>Откуда узнали</th>
+            <th>Статус</th>
+            <th>Примечание</th>
+            <th>Действия</th>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Users){
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.PhoneNum</td>
+                    <td>@user.BirthDate.ToString("yyyy-MM-dd")</td>
+                    <td>@user.UserRole</td>
+                    <td>@user.FromWhereFoundOut</td>
+                    <td>@user.Status</td>
+                    <td>@user.Note</td>
+                    <td>
+                        <a asp-page="./Details" asp-route-id="@user.Id">Просмотр</a> |
+                        <a asp-page="./Edit" asp-route-id="@user.Id">Изменить</a> |
+                        <a asp-page="./Delete" asp-route-id="@user.Id">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
-<table class="table">
-    <thead>
-        <th>ID</th>
-        <th>ФИО</th>
-        <th>Электронная почта</th>
-        <th>Телефон</th>        
-        <th>Дата рождения</th>
-        <th>Роль</th>
-        <th>Откуда узнали</th>
-        <th>Статус</th>
-        <th>Примечание</th>
-        <th>Действия</th>
-    </thead>
-    <tbody>
-        @foreach (var user in Model.Users){
-            <tr>
-                <td>@user.Id</td>
-                <td>@user.UserName</td>
-                <td>@user.Email</td>
-                <td>@user.PhoneNum</td>
-                <td>@user.BirthDate.ToString("yyyy-MM-dd")</td>
-                <td>@user.UserRole</td>
-                <td>@user.FromWhereFoundOut</td>
-                <td>@user.Status</td>
-                <td>@user.Note</td>
-                <td>
-                    <a asp-page="./Details" asp-route-id="@user.Id">Просмотр</a> |
-                    <a asp-page="./Edit" asp-route-id="@user.Id">Изменить</a> |
-                    <a asp-page="./Delete" asp-route-id="@user.Id">Удалить</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<link rel="stylesheet" href="~/css/admin.css">
+
 @section Scripts{
+    <script type="module" src='@Url.Content("~/js/admin.js")'></script>
 }
 
 
