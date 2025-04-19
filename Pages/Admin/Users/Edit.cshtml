@@ -4,9 +4,150 @@
     ViewData["Title"] = "Изменить данные аккаунта пользователя";
 }
 
-<h1>Изменить данные аккаунта пользователя</h1>
+<div class="registration-form-wrap">
+    <div class="container">
+        <form method="post">
+            <!-- Account Section -->
+            <div class="row">
+                <h4 class="red-heading">Редактирование данных пользователя</h4>
+                <label for="reg-name" class="reg-label">Имя <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input type="text" placeholder="Имя пользователя" id="reg-name" required>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <label for="reg-email" class="reg-label">Электронная почта <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input type="email" placeholder="Адрес эл. почты" id="reg-email" required>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+                <label for="reg-phone" class="reg-label">Номер телефона <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input 
+                    type="tel" 
+                    placeholder="Например: +79123456789" 
+                    id="reg-phone" 
+                    pattern="^(\+7|7|8)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$"
+                    required>
+                    <div class="input-icon">
+                        <i class="fa fa-phone"></i>
+                    </div>
+                </div>
+                <label for="reg-bday" class="reg-label">День рождения <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input type="date" placeholder="Укажите день рождения" id="reg-bday" required>
+                    <div class="input-icon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <label for="reg-foundout" class="reg-label">Откуда узнали о нас</label>
+                <div class="input-group">
+                    <textarea id="reg-foundout" name="reg-foundout" rows="4" placeholder="Если пользователь сообщил"></textarea>
+                </div>
+            </div>
 
-<form method="post">
+            <!-- Role -->
+            <div class="row">
+                <label for="reg-role" class="reg-label">Роль пользователя</label>
+                <div class="input-group input-group-icon">
+                    <select id="reg-role">
+                        <option selected>Choose...</option>
+                        <option>...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Status -->
+            <div class="row">
+                <label for="reg-status" class="reg-label">Статус пользователя</label>
+                <div class="input-group input-group-icon">
+                    <select id="reg-status">
+                        <option selected>Choose...</option>
+                        <option>...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Note -->
+            <div class="row">
+                <label for="reg-note" class="reg-label">Примечание</label>
+                <div class="input-group input-group-icon">
+                    <input type="text" placeholder="Например, причина блокировки" id="reg-note">
+                    <div class="input-icon">
+                        <i class="far fa-sticky-note"></i>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="reg-break"></div>
+            <!-- Terms and Conditions -->
+            <div class="row">
+                <div class="input-group">
+                <input id="terms" type="checkbox" required>
+                <label for="terms" class="reg-label">
+                    Техника безопасности <span class="required">*</span>
+                </label>
+                </div>
+            </div>
+
+            <!-- Ads -->
+            <div class="row">
+                <div class="input-group">
+                <input id="reg-ads" type="checkbox">
+                <label for="reg-ads" class="reg-label">
+                    Получать сообщения об акциях и предложениях на электронную почту
+                </label>
+                </div>
+            </div>
+
+            <div class="reg-break"></div>
+            <div class="row">
+                <h4 class="red-heading">Смена пароля</h4>
+                <label for="reg-password" class="reg-label">Новый пароль <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input type="password" placeholder="Придумайте новый пароль" id="reg-password" required>
+                    <div class="input-icon">
+                        <i class="fas fa-unlock"></i>
+                    </div>
+                </div>
+                <label for="reg-confrirm-password" class="reg-label">Подтвердите новый пароль <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input type="password" placeholder="Подтвердите ваш новый пароль" id="reg-confrirm-password" required>
+                    <div class="input-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                </div>
+            </div>
+
+            
+            <button id="submitForm" type="submit" class="red-button">Сохранить изменения</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./Users" class="btn btn-light">Назад</a>
+            </div>
+            
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+@*<form method="post">
     <div class="form-group">
         <label asp-for="CUser.UserName">ФИО</label>
         <input asp-for="CUser.UserName" class="form-control" />
@@ -50,6 +191,6 @@
     <br>
     <button type="submit" class="btn btn-secondary">Изменить</button>
     <a asp-page="./Users" class="btn btn-light">Отмена</a>
-</form>
+</form>*@
 @section Scripts{
 }

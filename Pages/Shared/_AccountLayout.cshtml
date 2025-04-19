@@ -1,0 +1,47 @@
+@{
+    Layout = "_Layout";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/account.css">
+</head>
+<body>
+
+    <div class="account-wrap">
+        <div class="container">
+        <div class="view-account">
+            <section class="module">
+                <div class="module-inner">
+                    <div class="side-bar">
+                        <div class="user-info">
+                            <img class="img-profile img-circle img-responsive center-block" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                            <ul class="meta list list-unstyled">
+                                <li class="name">Username</li>
+                                <li class="email">Email</li>
+                                <li class="activity"></li>
+                            </ul>
+                        </div>
+                        <nav class="side-menu">
+                            <ul class="nav">
+                                <li id="acc-menu-link-1"><a class="acc-menu-link" asp-page="/Account/Acc"><span class="fa fa-user"></span> Профиль</a></li>
+                                <li id="acc-menu-link-2"><a class="acc-menu-link" asp-page="/Account/History"><span class="fa fa-history"></span> История заездов</a></li>
+                                <li id="acc-menu-link-3"><a class="acc-menu-link" asp-page="/Account/Edit"><span class="fa fa-edit"></span> Редактировать профиль</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="main">
+                        @RenderBody()
+                    </div>
+
+
+                </div>
+            </section>
+        </div>
+        </div>
+    </div>
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

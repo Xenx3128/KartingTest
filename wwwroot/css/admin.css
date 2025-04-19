@@ -11,3 +11,34 @@
     font-weight: 500;
     font-size: 14px;
 }
+
+.admin-menu-icon {
+    text-decoration: none;
+    transition: color 0.3s;
+    color: #0075cf
+}
+.admin-menu-icon:hover {
+    color: #0061ab
+}
+/*
+#users-add-icon {
+    color: #0075cf
+}
+#users-add-icon:hover {
+    color: #013d6b
+}
+
+
+#users-details-icon {
+    color: #0075cf  
+}
+#users-edit-icon {
+
+}
+#users-delete-icon {
+
+} */
+
+.back-button {
+    
+}

@@ -172,7 +172,7 @@ body {
 }
 
 
-.reg-button-submit {
+.red-button {
 	display: flex;
 	margin: 0 auto;
 	align-items: center;
@@ -187,8 +187,8 @@ body {
 	font-weight: 700;
 	line-height: 1.25;
 	color: #fff;
-	text-decoration: none;
 	background-color: #fb3f54;
+	text-decoration: none;
 	background-clip: padding-box;
 	border: 1px solid transparent;
 	border-radius: .25rem;
@@ -201,17 +201,23 @@ body {
 	transition: all 250ms;
 }
 
-.reg-button-submit:hover, 
-.reg-button-submit:focus {
+.back-btn-wrap {
+	text-align: center;
+	margin: 4px auto;
+}
+
+
+.red-button:hover, 
+.red-button:focus {
 	background-color: #fc233c;
 	box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
 }
 
-.reg-button-submit:hover {
+.red-button:hover {
 	transform: translateY(-1px);
 }
 
-.reg-button-submit:active {
+.red-button:active {
 	background-color: #c21b2e;
 	box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
 	transform: translateY(0);
