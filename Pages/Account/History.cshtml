@@ -1,10 +1,8 @@
 @page
-@model TestMVC.Pages.AccModel
-
+@model TestMVC.Pages.AccHistoryModel
 @{
     Layout = "_AccountLayout";
 }
-
 
 <div class="content-panel">
     <h4 class="red-heading">История заездов</h4>
@@ -14,48 +12,32 @@
                 <th>Дата заезда</th>
                 <th>Время заезда</th>
                 <th>Категория</th>
-                <th>Карт</th>
+                @*<th>Карт</th>*@
                 <th>Место</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th>01.01.2000</th>
-                <th>8:15-8:30</th>
-                <th>Детский</th>
-                <th>Двухместный</th>
-                <th>1</th>
-            </tr>
-            <tr>
-                <th>04.02.2000</th>
-                <th>9:15-9:30</th>
-                <th>Взрослый</th>
-                <th>Одноместный</th>
-                <th>2</th>
-            </tr>
-            <tr>
-                <th>05.03.2000</th>
-                <th>10:15-10:30</th>
-                <th>Детский</th>
-                <th>Одноместный</th>
-                <th>3</th>
-            </tr>
+            @foreach (var race in Model.RaceHistory)
+            {
+                <tr>
+                    <td>@race.StartDate.ToString("dd.MM.yyyy")</td>
+                    <td>@race.StartDate.ToString("HH:mm")-@race.FinishDate.ToString("HH:mm")</td>
+                    <td>@race.Category</td>
+                    @*<td>@(race.IsDoubleSeater ? "Двухместный" : "Одноместный")</td>*@
+                    <td>@race.Position</td>
+                </tr>
+            }
         </tbody>
     </table>
-
 </div>
 
-
-
 <link rel="stylesheet" href="~/css/account.css">
-
-
-
 
 @section Scripts{
     <script type="module" src='@Url.Content("~/js/history.js")'></script>
     <script>
         var menu_link = document.getElementById("acc-menu-link-2");
         menu_link.classList.add("active");
+
     </script>
 }

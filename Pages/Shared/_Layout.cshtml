@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using TestMVC.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -35,8 +41,13 @@
                 <a href="#">Как добраться</a>
                 <a href="#">+7 (342) 243-01-23</a>
                 <a asp-page="/Orders" type="button" id="order-btn">Забронировать</a>
-                <a asp-page="/Account/Login">Вход</a>
-                <a asp-page="/Account/Register" type="button">Регистрация</a>
+                @if (!SignInManager.IsSignedIn(User)){
+                    <a asp-area="Identity" asp-page="/Account/Login">Вход</a>
+                    <a asp-area="Identity" asp-page="/Account/Register" type="button">Регистрация</a>
+                }
+                else{
+                    <a id="account-link" asp-area="Identity" asp-page="/Account/Acc">@UserManager.GetUserName(User)</a>
+                }
             </nav>
         </div>
     </header>

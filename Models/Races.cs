@@ -1,16 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-//using Microsoft.EntityFrameworkCore;
 
 namespace TestMVC.Models;
 
-public class Races{
+public class Races
+{
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     [Required]
-    [ForeignKey("Order")]
     public int OrderId { get; set; }
 
     [Required]
@@ -29,9 +28,7 @@ public class Races{
     [StringLength(50)]
     public string Status { get; set; }
 }
-/// <summary>
-/// Rewrite this bullshit
-/// </summary>
+
 public class AppointmentSlot
 {
     [Required]
@@ -40,14 +37,10 @@ public class AppointmentSlot
     [Required]
     public DateOnly SlotDate { get; set; }
     public TimeOnly SlotStart { get; set; }
-    public int? OrderId { set; get; }
-
-    public string? Category  { get; set; }
+    public int? OrderId { get; set; }
+    public string? Category { get; set; }
     public string? Status { get; set; } = "free";
-    
 }
-
-
 
 public class RaceCart
 {
@@ -59,7 +52,6 @@ public class RaceCart
     public int Position { get; set; }
 }
 
-
 public class UserCart
 {
     [Key]
@@ -67,14 +59,11 @@ public class UserCart
     public int Id { get; set; }
 
     [Required]
-    [ForeignKey("User")]
-    public int UserId { get; set; }
+    public int UserId { get; set; }  // FK only
 
     [Required]
-    [ForeignKey("RaceCart")]
-    public int RaceCartId { get; set; }
+    public int RaceCartId { get; set; }  // FK only
 }
-
 
 public class CircleResults
 {
@@ -83,8 +72,7 @@ public class CircleResults
     public int Id { get; set; }
 
     [Required]
-    [ForeignKey("RaceCart")]
-    public int RaceCartId { get; set; }
+    public int RaceCartId { get; set; }  // FK only
 
     [Required]
     public int CircleNum { get; set; }

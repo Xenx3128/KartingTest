@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Claims;
-//using Microsoft.EntityFrameworkCore;
 
 namespace TestMVC.Models;
 
-public class CartUser{
+/*public class CartUser
+{
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
@@ -41,7 +40,7 @@ public class CartUser{
 
     [StringLength(500)]
     public string Note { get; set; }
-}
+}*/
 
 public class UserStatus
 {

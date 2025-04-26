@@ -10,136 +10,139 @@
             <!-- Account Section -->
             <div class="row">
                 <h4 class="red-heading">Редактирование данных пользователя</h4>
-                <label for="reg-name" class="reg-label">Имя <span class="required">*</span></label>
+                <label asp-for="Input.FullName" class="reg-label">Имя <span class="required">*</span></label>
                 <div class="input-group input-group-icon">
-                    <input type="text" placeholder="Имя пользователя" id="reg-name" required>
+                    <input asp-for="Input.FullName" class="form-control" placeholder="Имя пользователя" id="reg-name" required>
                     <div class="input-icon">
                         <i class="fas fa-user"></i>
                     </div>
+                    <span asp-validation-for="Input.FullName" class="text-danger"></span>
                 </div>
-                <label for="reg-email" class="reg-label">Электронная почта <span class="required">*</span></label>
+                <label asp-for="Input.Email" class="reg-label">Электронная почта <span class="required">*</span></label>
                 <div class="input-group input-group-icon">
-                    <input type="email" placeholder="Адрес эл. почты" id="reg-email" required>
+                    <input asp-for="Input.Email" class="form-control" placeholder="Адрес эл. почты" id="reg-email" required>
                     <div class="input-icon">
                         <i class="fas fa-envelope"></i>
                     </div>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
-                <label for="reg-phone" class="reg-label">Номер телефона <span class="required">*</span></label>
+                <label asp-for="Input.PhoneNumber" class="reg-label">Номер телефона <span class="required">*</span></label>
                 <div class="input-group input-group-icon">
-                    <input 
-                    type="tel" 
-                    placeholder="Например: +79123456789" 
-                    id="reg-phone" 
-                    pattern="^(\+7|7|8)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$"
-                    required>
+                    <input asp-for="Input.PhoneNumber" class="form-control" 
+                           placeholder="Например: +79123456789" 
+                           id="reg-phone" 
+                           required>
                     <div class="input-icon">
                         <i class="fa fa-phone"></i>
                     </div>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                 </div>
-                <label for="reg-bday" class="reg-label">День рождения <span class="required">*</span></label>
+                <label asp-for="Input.BirthDate" class="reg-label">День рождения <span class="required">*</span></label>
                 <div class="input-group input-group-icon">
-                    <input type="date" placeholder="Укажите день рождения" id="reg-bday" required>
+                    <input asp-for="Input.BirthDate" class="form-control" type="date" id="reg-bday" required>
                     <div class="input-icon">
                         <i class="fa fa-calendar"></i>
                     </div>
+                    <span asp-validation-for="Input.BirthDate" class="text-danger"></span>
                 </div>
             </div>
             
             <div class="row">
-                <label for="reg-foundout" class="reg-label">Откуда узнали о нас</label>
+                <label asp-for="Input.FromWhereFoundOut" class="reg-label">Откуда узнали о нас</label>
                 <div class="input-group">
-                    <textarea id="reg-foundout" name="reg-foundout" rows="4" placeholder="Если пользователь сообщил"></textarea>
+                    <textarea asp-for="Input.FromWhereFoundOut" class="form-control" id="reg-foundout" rows="4" placeholder="Если пользователь сообщил"></textarea>
+                    <span asp-validation-for="Input.FromWhereFoundOut" class="text-danger"></span>
                 </div>
             </div>
 
             <!-- Role -->
             <div class="row">
-                <label for="reg-role" class="reg-label">Роль пользователя</label>
+                <label asp-for="Input.Role" class="reg-label">Роль пользователя</label>
                 <div class="input-group input-group-icon">
-                    <select id="reg-role">
-                        <option selected>Choose...</option>
-                        <option>...</option>
+                    <select asp-for="Input.Role" class="form-control" id="reg-role" asp-items="Model.Roles">
+                        <option value="">Выберите...</option>
                     </select>
                     <div class="input-icon">
                         <i class="fas fa-user-cog"></i>
                     </div>
+                    <span asp-validation-for="Input.Role" class="text-danger"></span>
                 </div>
-
             </div>
 
             <!-- Status -->
             <div class="row">
-                <label for="reg-status" class="reg-label">Статус пользователя</label>
+                <label asp-for="Input.Status" class="reg-label">Статус пользователя</label>
                 <div class="input-group input-group-icon">
-                    <select id="reg-status">
-                        <option selected>Choose...</option>
-                        <option>...</option>
+                    <select asp-for="Input.Status" class="form-control" id="reg-status" asp-items="Model.Statuses">
+                        <option value="">Выберите...</option>
                     </select>
                     <div class="input-icon">
                         <i class="fas fa-user-check"></i>
                     </div>
+                    <span asp-validation-for="Input.Status" class="text-danger"></span>
                 </div>
-
             </div>
 
             <!-- Note -->
             <div class="row">
-                <label for="reg-note" class="reg-label">Примечание</label>
+                <label asp-for="Input.Note" class="reg-label">Примечание</label>
                 <div class="input-group input-group-icon">
-                    <input type="text" placeholder="Например, причина блокировки" id="reg-note">
+                    <input asp-for="Input.Note" class="form-control" placeholder="Например, причина блокировки" id="reg-note">
                     <div class="input-icon">
                         <i class="far fa-sticky-note"></i>
                     </div>
+                    <span asp-validation-for="Input.Note" class="text-danger"></span>
                 </div>
             </div>
-
 
             <div class="reg-break"></div>
             <!-- Terms and Conditions -->
             <div class="row">
                 <div class="input-group">
-                <input id="terms" type="checkbox" required>
-                <label for="terms" class="reg-label">
-                    Техника безопасности <span class="required">*</span>
-                </label>
+                    <input asp-for="Input.AcceptTerms" id="terms" type="checkbox" required>
+                    <label asp-for="Input.AcceptTerms" class="reg-label">
+                        Техника безопасности <span class="required">*</span>
+                    </label>
+                    <span asp-validation-for="Input.AcceptTerms" class="text-danger"></span>
                 </div>
             </div>
 
             <!-- Ads -->
             <div class="row">
                 <div class="input-group">
-                <input id="reg-ads" type="checkbox">
-                <label for="reg-ads" class="reg-label">
-                    Получать сообщения об акциях и предложениях на электронную почту
-                </label>
+                    <input asp-for="Input.ReceivePromotions" id="reg-ads" type="checkbox">
+                    <label asp-for="Input.ReceivePromotions" class="reg-label">
+                        Получать сообщения об акциях и предложениях на электронную почту
+                    </label>
                 </div>
             </div>
 
             <div class="reg-break"></div>
+            <!-- Password Section -->
             <div class="row">
                 <h4 class="red-heading">Смена пароля</h4>
-                <label for="reg-password" class="reg-label">Новый пароль <span class="required">*</span></label>
+                <label asp-for="Input.Password" class="reg-label">Новый пароль</label>
                 <div class="input-group input-group-icon">
-                    <input type="password" placeholder="Придумайте новый пароль" id="reg-password" required>
+                    <input asp-for="Input.Password" class="form-control" type="password" placeholder="Придумайте новый пароль" id="reg-password">
                     <div class="input-icon">
                         <i class="fas fa-unlock"></i>
                     </div>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
-                <label for="reg-confrirm-password" class="reg-label">Подтвердите новый пароль <span class="required">*</span></label>
+                <label asp-for="Input.ConfirmPassword" class="reg-label">Подтвердите новый пароль</label>
                 <div class="input-group input-group-icon">
-                    <input type="password" placeholder="Подтвердите ваш новый пароль" id="reg-confrirm-password" required>
+                    <input asp-for="Input.ConfirmPassword" class="form-control" type="password" placeholder="Подтвердите ваш новый пароль" id="reg-confirm-password">
                     <div class="input-icon">
                         <i class="fas fa-key"></i>
                     </div>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
 
-            
             <button id="submitForm" type="submit" class="red-button">Сохранить изменения</button>
             <div class="back-btn-wrap">
                 <a asp-page="./Users" class="btn btn-light">Назад</a>
             </div>
-            
         </form>
     </div>
 </div>
@@ -147,50 +150,6 @@
 <link rel="stylesheet" href="~/css/admin.css">
 <link rel="stylesheet" href="~/css/registration.css">
 
-@*<form method="post">
-    <div class="form-group">
-        <label asp-for="CUser.UserName">ФИО</label>
-        <input asp-for="CUser.UserName" class="form-control" />
-        <span asp-validation-for="CUser.UserName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.Email">Электронная почта</label>
-        <input asp-for="CUser.Email" class="form-control" />
-        <span asp-validation-for="CUser.Email" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.PhoneNum">Номер телефона</label>
-        <input asp-for="CUser.PhoneNum" class="form-control" />
-        <span asp-validation-for="CUser.PhoneNum" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.BirthDate">Дата рождения</label>
-        <input asp-for="CUser.BirthDate" class="form-control" type="date" />
-        <span asp-validation-for="CUser.BirthDate" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.Pwd">Придумайте пароль</label>
-        <input asp-for="CUser.Pwd" class="form-control" type="password" />
-        <span asp-validation-for="CUser.Pwd" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.FromWhereFoundOut">Откуда узнали</label>
-        <textarea asp-for="CUser.FromWhereFoundOut" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="CUser.FromWhereFoundOut" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.Status">Статус пользователя</label>
-        <input asp-for="CUser.Status" class="form-control" />
-        <span asp-validation-for="CUser.Status" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CUser.Note">Примечание</label>
-        <input asp-for="CUser.Note" class="form-control" />
-        <span asp-validation-for="CUser.Note" class="text-danger"></span>
-    </div>
-    <br>
-    <button type="submit" class="btn btn-secondary">Изменить</button>
-    <a asp-page="./Users" class="btn btn-light">Отмена</a>
-</form>*@
-@section Scripts{
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
 }

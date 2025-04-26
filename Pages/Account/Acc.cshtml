@@ -1,11 +1,12 @@
 @page
 @model TestMVC.Pages.AccModel
-
+@using TestMVC.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
 @{
     Layout = "_AccountLayout";
+    var user = await UserManager.GetUserAsync(User);
 }
-
-
 
 
 
@@ -17,7 +18,7 @@
             <div class="profile-info-name"> Имя </div>
 
             <div class="profile-info-value">
-                <span>Username</span>
+                <span>@user.FullName</span>
             </div>
         </div>
 
@@ -25,7 +26,7 @@
             <div class="profile-info-name"> Электронная почта </div>
 
             <div class="profile-info-value">
-                <span>Email</span>
+                <span>@user.Email</span>
             </div>
         </div>
 
@@ -33,7 +34,7 @@
             <div class="profile-info-name"> Номер телефона </div>
 
             <div class="profile-info-value">
-                <span>+79123456789</span>
+                <span>@(user.PhoneNumber ?? "Не указан")</span>
             </div>
         </div>
 
@@ -41,7 +42,28 @@
             <div class="profile-info-name"> День рождения </div>
 
             <div class="profile-info-value">
-                <span>2010/06/20</span>
+                <span>@user.BirthDate.ToString("yyyy/MM/dd")</span>
+            </div>
+        </div>
+
+        <div class="profile-info-row"></div>
+            <div class="profile-info-name">Статус аккаунта</div>
+            <div class="profile-info-value">
+                @if (user.LockoutEnd?.DateTime > DateTime.Now)
+                {
+                    <span class="text-danger">Заблокирован до @user.LockoutEnd?.DateTime.ToString("yyyy/MM/dd")</span>
+                }
+                else
+                {
+                    <span class="text-success">Активен</span>
+                }
+            </div>
+        </div>
+
+        <div class="profile-info-row"></div>
+            <div class="profile-info-name">Дата регистрации</div>
+            <div class="profile-info-value">
+                <span>@user.RegistrationDate.ToString("yyyy/MM/dd")</span>
             </div>
         </div>
 

@@ -1,43 +1,42 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Threading.Tasks;
-using TestMVC.Data;
-using TestMVC.Utility;
+using Microsoft.AspNetCore.Identity;
 using TestMVC.Models;
+using TestMVC.Data;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using TestMVC.Data;
 
-namespace TestMVC.Pages;
-public class AccHistoryModel : PageModel
+namespace TestMVC.Pages
 {
-    private string connectionString = ConnectionString.CName;
-    private readonly UserContext _userContext;
-
-    public AccHistoryModel()
+    [Authorize]
+    public class AccHistoryModel : PageModel
     {
-        _userContext = new UserContext(connectionString);
-    }
+        private readonly UserContext _userContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AppDbContext _dbContext;
 
-    [BindProperty]
-    public string Email { get; set; }
+        public List<RaceHistoryViewModel> RaceHistory { get; set; }
 
-    [BindProperty]
-    public string Password { get; set; }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!ModelState.IsValid)
+        public AccHistoryModel(
+            UserContext userContext,
+            UserManager<ApplicationUser> userManager,
+            AppDbContext dbContext)
         {
-            return Page();
+            _userContext = userContext;
+            _userManager = userManager;
+            _dbContext = dbContext;
         }
 
-        var user = await _userContext.GetUserByEmail(Email);
-
-        if (user != null && user.Pwd == Password)
+        public async Task OnGetAsync()
         {
-            // Successful login logic here
-            return RedirectToPage("/Index");
-        }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return;
 
-        ModelState.AddModelError("", "Invalid email or password.");
-        return Page();
+            RaceHistory = await _userContext.GetUserRaceHistoryAsync(user.Id);
+        }
     }
+
+
 }

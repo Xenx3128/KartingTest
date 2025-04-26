@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-//using Microsoft.EntityFrameworkCore;
 
 namespace TestMVC.Models;
 
@@ -22,7 +21,6 @@ public class TechnicalBreaks
     [StringLength(50)]
     public string Status { get; set; }
 }
-
 
 public class Settings
 {

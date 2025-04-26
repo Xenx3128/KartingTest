@@ -1,43 +1,106 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Threading.Tasks;
-using TestMVC.Data;
-using TestMVC.Utility;
+using Microsoft.AspNetCore.Identity;
 using TestMVC.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
-namespace TestMVC.Pages;
-public class AccEditModel : PageModel
+namespace TestMVC.Pages
 {
-    private string connectionString = ConnectionString.CName;
-    private readonly UserContext _userContext;
-
-    public AccEditModel()
+    [Authorize]
+    public class AccEditModel : PageModel
     {
-        _userContext = new UserContext(connectionString);
-    }
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-    [BindProperty]
-    public string Email { get; set; }
+        [BindProperty]
+        public EditProfileViewModel Input { get; set; }
 
-    [BindProperty]
-    public string Password { get; set; }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!ModelState.IsValid)
+        public AccEditModel(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
-            return Page();
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        var user = await _userContext.GetUserByEmail(Email);
-
-        if (user != null && user.Pwd == Password)
+        public async Task OnGetAsync()
         {
-            // Successful login logic here
-            return RedirectToPage("/Index");
+            var user = await _userManager.GetUserAsync(User);
+            Input = new EditProfileViewModel
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                BirthDate = user.BirthDate
+            };
         }
 
-        ModelState.AddModelError("", "Invalid email or password.");
-        return Page();
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Update profile information
+            user.FullName = Input.FullName;
+            user.PhoneNumber = Input.PhoneNumber;
+            user.BirthDate = Input.BirthDate;
+
+            // Update email if changed
+            if (Input.Email != user.Email)
+            {
+                var setEmailResult = await _userManager.SetEmailAsync(user, Input.Email);
+                if (!setEmailResult.Succeeded)
+                {
+                    foreach (var error in setEmailResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return Page();
+                }
+            }
+
+            // Update password if provided
+            if (!string.IsNullOrEmpty(Input.OldPassword) && !string.IsNullOrEmpty(Input.NewPassword))
+            {
+                var changePasswordResult = await _userManager.ChangePasswordAsync(
+                    user, 
+                    Input.OldPassword, 
+                    Input.NewPassword);
+                
+                if (!changePasswordResult.Succeeded)
+                {
+                    foreach (var error in changePasswordResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return Page();
+                }
+
+                // Refresh sign-in to update security stamp
+                await _signInManager.RefreshSignInAsync(user);
+            }
+
+            // Save profile changes
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                foreach (var error in updateResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return Page();
+            }
+
+            return RedirectToPage("./Acc");
+        }
     }
 }

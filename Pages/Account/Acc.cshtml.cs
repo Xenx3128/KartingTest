@@ -1,43 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Threading.Tasks;
-using TestMVC.Data;
-using TestMVC.Utility;
+using Microsoft.AspNetCore.Identity;
 using TestMVC.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
-namespace TestMVC.Pages;
-public class AccModel : PageModel
+namespace TestMVC.Pages
 {
-    private string connectionString = ConnectionString.CName;
-    private readonly UserContext _userContext;
-
-    public AccModel()
+    [Authorize]
+    public class AccModel : PageModel
     {
-        _userContext = new UserContext(connectionString);
-    }
+        private readonly UserManager<ApplicationUser> _userManager;
 
-    [BindProperty]
-    public string Email { get; set; }
-
-    [BindProperty]
-    public string Password { get; set; }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!ModelState.IsValid)
+        public AccModel(UserManager<ApplicationUser> userManager)
         {
-            return Page();
+            _userManager = userManager;
         }
 
-        var user = await _userContext.GetUserByEmail(Email);
+        public ApplicationUser CurrentUser { get; set; }
 
-        if (user != null && user.Pwd == Password)
+        public async Task OnGetAsync()
         {
-            // Successful login logic here
-            return RedirectToPage("/Index");
+            CurrentUser = await _userManager.GetUserAsync(User);
         }
-
-        ModelState.AddModelError("", "Invalid email or password.");
-        return Page();
     }
 }
