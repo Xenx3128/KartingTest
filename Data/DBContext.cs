@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TestMVC.Models;
 
-
 namespace TestMVC.Data;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
@@ -22,41 +21,68 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<OrderStatus> OrderStatuses { get; set; }
     public DbSet<RaceStatus> RaceStatuses { get; set; }
     public DbSet<RaceCategory> RaceCategories { get; set; }
-    public DbSet<UserStatus> UserStatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // Configure relationships using Fluent API (without navigation properties)
-        
+
         // Order -> Races (one-to-many)
-        modelBuilder.Entity<Races>()
-            .HasOne<Order>()
-            .WithMany()
+        modelBuilder.Entity<Order>()
+            .HasMany(o => o.Races)
+            .WithOne(r => r.Order)
             .HasForeignKey(r => r.OrderId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // UserCart -> User (many-to-one)
+        // Order -> OrderStatus (many-to-one)
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.OrderStatus)
+            .WithMany()
+            .HasForeignKey(o => o.OrderStatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Order -> ApplicationUser (many-to-one)
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.User)
+            .WithMany()
+            .HasForeignKey(o => o.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Races -> RaceCategory (many-to-one)
+        modelBuilder.Entity<Races>()
+            .HasOne(r => r.RaceCategory)
+            .WithMany()
+            .HasForeignKey(r => r.RaceCategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Races -> RaceStatus (many-to-one)
+        modelBuilder.Entity<Races>()
+            .HasOne(r => r.RaceStatus)
+            .WithMany()
+            .HasForeignKey(r => r.RaceStatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // UserCart -> ApplicationUser (many-to-one)
         modelBuilder.Entity<UserCart>()
-            .HasOne<ApplicationUser>()
+            .HasOne(uc => uc.User)
             .WithMany()
             .HasForeignKey(uc => uc.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // UserCart -> RaceCart (many-to-one)
         modelBuilder.Entity<UserCart>()
-            .HasOne<RaceCart>()
+            .HasOne(uc => uc.RaceCart)
             .WithMany()
             .HasForeignKey(uc => uc.RaceCartId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // CircleResults -> RaceCart (many-to-one)
         modelBuilder.Entity<CircleResults>()
-            .HasOne<RaceCart>()
+            .HasOne(cr => cr.RaceCart)
             .WithMany()
             .HasForeignKey(cr => cr.RaceCartId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Identity relationships
         modelBuilder.Entity<ApplicationUser>()
             .HasMany(u => u.UserRoles)
             .WithOne()

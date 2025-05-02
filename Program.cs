@@ -33,15 +33,19 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 
     // Sign-in settings
     options.SignIn.RequireConfirmedAccount = true;
+
+    // Lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true; // Enables lockout for new users
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders()
 .AddRoles<ApplicationRole>();
 
 // Register contexts with proper dependencies
-builder.Services.AddScoped<AppointmentContext>(provider => 
-    new AppointmentContext(
-        provider.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection")));
+builder.Services.AddSingleton<AppointmentContext>(sp =>
+    new AppointmentContext(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<UserContext>(provider => 
 {
@@ -51,6 +55,9 @@ builder.Services.AddScoped<UserContext>(provider =>
     
     return new UserContext(connectionString, userManager, signInManager);
 });
+
+builder.Services.AddSingleton<OrderContext>(sp =>
+    new OrderContext(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddRazorPages(options =>
 {

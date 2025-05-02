@@ -42,7 +42,7 @@ namespace TestMVC.Models;
     public string Note { get; set; }
 }*/
 
-public class UserStatus
+/*public class UserStatus
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -51,4 +51,4 @@ public class UserStatus
     [Required]
     [StringLength(50)]
     public string Status { get; set; }
-}
+}*/

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TestMVC.Models
 {
@@ -9,13 +10,10 @@ namespace TestMVC.Models
     {
         // Keep all CartUser properties
         [StringLength(255)]
-        public string FullName { get; set; }  // Replaces UserName
+        public string? FullName { get; set; }  // Replaces UserName
         
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
-
-        [StringLength(20)] 
-        public string PhoneNum { get; set; }  // Identity already has PhoneNumber
         
         // Identity brings these automatically:
         // - Email
@@ -24,20 +22,20 @@ namespace TestMVC.Models
         // - etc.
 
         [StringLength(255)]
-        public string FromWhereFoundOut { get; set; }
-
-        [StringLength(50)]
-        public string Status { get; set; }
+        public string? FromWhereFoundOut { get; set; }
 
         [StringLength(500)]
-        public string Note { get; set; }
+        public string? Note { get; set; }
 
         public bool AcceptTerms { get; set; }
         public bool ReceivePromotions { get; set; }
 
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
-        public virtual ICollection<IdentityUserRole<int>> UserRoles { get; set; }
+        public virtual ICollection<IdentityUserRole<int>>? UserRoles { get; set; }
+
+        // Navigation property for orders
+        public virtual ICollection<Order> Orders { get; set; }
     }
 
     public class ApplicationRole : IdentityRole<int>

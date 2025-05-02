@@ -1,0 +1,79 @@
+@page
+@model TestMVC.Pages.Admin.OrdersModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Панель администратора: Заказы";
+}
+
+<div id="admin-orders-main-wrap">
+    <div class="row">
+        <a asp-page="./Create" id="orders-add-icon" type="button" class="add-btn admin-menu-icon" title="Добавить заказ">
+            <i class="fa fa-plus fa-lg"></i>
+        </a>
+    </div>
+
+    <table id="adminOrdersMain" class="cell-border hover stripe">
+        <thead>
+            <tr>
+                <th></th> <!-- Control column for expand/collapse -->
+                <th>ID</th>
+                <th>Дата заказа</th>
+                <th>Пользователь</th>
+                <th>Цена</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                var races = Model.OrderRaces.ContainsKey(order.Id) ? Model.OrderRaces[order.Id] : new List<TestMVC.Models.Races>();
+                var racesJson = JsonSerializer.Serialize(races.Select(r => new
+                {
+                    id = r.Id,
+                    startDate = r.StartDate.ToString("yyyy-MM-dd HH:mm"),
+                    finishDate = r.FinishDate.ToString("yyyy-MM-dd HH:mm"),
+                    raceCategory = r.RaceCategory?.Category ?? "Unknown",
+                    raceStatus = r.RaceStatus?.Status ?? "Unknown"
+                }));
+                <tr data-races="@racesJson">
+                    <td></td> <!-- Control column -->
+                    <td>@order.Id</td>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @(order.User?.Email ?? "Unknown")
+                        @if (order.User == null)
+                        {
+                            <script>console.warn('Order @order.Id has no User (UserId: @order.UserId)');</script>
+                        }
+                    </td>
+                    <td>@order.Price.ToString("C")</td>
+                    <td>
+                        @(order.OrderStatus?.Status ?? "Unknown")
+                        @if (order.OrderStatus == null)
+                        {
+                            <script>console.warn('Order @order.Id has no OrderStatus (OrderStatusId: @order.OrderStatusId)');</script>
+                        }
+                    </td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@order.Id" class="admin-menu-icon" id="orders-edit-icon" title="Редактировать заказ">
+                            <i class="fa fa-edit fa-lg"></i>
+                        </a> |
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@order.Id" class="d-inline">
+                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="orders-delete-icon" title="Удалить заказ"
+                                    onclick="return confirm('Вы уверены, что хотите удалить этот заказ?')">
+                                <i class="fa fa-trash fa-lg text-danger"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+
+@section Scripts {
+    <script type="module" src='@Url.Content("~/js/adminOrders.js")'></script>
+}

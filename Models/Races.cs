@@ -12,6 +12,9 @@ public class Races
     [Required]
     public int OrderId { get; set; }
 
+    [ForeignKey("OrderId")]
+    public Order Order { get; set; }
+
     [Required]
     [DataType(DataType.DateTime)]
     public DateTime StartDate { get; set; }
@@ -21,25 +24,16 @@ public class Races
     public DateTime FinishDate { get; set; }
 
     [Required]
-    [StringLength(50)]
-    public string Category { get; set; }
+    public int RaceCategoryId { get; set; }
+
+    [ForeignKey("RaceCategoryId")]
+    public RaceCategory RaceCategory { get; set; }
 
     [Required]
-    [StringLength(50)]
-    public string Status { get; set; }
-}
-
-public class AppointmentSlot
-{
-    [Required]
-    public int? Id { get; set; }
-
-    [Required]
-    public DateOnly SlotDate { get; set; }
-    public TimeOnly SlotStart { get; set; }
-    public int? OrderId { get; set; }
-    public string? Category { get; set; }
-    public string? Status { get; set; } = "free";
+    public int RaceStatusId { get; set; }
+    
+    [ForeignKey("RaceStatusId")]
+    public RaceStatus RaceStatus { get; set; }
 }
 
 public class RaceCart
@@ -59,10 +53,16 @@ public class UserCart
     public int Id { get; set; }
 
     [Required]
-    public int UserId { get; set; }  // FK only
+    public int UserId { get; set; }
+
+    [ForeignKey("UserId")]
+    public ApplicationUser User { get; set; }
 
     [Required]
-    public int RaceCartId { get; set; }  // FK only
+    public int RaceCartId { get; set; }
+
+    [ForeignKey("RaceCartId")]
+    public RaceCart RaceCart { get; set; }
 }
 
 public class CircleResults
@@ -72,7 +72,10 @@ public class CircleResults
     public int Id { get; set; }
 
     [Required]
-    public int RaceCartId { get; set; }  // FK only
+    public int RaceCartId { get; set; }
+
+    [ForeignKey("RaceCartId")]
+    public RaceCart RaceCart { get; set; }
 
     [Required]
     public int CircleNum { get; set; }

@@ -18,10 +18,20 @@ namespace TestMVC.Pages
         }
 
         public ApplicationUser CurrentUser { get; set; }
+        public int UserId { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            CurrentUser = await _userManager.GetUserAsync(User);
+            // Use the provided ID or fall back to the authenticated user's ID
+            UserId = id ?? int.Parse(_userManager.GetUserId(User));
+            CurrentUser = await _userManager.FindByIdAsync(UserId.ToString());
+
+            if (CurrentUser == null)
+            {
+                return NotFound($"Unable to load user with ID '{UserId}'.");
+            }
+
+            return Page();
         }
     }
 }

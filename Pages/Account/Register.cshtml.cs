@@ -43,12 +43,14 @@ namespace TestMVC.Pages
                     UserName = Input.Email,  // Important for Identity
                     Email = Input.Email,
                     FullName = Input.FullName,
-                    BirthDate = Input.BirthDate,
-                    PhoneNumber = Input.PhoneNum,  // Using Identity's PhoneNumber
+                    BirthDate = Input.BirthDate.ToUniversalTime(), // Convert to UTC
+                    PhoneNumber = Input.PhoneNumber,  // Using Identity's PhoneNumber
                     FromWhereFoundOut = Input.FromWhereFoundOut,
                     AcceptTerms = Input.AcceptTerms,
                     ReceivePromotions = Input.ReceivePromotions,
+                    RegistrationDate = DateTime.UtcNow, // Use UTC for RegistrationDate
                     EmailConfirmed = true  // Set to false if using email confirmation
+
                 };
 
                 var result = await _userContext.RegisterUserAsync(user, Input.Password);

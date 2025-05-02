@@ -1,4 +1,4 @@
-@page
+@page "{id?}"
 @model TestMVC.Pages.AccEditModel
 @{
     Layout = "_AccountLayout";
@@ -102,7 +102,7 @@
 <link rel="stylesheet" href="~/css/registration.css">
 
 @section Scripts{
-<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
     <script type="module" src='@Url.Content("~/js/registration.js")'></script>
     <script>
         var menu_link = document.getElementById("acc-menu-link-3");

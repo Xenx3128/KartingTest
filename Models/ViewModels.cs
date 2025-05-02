@@ -34,11 +34,11 @@ namespace TestMVC.Models
         [Required]
         [StringLength(20)]
         [Display(Name = "Phone Number")]
-        public string PhoneNum { get; set; }
+        public string PhoneNumber { get; set; }
 
         [StringLength(255)]
         [Display(Name = "How did you hear about us?")]
-        public string FromWhereFoundOut { get; set; }
+        public string? FromWhereFoundOut { get; set; }
 
         public bool AcceptTerms { get; set; }
         public bool ReceivePromotions { get; set; }
@@ -70,7 +70,7 @@ namespace TestMVC.Models
         public string Email { get; set; }
 
         [StringLength(20)]
-        public string PhoneNum { get; set; }
+        public string PhoneNumber { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
@@ -98,17 +98,17 @@ namespace TestMVC.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Текущий пароль")]
-        public string OldPassword { get; set; }
+        public string? OldPassword { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Новый пароль")]
         [StringLength(100, ErrorMessage = "Пароль должен содержать от {2} до {1} символов", MinimumLength = 6)]
-        public string NewPassword { get; set; }
+        public string? NewPassword { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердите пароль")]
         [Compare("NewPassword", ErrorMessage = "Пароли не совпадают")]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
     }
 
     public class RaceHistoryViewModel
@@ -120,51 +120,10 @@ namespace TestMVC.Models
     }
 
     
-    public class CreateUserViewModel
+public class CreateUserViewModel
     {
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        public string FullName { get; set; }
-
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        [EmailAddress(ErrorMessage = "Некорректный email адрес")]
-        public string Email { get; set; }
-
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        [Phone(ErrorMessage = "Некорректный номер телефона")]
-        public string PhoneNumber { get; set; }
-
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        [DataType(DataType.Date)]
-        public DateTime BirthDate { get; set; }
-
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        [StringLength(100, ErrorMessage = "Пароль должен содержать от {2} до {1} символов", MinimumLength = 6)]
-        public string Password { get; set; }
-
-        public string FromWhereFoundOut { get; set; }
-
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        public string Role { get; set; }
-
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        public string Status { get; set; }
-
-        public string Note { get; set; }
-
-        [Required(ErrorMessage = "Необходимо принять правила техники безопасности")]
-        [Display(Name = "Техника безопасности")]
-        public bool AcceptSafetyRules { get; set; }
-
-        [Display(Name = "Получать промо-предложения")]
-        public bool ReceivePromotions { get; set; }
-    }
-
-    public class EditUserViewModel
-    {
-        public int Id { get; set; }
-
-        [Required(ErrorMessage = "ФИО обязательно")]
-        [StringLength(255, ErrorMessage = "ФИО не может превышать 255 символов")]
+        [Required(ErrorMessage = "Имя обязательно")]
+        [StringLength(255, ErrorMessage = "Имя не может превышать 255 символов")]
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Электронная почта обязательна")]
@@ -172,35 +131,105 @@ namespace TestMVC.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Номер телефона обязателен")]
-        [RegularExpression(@"^(\+7|7|8)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$", 
-            ErrorMessage = "Неверный формат номера телефона")]
+        [Phone(ErrorMessage = "Неверный формат номера телефона")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Дата рождения обязательна")]
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
 
+        [Required(ErrorMessage = "Пароль обязателен")]
+        [DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Пароль должен содержать от 8 до 100 символов")]
+        public string Password { get; set; }
+
         [StringLength(255, ErrorMessage = "Текст не может превышать 255 символов")]
-        public string FromWhereFoundOut { get; set; }
+        public string? FromWhereFoundOut { get; set; }
 
-        [StringLength(50, ErrorMessage = "Статус не может превышать 50 символов")]
-        public string Status { get; set; }
-
-        [StringLength(500, ErrorMessage = "Примечание не может превышать 500 символов")]
-        public string Note { get; set; }
-
-        [Required(ErrorMessage = "Необходимо подтвердить технику безопасности")]
-        public bool AcceptTerms { get; set; }
-
-        public bool ReceivePromotions { get; set; }
-
+        [Required(ErrorMessage = "Роль обязательна")]
         public string Role { get; set; }
 
+        [Required(ErrorMessage = "Статус обязателен")]
+        public string Status { get; set; } // "Active" or "Banned"
+
+        [StringLength(500, ErrorMessage = "Примечание не может превышать 500 символов")]
+        public string? Note { get; set; }
+
+        [Required(ErrorMessage = "Необходимо принять правила безопасности")]
+        public bool AcceptSafetyRules { get; set; }
+
+        public bool ReceivePromotions { get; set; }
+    }
+
+    public class EditUserViewModel
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Имя обязательно")]
+        [StringLength(255, ErrorMessage = "Имя не может превышать 255 символов")]
+        public string FullName { get; set; }
+
+        [Required(ErrorMessage = "Электронная почта обязательна")]
+        [EmailAddress(ErrorMessage = "Неверный формат электронной почты")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Номер телефона обязателен")]
+        [Phone(ErrorMessage = "Неверный формат номера телефона")]
+        public string PhoneNumber { get; set; }
+
+        [Required(ErrorMessage = "Дата рождения обязательна")]
+        [DataType(DataType.Date)]
+        public DateTime BirthDate { get; set; }
+
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Пароль должен содержать от 8 до 100 символов")]
+        public string? Password { get; set; }
 
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Пароли не совпадают")]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
+
+        [StringLength(255, ErrorMessage = "Текст не может превышать 255 символов")]
+        public string? FromWhereFoundOut { get; set; }
+
+        [Required(ErrorMessage = "Роль обязательна")]
+        public string Role { get; set; }
+
+        [Required(ErrorMessage = "Статус обязателен")]
+        public string Status { get; set; } // "Active" or "Banned"
+
+        [StringLength(500, ErrorMessage = "Примечание не может превышать 500 символов")]
+        public string? Note { get; set; }
+
+        [Required(ErrorMessage = "Необходимо принять правила безопасности")]
+        public bool AcceptTerms { get; set; }
+
+        public bool ReceivePromotions { get; set; }
     }
+
+    // Model for user dropdown
+    public class UserDropdownModel
+    {
+        public int Id { get; set; }
+        public string Email { get; set; }
+    }
+    
+    public class OrderingModel
+    {
+        [Required(ErrorMessage = "Дата обязательна")]
+        public DateOnly Date { get; set; }
+
+        [Required(ErrorMessage = "Выберите хотя бы одно время")]
+        public List<TimeOnly> Times { get; set; }
+
+        [Required(ErrorMessage = "Выберите тип заезда")]
+        public bool IsUniform { get; set; }
+
+        [Required(ErrorMessage = "Выберите категорию заезда")]
+        public List<int> RaceCategoryIds { get; set; }
+
+        [Required(ErrorMessage = "Необходимо принять технику безопасности")]
+        public bool TermsAccepted { get; set; }
+    }
+
 }

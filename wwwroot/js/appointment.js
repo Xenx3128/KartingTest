@@ -1,261 +1,231 @@
+let timePicker;
+let datePicker;
+let raceCategories = [];
 
-function updateRaceRadioButtons(slots, containerId){
-    var container = document.getElementById(containerId);
-    while (container.hasChildNodes()) {
-        container.removeChild(container.lastChild);
-    }
-
-    var RaceTypeRadios = document.getElementsByName('race-type');
-    var checkValue = 'None';
-    RaceTypeRadios.forEach(button => {
-        if (button.checked){
-            checkValue = button.value;
-        }
-    });
-    switch (checkValue){
-        case 'uniform':  // Uniform
-            addRaceRadioButtonsDivided(slots, container, 0);
-            break;
-        case 'divided':  // Divided
-            addRaceRadioButtonsDivided(slots, container, 1);
-            break;
+async function fetchRaceCategories() {
+    try {
+        const response = await axios.get('/api/appointments/categories');
+        raceCategories = response.data;
+    } catch (error) {
+        console.error('Error fetching race categories:', error);
     }
 }
 
-function addRaceRadioButtonsDivided(slots, container, mode=1) {
+function updateRaceRadioButtons(slots, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ''; // Clear existing content
 
-    /*<div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="race-type" id="raceTypeRadioUniform" value="option1">
-    <label class="form-check-label" for="RaceTypeRadioUniform">Один тип заездов для всех слотов</label>
-    </div>
-    <div class="form-check form-check-inline">
-    <input class="form-check-input" type="radio" name="race-type" id="raceTypeRadioDivided" value="option2">
-    <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
-
-    <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
-    </div>*/
-    var rowAmount = slots.length;
-    if (!mode){
-        rowAmount = 1;
-    }
-    console.log(rowAmount);
-    for (var rowCount = 0; rowCount < rowAmount; rowCount++){
-        // <div class="form-group row"></div>
-        var rowContainer = document.createElement('div');
-        rowContainer.classList.add('row');
+    const raceTypeRadios = document.getElementsByName('race-type');
+    const isUniform = Array.from(raceTypeRadios).find(r => r.checked)?.value === 'uniform';
+    
+    const rowCount = isUniform ? 1 : slots.length;
+    
+    for (let i = 0; i < rowCount; i++) {
+        const rowContainer = document.createElement('div');
+        rowContainer.classList.add('row', 'mt-2');
         container.appendChild(rowContainer);
-        
-        var titleContainer = document.createElement('h5');
-        if (mode){
-            titleContainer.textContent = `Слот ${slots[rowCount]}`;
-        }
-        else{
-            titleContainer.textContent = `Выберите тип заезда:`;
-        }
-        rowContainer.appendChild(titleContainer);
 
-        var inputGroupContainer = document.createElement('div');
-        inputGroupContainer.classList.add('input-group');
-        rowContainer.appendChild(inputGroupContainer);
+        const title = document.createElement('h5');
+        title.className = 'reg-label';
+        title.textContent = isUniform ? 'Выберите тип заезда:' : `Слот ${slots[i]}:`;
+        rowContainer.appendChild(title);
 
-        const radioOptions = ['Взрослый', 'Детский', 'Семейный'];
+        const inputGroup = document.createElement('div');
+        inputGroup.classList.add('input-group');
+        rowContainer.appendChild(inputGroup);
 
-        for (var radioCount = 0; radioCount < radioOptions.length; radioCount++){
-            var colThirdContainer = document.createElement('div');
-            colThirdContainer.classList.add('col-third');
+        raceCategories.forEach((category, index) => {
+            const col = document.createElement('div');
+            col.classList.add('col-third');
 
-            var inputContainer = document.createElement('input');
-            var inputContainerId = `raceTypeRadio_${slots[rowCount]}_${radioCount}`;
-            inputContainer.type = 'radio';
-            inputContainer.name = `race-type_${slots[rowCount]}`;
-            inputContainer.id = inputContainerId
-            inputContainer.value = `raceTypeRadio_${slots[rowCount]}_Option_${radioCount}`;
-            //<input id="race-type-divided" type="radio" name="race-type" value="divided">
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = isUniform ? 'race-category' : `race-category-${i}`;
+            input.id = `race-category-${i}-${index}`;
+            input.value = category.id;
+            input.classList.add('form-check-input');
+            input.required = true;
 
-            var labelContainer = document.createElement('label');
-            labelContainer.htmlFor = inputContainerId;
-            var labelContainerText = document.createTextNode(radioOptions[radioCount]);
-            labelContainer.appendChild(labelContainerText);
-            //<label for="race-type-divided">Различные типы заездов</label>
+            const label = document.createElement('label');
+            label.htmlFor = input.id;
+            label.classList.add('reg-label');
+            label.textContent = category.category;
 
-            colThirdContainer.appendChild(inputContainer);
-            colThirdContainer.appendChild(labelContainer);
-
-            inputGroupContainer.appendChild(colThirdContainer);
-        }
-        /*// <label for="" class="col-sm-2 col-form-label">Text</label>
-        var label = document.createElement('label');
-        label.htmlFor = '';
-        label.classList.add('col-sm-2', 'col-form-label');
-        if (mode){
-            var labeltext = document.createTextNode(`Слот ${slots[rowCount]}:`);
-        }
-        else{
-            var labeltext = document.createTextNode(`Выберите тип заезда:`);
-        }
-
-        label.appendChild(labeltext);
-        rowContainer.appendChild(label);
-
-        // <div class="col-sm-10">
-        var radioContainerGlobal = document.createElement('div');
-        radioContainerGlobal.classList.add('col-sm-10');
-
-        */
-        
-        //const radioOptions = ['Взрослый', 'Детский', 'Семейный'];
-
-        /*for (var radioCount = 0; radioCount < radioOptions.length; radioCount++){
-            // <div class="form-check form-check-inline">
-            var radioContainer1 = document.createElement('div');
-            radioContainer1.classList.add('form-check', 'form-check-inline');
-
-            // <input class="form-check-input" type="radio" name="race-type0" id="raceTypeRadio0_0" value="raceTypeRadio0Option0">
-            var inputContainer1 = document.createElement('input');
-            var inputContainer1Id = `raceTypeRadio_${slots[rowCount]}_${radioCount}`;
-            inputContainer1.classList.add('form-check-input');
-            inputContainer1.type = 'radio';
-            inputContainer1.name = `race-type_${slots[rowCount]}`;
-            inputContainer1.id = inputContainer1Id
-            inputContainer1.value = `raceTypeRadio_${slots[rowCount]}_Option_${radioCount}`;
-
-            // <label class="form-check-label" for="RaceTypeRadioDivided">Различные типы заездов</label>
-            var labelContainer = document.createElement('label');
-            labelContainer.classList.add('form-check-label');
-            labelContainer.htmlFor = inputContainer1Id;
-            var labelContainerText = document.createTextNode(radioOptions[radioCount]);
-            labelContainer.appendChild(labelContainerText);
-
-            radioContainer1.appendChild(inputContainer1);
-            radioContainer1.appendChild(labelContainer);
-
-            radioContainerGlobal.appendChild(radioContainer1);
-        }*/
-
-        //rowContainer.appendChild(radioContainerGlobal);
-
-        //container.appendChild(document.createElement('br'));
+            col.appendChild(input);
+            col.appendChild(label);
+            inputGroup.appendChild(col);
+        });
     }
 }
 
-function checkSelectedSlots(slots) {
-
-    var raceTypeSelection = document.getElementById('RaceTypeGlobalContainer');
-    /*if (slots.length == 0){
-        raceTypeSelection.style.visibility = 'visible';
-    }
-    else{
-        raceTypeSelection.style.visibility = 'visible';
-    }*/
-}
-
-
-window.onload = function() {
-    var timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
+function initializePickers() {
+    timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
         interval: 15,
         startTime: 10,
         endTime: 20,
         title: 'Свободные слоты',
         static: false,
-        useSlotTemplate : false
-
+        useSlotTemplate: false
     });
 
-
-    document.getElementById('inputtime').addEventListener('change.appo.picker', function (e) {
-        var slots = timePicker.getTimes();
-        console.log(slots);
-        updateRaceRadioButtons(slots, 'RaceTypeContainer');
-        checkSelectedSlots(slots);
-    })
-
-    var datePicker = new AirDatepicker(document.getElementById('inputdate'), {
-        dateFormat(date) {
-            return date.toLocaleString('ru', {
-                year: 'numeric',
-                day: '2-digit',
-                month: 'long'
-            });
-        },
-
-        onSelect({date, formattedDate, datepicker}){
-            date.setHours(date.getHours() + 5);
-            const newdate = new Date(date);
-            const promise = axios({
-                method: 'get',
-                url: '/api/appointments/day',
-                params: {
-                    querydate: date,
-                }
-            })
-            .then(function (response) {
-                var disable = [];
-                //console.log(data);
-                response.data.forEach(elem => {
-                    disable.push(elem);
+    datePicker = new AirDatepicker(document.getElementById('inputdate'), {
+        dateFormat: 'dd MMMM yyyy',
+        onSelect: async ({ date }) => {
+            if (!date) return;
+            try {
+                const selectedDate = DateOnly.fromDate(date).toString();
+                const response = await axios.get('/api/appointments/day', {
+                    params: { querydate: selectedDate }
                 });
-                console.log(disable);
+                // Filter disabled times for the selected date
+                const disabledTimes = response.data
+                    .filter(item => item.date === selectedDate)
+                    .map(item => item.time);
+                console.log('Disabled times for', selectedDate, ':', disabledTimes); // Debug
                 timePicker.destroy();
                 timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
+                    interval: 15,
                     startTime: 10,
                     endTime: 20,
-                    disabled: disable,
+                    disabled: disabledTimes, // Pass HH:mm strings
                     title: 'Свободные слоты',
                     static: false,
-                    useSlotTemplate : false
+                    useSlotTemplate: false
                 });
-                var slots = timePicker.getTimes();
-                //updateRaceRadioButtons(slots, 'RaceTypeContainer');
-                checkSelectedSlots(slots);
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            });
-
-
+                updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer');
+            } catch (error) {
+                console.error('Error fetching unavailable times:', error);
+            }
         }
-    })
+    });
+}
 
-    var RaceTypeRadios = document.getElementsByName('race-type');
-    RaceTypeRadios.forEach(button => {
-        button.addEventListener('change', function(){
-            updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer', button.value)
-        });
-        //button.onclick = updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer', button.value);
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchRaceCategories();
+    initializePickers();
+
+    document.getElementById('inputtime').addEventListener('change.appo.picker', () => {
+        const times = timePicker.getTimes();
+        console.log('Selected times:', times); // Debug
+        updateRaceRadioButtons(times, 'RaceTypeContainer');
     });
 
-    
-    function postForm(event){
-        var form = document.getElementById('orderForm')
-        var data = new FormData(form);
-    
-        var date = datePicker.selectedDates;
-        if (date.length == 0) return;
-    
-        //data.set('time', timePicker.getTimes())
-        
-        for (var [key, value] of data.entries()) { 
-            //console.log(key, value);
-          }
-          
-        const request = axios({
-            method: "post",
-            url: "api/appointments/order",
-            data: data,
-          })
-            .then(function (response) {
-              //handle success
-              console.log('/');
-              console.log(response);
-              window.location.href = '/Index';
+    document.getElementsByName('race-type').forEach(radio => {
+        radio.addEventListener('change', () => {
+            updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer');
+        });
+    });
+
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        const date = datePicker.selectedDates[0];
+        if (!date) {
+            alert('Выберите дату');
+            return;
+        }
+
+        const times = timePicker.getTimes();
+        if (!times || times.length === 0) {
+            alert('Выберите хотя бы одно время');
+            return;
+        }
+
+        const isUniform = formData.get('race-type') === 'uniform';
+        const raceCategoryIds = isUniform
+            ? [parseInt(formData.get('race-category'))]
+            : times.map((_, i) => parseInt(formData.get(`race-category-${i}`)));
+
+        if (raceCategoryIds.some(id => isNaN(id))) {
+            alert('Выберите категорию для каждого слота');
+            return;
+        }
+
+        // Validate and format times as HH:mm
+        const formattedTimes = times
+            .map(t => {
+                try {
+                    const timeObj = TimeOnly.fromTimeString(t);
+                    return timeObj.toString();
+                } catch (error) {
+                    console.error('Invalid time value:', t, error);
+                    return null;
+                }
             })
-            .catch(function (response) {
-              //handle error
-              console.log('//');
-              console.log(response);
-            });
+            .filter(t => t !== null);
+
+        if (formattedTimes.length === 0) {
+            alert('Неверный формат времени. Пожалуйста, выберите корректные временные слоты.');
+            return;
+        }
+
+        const data = {
+            date: DateOnly.fromDate(date).toString(),
+            times: formattedTimes,
+            isUniform: isUniform,
+            raceCategoryIds: raceCategoryIds,
+            termsAccepted: formData.get('terms') === 'on'
+        };
+
+        console.log('Submitting data:', data); // Debug
+
+        try {
+            await axios.post('/api/appointments/order', data);
+            window.location.href = '/Index';
+        } catch (error) {
+            console.error('Error submitting order:', error.response?.data || error);
+            alert('Ошибка при регистрации заезда: ' + (error.response?.data?.message || 'Неизвестная ошибка'));
+        }
+    });
+});
+
+// Helper classes for DateOnly and TimeOnly serialization
+class DateOnly {
+    static fromDate(date) {
+        if (!(date instanceof Date) || isNaN(date.getTime())) {
+            throw new Error('Invalid date');
+        }
+        return {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            day: date.getDate(),
+            toString: function() {
+                return `${this.year}-${this.month.toString().padStart(2, '0')}-${this.day.toString().padStart(2, '0')}`;
+            }
+        };
+    }
+}
+
+class TimeOnly {
+    static fromTimeString(timeString) {
+        if (typeof timeString !== 'string' || !/^\d{2}:\d{2}$/.test(timeString)) {
+            throw new Error('Invalid time format. Expected HH:mm');
+        }
+        const [hour, minute] = timeString.split(':').map(Number);
+        if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+            throw new Error('Invalid time values');
+        }
+        return {
+            hour,
+            minute,
+            toString: function() {
+                return `${this.hour.toString().padStart(2, '0')}:${this.minute.toString().padStart(2, '0')}`;
+            }
+        };
     }
 
-    document.getElementById('submitForm').onclick = postForm;
+    static fromDate(date) {
+        if (!(date instanceof Date) || isNaN(date.getTime())) {
+            throw new Error('Invalid time');
+        }
+        return {
+            hour: date.getHours(),
+            minute: date.getMinutes(),
+            toString: function() {
+                return `${this.hour.toString().padStart(2, '0')}:${this.minute.toString().padStart(2, '0')}`;
+            }
+        };
+    }
 }

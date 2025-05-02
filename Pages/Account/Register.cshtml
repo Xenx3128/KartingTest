@@ -32,9 +32,9 @@
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
 
                 <!-- Phone Number -->
-                <label asp-for="Input.PhoneNum" class="reg-label">Номер телефона <span class="required">*</span></label>
+                <label asp-for="Input.PhoneNumber" class="reg-label">Номер телефона <span class="required">*</span></label>
                 <div class="input-group input-group-icon">
-                    <input asp-for="Input.PhoneNum" 
+                    <input asp-for="Input.PhoneNumber" 
                            placeholder="Например: +79123456789" 
                            pattern="^(\+7|7|8)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$"
                            required>
@@ -42,7 +42,7 @@
                         <i class="fa fa-phone"></i>
                     </div>
                 </div>
-                <span asp-validation-for="Input.PhoneNum" class="text-danger"></span>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
 
                 <!-- Birth Date -->
                 <label asp-for="Input.BirthDate" class="reg-label">Укажите ваш день рождения <span class="required">*</span></label>

@@ -60,18 +60,16 @@ namespace TestMVC.Data
                 UPDATE ""AspNetUsers"" 
                 SET ""FullName"" = @FullName,
                     ""BirthDate"" = @BirthDate,
-                    ""PhoneNum"" = @PhoneNum,
+                    ""PhoneNumber"" = @PhoneNum,
                     ""FromWhereFoundOut"" = @FromWhereFoundOut,
-                    ""Status"" = @Status,
                     ""Note"" = @Note
                 WHERE ""Id"" = @Id";
             
             await connection.ExecuteAsync(sql, new {
                 user.FullName,
                 user.BirthDate,
-                user.PhoneNum,
+                user.PhoneNumber,
                 user.FromWhereFoundOut,
-                user.Status,
                 user.Note,
                 user.Id
             });
@@ -140,12 +138,13 @@ namespace TestMVC.Data
         public async Task<List<RaceHistoryViewModel>> GetUserRaceHistoryAsync(int userId)
         {
             using var connection = CreateConnection();
-            var sql = @"
-                    SELECT r.StartDate, r.FinishDate, r.Category
-                    FROM Races r
-                    INNER JOIN Orders o ON r.OrderId = o.Id
-                    WHERE o.UserId = @UserId
-                    ORDER BY r.StartDate DESC";
+            var sql = """
+                    SELECT r."StartDate", r."FinishDate", r."Category"
+                    FROM  "Races" r
+                    INNER JOIN "Orders" o ON r."OrderId" = o."Id"
+                    WHERE o."UserId" = @UserId
+                    ORDER BY r."StartDate" DESC
+                    """;
             var raceHistory = await connection.QueryAsync<RaceHistoryViewModel>(
                 sql,
                 new { UserId = userId }

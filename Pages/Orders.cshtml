@@ -1,105 +1,65 @@
 @page
 @model TestMVC.Pages.OrdersModel
 @{
-    ViewData["Title"] = "Orders";
+    ViewData["Title"] = "Заказ заездов";
 }
-
 
 <div class="orders-wrap">
     <div class="container">
         <form method="post" class="mt-4" id="orderForm">
-            <!-- Date Section -->
+            <!-- Date and Time Section -->
             <div class="row">
-                <h4 class="red-heading">Время заезда</h4>
+                <h4 class="red-heading">Выбор времени заезда</h4>
                 <div class="input-group">
                     <input id="inputdate" class="form-control" name="date" type="text" placeholder="Выберите дату" required readonly>
+                    <span class="text-danger" asp-validation-for="Input.Date"></span>
                 </div>
                 <div class="input-group">
                     <input id="inputtime" class="form-control" name="time" type="text" placeholder="Выберите время" required readonly>
+                    <span class="text-danger" asp-validation-for="Input.Times"></span>
                 </div>
             </div>
 
-            <div id="RaceTypeGlobalContainer">
-                <div class="row">
-                    <h4 class="red-heading">Тип заезда</h4>
-                    <div class="input-group">
-                        <input id="race-type-uniform" type="radio" name="race-type" value="uniform">
-                        <label for="race-type-uniform">Один тип заездов для всех слотов</label>
-
-                    </div>
+            <!-- Race Type Selection -->
+            <div id="RaceTypeGlobalContainer" class="row">
+                <h4 class="red-heading">Тип заезда</h4>
+                <div class="input-group">
+                    <input id="race-type-uniform" type="radio" name="race-type" value="uniform" checked>
+                    <label for="race-type-uniform" class="reg-label">Один тип заездов для всех слотов</label>
                 </div>
-                <div class="row">
-                    <div class="input-group">
-                        <input id="race-type-divided" type="radio" name="race-type" value="divided">
-                        <label for="race-type-divided">Различные типы заездов</label>
-                    </div>
+                <div class="input-group">
+                    <input id="race-type-divided" type="radio" name="race-type" value="divided">
+                    <label for="race-type-divided" class="reg-label">Различные типы заездов</label>
                 </div>
-                <div id="RaceTypeContainer">
-                </div>
+                <span class="text-danger" asp-validation-for="Input.IsUniform"></span>
+                <div id="RaceTypeContainer" class="mt-2"></div>
             </div>
-
-            @*<!-- Date of Birth & Gender -->
-            <div class="row">
-                <div class="col-half">
-                <h4>Date of Birth</h4>
-                <div class="input-group">
-                    <div class="col-third">
-                    <input type="text" placeholder="DD">
-                    </div>
-                    <div class="col-third">
-                    <input type="text" placeholder="MM">
-                    </div>
-                    <div class="col-third">
-                    <input type="text" placeholder="YYYY">
-                    </div>
-                </div>
-                </div>
-                <div class="col-half">
-                <h4>Gender</h4>
-                <div class="input-group">
-                    <input id="gender-male" type="radio" name="gender" value="male">
-                    <label for="gender-male">Male</label>
-                    <input id="gender-female" type="radio" name="gender" value="female">
-                    <label for="gender-female">Female</label>
-                </div>
-                </div>
-            </div>*@
 
             <!-- Terms and Conditions -->
             <div class="row">
-                <h4 class="red-heading">Terms and Conditions</h4>
+                <h4 class="red-heading">Техника безопасности</h4>
                 <div class="input-group">
-                <input id="terms" type="checkbox">
-                <label for="terms">
-                    I accept the terms and conditions for signing up to this service, and hereby confirm I have read the privacy policy.
-                </label>
+                    <input id="terms" type="checkbox" name="terms" required>
+                    <label for="terms" class="reg-label">Я прочёл и принимаю технику безопасности</label>
+                    <span class="text-danger" asp-validation-for="Input.TermsAccepted"></span>
                 </div>
             </div>
 
-            <button id="submitForm" type="submit" class="red-button">Регистрация</button>
+            <button id="submitForm" type="submit" class="red-button">Зарегистрировать заезд</button>
         </form>
     </div>
 </div>
 
 <link rel="stylesheet" href="~/css/orders.css">
-
-
 <link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">
-<script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
-
 <link rel="stylesheet" href="~/lib/air-datepicker/air-datepicker.css">
-<script src="~/lib/air-datepicker/air-datepicker.js"></script>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
+<script src="~/lib/air-datepicker/air-datepicker.js"></script>
 <script src="~/lib/axios/dist/axios.min.js"></script>
 
-
-@section Scripts{
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script type="module" src='@Url.Content("~/js/appointment.js")'></script>
-    <script>
-        @*var urlParams = new URLSearchParams(window.location.search);
-        let queryString = urlParams.get('quest');
-
-        document.getElementById("questSelect").querySelector("option[value='" + queryString + "']").selected = true;*@
-    </script>
 }
-

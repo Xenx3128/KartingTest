@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,10 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace TestMVC.Pages
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class AdminUsersCreateModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -28,7 +28,9 @@ namespace TestMVC.Pages
         [BindProperty]
         public CreateUserViewModel Input { get; set; }
 
-        public List<SelectListItem> Roles { get; set; }
+        public List<SelectListItem> Roles { get; set; } = new List<SelectListItem>();
+
+        public bool IsSuperAdmin { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -37,8 +39,28 @@ namespace TestMVC.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // Check if current user is SuperAdmin
+            var currentUser = await _userManager.GetUserAsync(User);
+            IsSuperAdmin = currentUser != null && await _userManager.IsInRoleAsync(currentUser, "SuperAdmin");
+
             if (!ModelState.IsValid)
             {
+                await InitializeRoles();
+                return Page();
+            }
+
+            // Validate role selection: Regular Admins cannot select "Admin"
+            if (!IsSuperAdmin && Input.Role == "Admin")
+            {
+                ModelState.AddModelError("Input.Role", "Только SuperAdmin может назначать роль Admin.");
+                await InitializeRoles();
+                return Page();
+            }
+
+            // Validate status
+            if (Input.Status != "Active" && Input.Status != "Banned")
+            {
+                ModelState.AddModelError("Input.Status", "Недопустимый статус.");
                 await InitializeRoles();
                 return Page();
             }
@@ -49,11 +71,15 @@ namespace TestMVC.Pages
                 Email = Input.Email,
                 FullName = Input.FullName,
                 PhoneNumber = Input.PhoneNumber,
-                BirthDate = Input.BirthDate,
+                BirthDate = Input.BirthDate.ToUniversalTime(),
                 FromWhereFoundOut = Input.FromWhereFoundOut,
                 Note = Input.Note,
-                EmailConfirmed = Input.Status != "Pending",
-                LockoutEnd = Input.Status == "Blocked" ? DateTimeOffset.MaxValue : null
+                AcceptTerms = Input.AcceptSafetyRules,
+                ReceivePromotions = Input.ReceivePromotions,
+                RegistrationDate = DateTime.UtcNow,
+                EmailConfirmed = true, // Adjust based on your requirements
+                LockoutEnd = Input.Status == "Banned" ? DateTimeOffset.MaxValue : null,
+                LockoutEnabled = true // Required for LockoutEnd to take effect
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password);
@@ -63,7 +89,16 @@ namespace TestMVC.Pages
                 // Assign selected role
                 if (!string.IsNullOrEmpty(Input.Role))
                 {
-                    await _userManager.AddToRoleAsync(user, Input.Role);
+                    var roleResult = await _userManager.AddToRoleAsync(user, Input.Role);
+                    if (!roleResult.Succeeded)
+                    {
+                        foreach (var error in roleResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        await InitializeRoles();
+                        return Page();
+                    }
                 }
 
                 return RedirectToPage("./Users");
@@ -80,13 +115,23 @@ namespace TestMVC.Pages
 
         private async Task InitializeRoles()
         {
-            Roles = (await _roleManager.Roles.ToListAsync())
+            // Check if current user is SuperAdmin
+            var currentUser = await _userManager.GetUserAsync(User);
+            IsSuperAdmin = currentUser != null && await _userManager.IsInRoleAsync(currentUser, "SuperAdmin");
+
+            // Filter roles based on user role
+            var availableRoles = IsSuperAdmin
+                ? new[] { "User", "Admin" }
+                : new[] { "User" };
+
+            Roles = await _roleManager.Roles
+                .Where(r => availableRoles.Contains(r.Name))
                 .Select(r => new SelectListItem
                 {
                     Value = r.Name,
                     Text = r.Name
-                }).ToList();
+                })
+                .ToListAsync() ?? new List<SelectListItem>();
         }
     }
-
 }

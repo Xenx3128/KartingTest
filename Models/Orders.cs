@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace TestMVC.Models;
 
@@ -10,7 +11,7 @@ public class Order
     public int Id { get; set; }
 
     [Required]
-    public int UserId { get; set; }  // FK only, no navigation property
+    public int UserId { get; set; }
 
     [Required]
     [DataType(DataType.DateTime)]
@@ -21,8 +22,15 @@ public class Order
     public decimal Price { get; set; }
 
     [Required]
-    [StringLength(50)]
-    public string Status { get; set; }
+    public int OrderStatusId { get; set; }
+
+    [ForeignKey("OrderStatusId")]
+    public OrderStatus OrderStatus { get; set; }
+
+    [ForeignKey("UserId")]
+    public ApplicationUser User { get; set; }
+
+    public List<Races> Races { get; set; } = new List<Races>();
 }
 
 public class OrderStatus

@@ -59,7 +59,7 @@
                 <!-- Password -->
                 <label asp-for="Input.Password" class="reg-label">Пароль <span class="required">*</span></label>
                 <div class="input-group input-group-icon">
-                    <input asp-for="Input.Password" type="text" placeholder="Придумайте пароль" required>
+                    <input asp-for="Input.Password" type="password" placeholder="Придумайте пароль" required>
                     <div class="input-icon">
                         <i class="fas fa-unlock"></i>
                     </div>
@@ -79,12 +79,15 @@
                 <label asp-for="Input.Role" class="reg-label">Роль пользователя</label>
                 <div class="input-group input-group-icon">
                     <select asp-for="Input.Role" asp-items="Model.Roles" required>
-                        <option value="">Выберите роль</option>
                     </select>
                     <div class="input-icon">
                         <i class="fas fa-user-cog"></i>
                     </div>
                 </div>
+                @if (!Model.IsSuperAdmin)
+                {
+                    <small class="form-text text-muted">Только SuperAdmin может назначать роль Admin.</small>
+                }
                 <span asp-validation-for="Input.Role" class="text-danger"></span>
             </div>
 
@@ -94,8 +97,7 @@
                 <div class="input-group input-group-icon">
                     <select asp-for="Input.Status" required>
                         <option value="Active">Активен</option>
-                        <option value="Blocked">Заблокирован</option>
-                        <option value="Pending">Ожидает подтверждения</option>
+                        <option value="Banned">Заблокирован</option>
                     </select>
                     <div class="input-icon">
                         <i class="fas fa-user-check"></i>
@@ -153,5 +155,5 @@
 <link rel="stylesheet" href="~/css/registration.css">
 
 @section Scripts {
-<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }

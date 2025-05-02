@@ -1,78 +1,98 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TestMVC.Models;
 using TestMVC.Data;
-using TestMVC.Utility;
-using TestMVC.Service;
+using TestMVC.Models;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-
-namespace TestMVC.Controllers;
-
-[Route("api/appointments")]
-[ApiController]
-public class AppointmentController : Controller
+namespace TestMVC.Controllers
 {
-    private string connectionString = ConnectionString.CName;
+    [Route("api/appointments")]
+    [ApiController]
+    public class AppointmentsController : ControllerBase
+    {
+        private readonly AppointmentContext _appointmentContext;
+        private static readonly TimeZoneInfo EkaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time");
 
-
-    [HttpGet("day")]
-    public async Task<IEnumerable<string>> GetDailyAppointments([FromQuery] DateTime querydate){
-        var _context = new AppointmentContext(connectionString); 
-
-        var data1 = await _context.GetPlannedRaces(querydate);
-        var data2 = await _context.GetTechBreaks(querydate);
-        var data = data1.Concat(data2);
-        var data3 = data.Select(a => a.ToString("HH:mm")).ToList();
-        return data3;
-    }
-
-    [HttpPost("order")]
-    public async Task<ActionResult<AppointmentSlot>> PostOrder([FromForm] object data){
-        DateOnly date = new DateOnly();
-        List<TimeOnly> times = new List<TimeOnly>();
-        string raceTypeMode = "unknown";
-        List<string> modes = new List<string>();
-
-        foreach (var pair in Request.Form){
-            var key = pair.Key.ToString();
-            var val = pair.Value.ToString();
-            //Console.WriteLine($"{key}: {val}");
-            switch (key){
-                case "date":
-                    date = DateOnly.FromDateTime(DateTime.Parse(val));
-                    break;
-                case "time":
-                    string[] timesStr = val.Split("; ");
-                    foreach (var t in timesStr){
-                        var time = TimeOnly.Parse(t);
-                        times.Add(time);
-                    }
-                    break;
-                case "raceTypeRadioOptions":
-                    raceTypeMode = val;
-                    break;
-                case "__RequestVerificationToken":
-                    break;
-                default: // Race Type Options
-                    var valSplit = val.Split('_');
-                    var selected = val.Split('_')[3];
-                    switch (selected){
-                        case "0":
-                            modes.Add("adult");
-                            break;
-                        case "1":
-                            modes.Add("children");
-                            break;
-                        case "2":
-                            modes.Add("family");
-                            break;
-                    }
-                    break;
-
-            }
+        public AppointmentsController(AppointmentContext appointmentContext)
+        {
+            _appointmentContext = appointmentContext;
         }
-        var _context = new AppointmentContext(connectionString); 
-        _context.PostOrder(date, times, raceTypeMode, modes);  
-        return NoContent();
+
+        [HttpGet("day")]
+        public async Task<ActionResult<IEnumerable<object>>> GetUnavailableTimes(DateTime querydate)
+        {
+            var races = await _appointmentContext.GetPlannedRaces(querydate);
+            var breaks = await _appointmentContext.GetTechBreaks(querydate);
+            var unavailable = new List<DateTime>();
+            unavailable.AddRange(races);
+            unavailable.AddRange(breaks);
+
+            var formattedTimes = unavailable
+                .Select(dt => new
+                {
+                    date = dt.ToString("yyyy-MM-dd"),
+                    time = TimeZoneInfo.ConvertTime(dt, EkaterinburgTimeZone).ToString("HH:mm")
+                })
+                .Distinct()
+                .OrderBy(x => x.date)
+                .ThenBy(x => x.time)
+                .ToList();
+
+            return Ok(formattedTimes);
+        }
+
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<RaceCategory>>> GetRaceCategories()
+        {
+            var categories = await _appointmentContext.GetRaceCategoriesAsync();
+            return Ok(categories);
+        }
+
+        [HttpPost("order")]
+        public async Task<ActionResult<int>> CreateOrder([FromBody] OrderRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (request.Times == null || !request.Times.Any())
+            {
+                return BadRequest(new { message = "At least one time slot is required." });
+            }
+
+            var times = new List<TimeOnly>();
+            foreach (var time in request.Times)
+            {
+                if (!TimeOnly.TryParse(time, out var parsedTime))
+                {
+                    return BadRequest(new { message = $"Invalid time format: {time}. Expected format: HH:mm (e.g., 10:00)." });
+                }
+                times.Add(parsedTime);
+            }
+
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var date = DateOnly.Parse(request.Date);
+
+            var orderId = await _appointmentContext.CreateOrderAsync(
+                userId,
+                date,
+                times,
+                request.IsUniform,
+                request.RaceCategoryIds);
+
+            return Ok(orderId);
+        }
+
+        public class OrderRequest
+        {
+            public string Date { get; set; }
+            public List<string> Times { get; set; }
+            public bool IsUniform { get; set; }
+            public List<int> RaceCategoryIds { get; set; }
+            public bool TermsAccepted { get; set; }
+        }
     }
 }

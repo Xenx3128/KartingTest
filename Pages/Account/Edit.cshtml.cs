@@ -24,9 +24,17 @@ namespace TestMVC.Pages
             _signInManager = signInManager;
         }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            var user = await _userManager.GetUserAsync(User);
+            // Use the provided ID or fall back to the authenticated user's ID
+            var userId = id ?? int.Parse(_userManager.GetUserId(User));
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+
             Input = new EditProfileViewModel
             {
                 FullName = user.FullName,
@@ -34,25 +42,37 @@ namespace TestMVC.Pages
                 PhoneNumber = user.PhoneNumber,
                 BirthDate = user.BirthDate
             };
+
+            return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
+            // Use the provided ID or fall back to the authenticated user's ID
+            var userId = id ?? int.Parse(_userManager.GetUserId(User));
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+
+            // Restrict editing to the authenticated user's own account
+            var authUserId = _userManager.GetUserId(User);
+            if (userId.ToString() != authUserId)
+            {
+                return Forbid();
+            }
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
             // Update profile information
             user.FullName = Input.FullName;
             user.PhoneNumber = Input.PhoneNumber;
-            user.BirthDate = Input.BirthDate;
+            user.BirthDate = Input.BirthDate.ToUniversalTime();
 
             // Update email if changed
             if (Input.Email != user.Email)
@@ -66,16 +86,29 @@ namespace TestMVC.Pages
                     }
                     return Page();
                 }
+                user.UserName = Input.Email;
             }
 
             // Update password if provided
-            if (!string.IsNullOrEmpty(Input.OldPassword) && !string.IsNullOrEmpty(Input.NewPassword))
+            if (!string.IsNullOrEmpty(Input.NewPassword))
             {
+                if (string.IsNullOrEmpty(Input.OldPassword))
+                {
+                    ModelState.AddModelError("Input.OldPassword", "Текущий пароль обязателен для смены пароля.");
+                    return Page();
+                }
+
+                if (Input.NewPassword != Input.ConfirmPassword)
+                {
+                    ModelState.AddModelError("Input.ConfirmPassword", "Пароли не совпадают.");
+                    return Page();
+                }
+
                 var changePasswordResult = await _userManager.ChangePasswordAsync(
-                    user, 
-                    Input.OldPassword, 
+                    user,
+                    Input.OldPassword,
                     Input.NewPassword);
-                
+
                 if (!changePasswordResult.Succeeded)
                 {
                     foreach (var error in changePasswordResult.Errors)
@@ -85,7 +118,6 @@ namespace TestMVC.Pages
                     return Page();
                 }
 
-                // Refresh sign-in to update security stamp
                 await _signInManager.RefreshSignInAsync(user);
             }
 
@@ -100,7 +132,7 @@ namespace TestMVC.Pages
                 return Page();
             }
 
-            return RedirectToPage("./Acc");
+            return RedirectToPage("./Acc", new { id = userId });
         }
     }
 }

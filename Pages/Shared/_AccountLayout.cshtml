@@ -1,46 +1,96 @@
+@using Microsoft.AspNetCore.Identity
+@using TestMVC.Models
+@inject UserManager<ApplicationUser> UserManager
 @{
     Layout = "_Layout";
+
+    // Get the user ID from the route (e.g., /Account/Acc/{id})
+    var userIdStr = Context.Request.RouteValues["id"]?.ToString();
+    int? userId = int.TryParse(userIdStr, out int parsedId) ? parsedId : (int?)null;
+
+    // Fetch the user based on the provided ID
+    ApplicationUser targetUser = null;
+    if (userId.HasValue)
+    {
+        targetUser = await UserManager.FindByIdAsync(userId.Value.ToString());
+    }
+
+    // Get the authenticated user's ID
+    var authenticatedUserId = UserManager.GetUserId(User);
+    int? authUserId = int.TryParse(authenticatedUserId, out int parsedAuthId) ? parsedAuthId : (int?)null;
+
+    // Determine if the authenticated user is viewing their own account
+    bool isOwnAccount = userId.HasValue && authUserId.HasValue && userId.Value == authUserId.Value;
+
+    // Set display values with fallbacks
+    var username = targetUser?.FullName ?? "Пользователь не найден";
+    var email = targetUser?.Email ?? "Не указан";
 }
 
 <head>
     <link rel="stylesheet" href="~/css/account.css">
 </head>
 <body>
-
     <div class="account-wrap">
+        @if (!isOwnAccount && targetUser != null)
+        {
+            <div class="alert alert-warning acc-alert">
+                Вы просматриваете профиль другого пользователя. Редактирование профиля доступно только для вашего аккаунта.
+            </div>
+        }
         <div class="container">
-        <div class="view-account">
-            <section class="module">
-                <div class="module-inner">
-                    <div class="side-bar">
-                        <div class="user-info">
-                            <img class="img-profile img-circle img-responsive center-block" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-                            <ul class="meta list list-unstyled">
-                                <li class="name">Username</li>
-                                <li class="email">Email</li>
-                                <li class="activity"></li>
-                            </ul>
+            <div class="view-account">
+                <section class="module">
+                    <div class="module-inner">
+                        <div class="side-bar">
+                            <div class="user-info">
+                                <img class="img-profile img-circle img-responsive center-block" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                                <ul class="meta list list-unstyled">
+                                    <li class="meta name">@username</li>
+                                    <li class="meta email">@email</li>
+                                    <li class="activity"></li>
+                                </ul>
+                            </div>
+                            <nav class="side-menu">
+                                <ul class="nav">
+                                    <li id="acc-menu-link-1">
+                                        <a class="acc-menu-link" asp-page="/Account/Acc" asp-route-id="@userId">
+                                            <span class="fa fa-user"></span> Профиль
+                                        </a>
+                                    </li>
+                                    <li id="acc-menu-link-2">
+                                        <a class="acc-menu-link" asp-page="/Account/History" asp-route-id="@userId">
+                                            <span class="fa fa-history"></span> История заездов
+                                        </a>
+                                    </li>
+                                    @if (isOwnAccount)
+                                    {
+                                        <li id="acc-menu-link-3">
+                                            <a class="acc-menu-link" asp-page="/Account/Edit" asp-route-id="@userId">
+                                                <span class="fa fa-edit"></span> Редактировать профиль
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li id="acc-menu-link-3" class="disabled">
+                                            <span class="acc-menu-link disabled-link">
+                                                <span class="fa fa-edit"></span> Редактировать профиль (недоступно)
+                                            </span>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
                         </div>
-                        <nav class="side-menu">
-                            <ul class="nav">
-                                <li id="acc-menu-link-1"><a class="acc-menu-link" asp-page="/Account/Acc"><span class="fa fa-user"></span> Профиль</a></li>
-                                <li id="acc-menu-link-2"><a class="acc-menu-link" asp-page="/Account/History"><span class="fa fa-history"></span> История заездов</a></li>
-                                <li id="acc-menu-link-3"><a class="acc-menu-link" asp-page="/Account/Edit"><span class="fa fa-edit"></span> Редактировать профиль</a></li>
-                            </ul>
-                        </nav>
+
+                        <div class="main2">
+                            @RenderBody()
+                        </div>
                     </div>
-
-                    <div class="main">
-                        @RenderBody()
-                    </div>
-
-
-                </div>
-            </section>
-        </div>
+                </section>
+            </div>
         </div>
     </div>
-
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

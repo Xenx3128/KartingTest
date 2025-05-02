@@ -1,0 +1,15 @@
+@page
+@model TestMVC.Pages.LockoutModel
+@{
+    ViewData["Title"] = "Аккаунт заблокирован";
+}
+
+<div class="container">
+    <h1 class="red-heading">Аккаунт заблокирован</h1>
+    <p>Ваш аккаунт был заблокирован. Пожалуйста, свяжитесь с администратором для получения дополнительной информации.</p>
+    <div class="back-btn-wrap">
+        <a asp-page="/Index" class="btn btn-light">Вернуться на главную</a>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/site.css">

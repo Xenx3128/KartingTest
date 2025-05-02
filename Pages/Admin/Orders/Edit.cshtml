@@ -1,0 +1,65 @@
+@page
+@model TestMVC.Pages.Admin.Orders.EditModel
+@{
+    ViewData["Title"] = "Редактировать заказ";
+}
+
+<div class="registration-form-wrap">
+    <div class="container">
+        <form method="post">
+            <input type="hidden" asp-for="Input.Id" />
+            <div class="row">
+                <h4 class="red-heading">Редактирование заказа</h4>
+                <label asp-for="Input.UserId" class="reg-label">Пользователь <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <select asp-for="Input.UserId" id="reg-user" asp-items="Model.Users" required>
+                        <option value="">Выберите пользователя...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span asp-validation-for="Input.UserId" class="text-danger"></span>
+                </div>
+                <label asp-for="Input.OrderDate" class="reg-label">Дата заказа <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input asp-for="Input.OrderDate" type="datetime-local" id="reg-date" required>
+                    <div class="input-icon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <span asp-validation-for="Input.OrderDate" class="text-danger"></span>
+                </div>
+                <label asp-for="Input.Price" class="reg-label">Цена <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input asp-for="Input.Price" type="number" step="0.01" min="0" placeholder="Цена заказа" id="reg-price" required>
+                    <div class="input-icon">
+                        <i class="fas fa-ruble-sign"></i>
+                    </div>
+                    <span asp-validation-for="Input.Price" class="text-danger"></span>
+                </div>
+                <label asp-for="Input.OrderStatusId" class="reg-label">Статус заказа <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <select asp-for="Input.OrderStatusId" id="reg-status" asp-items="Model.OrderStatuses" required>
+                        <option value="">Выберите статус...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <span asp-validation-for="Input.OrderStatusId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button id="submitForm" type="submit" class="red-button">Сохранить изменения</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./Orders" class="btn btn-light">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script type="module" src='@Url.Content("~/js/adminOrders.js")'></script>
+}

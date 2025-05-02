@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>КвестМания:@ViewData["Title"]</title>
+    <title>KartON: @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
@@ -23,6 +23,11 @@
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.2.2/af-2.7.0/b-3.2.2/b-colvis-3.2.2/b-html5-3.2.2/b-print-3.2.2/cr-2.0.4/date-1.5.5/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.4/rg-1.5.1/rr-1.5.0/sc-2.4.3/sb-1.8.2/sp-2.3.3/sl-3.0.0/sr-1.4.1/datatables.min.js" integrity="sha384-sIV9LMsMA6cOm6qFlTzbiRJeaXVf/9koMr1wEwQ7SaRZDyig/dc2sDNeBHkZ7o33" crossorigin="anonymous"></script>
     
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="~/lib/datatables/ellipsis.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
     <header class="header-outer">
@@ -31,7 +36,6 @@
                 <a asp-page="/Index">
                     <img src="https://static.tildacdn.com/tild3632-3130-4834-b666-646466613131/g10.svg" />
                 </a>
-                
             </div>
             <nav class="header-navigation">
                 <a href="#">Трасса</a>
@@ -41,12 +45,16 @@
                 <a href="#">Как добраться</a>
                 <a href="#">+7 (342) 243-01-23</a>
                 <a asp-page="/Orders" type="button" id="order-btn">Забронировать</a>
-                @if (!SignInManager.IsSignedIn(User)){
-                    <a asp-area="Identity" asp-page="/Account/Login">Вход</a>
-                    <a asp-area="Identity" asp-page="/Account/Register" type="button">Регистрация</a>
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <a asp-page="/Account/Login">Вход</a>
+                    <a asp-page="/Account/Register" type="button">Регистрация</a>
                 }
-                else{
-                    <a id="account-link" asp-area="Identity" asp-page="/Account/Acc">@UserManager.GetUserName(User)</a>
+                else
+                {
+                    var userId = UserManager.GetUserId(User);
+                    var user = await UserManager.FindByIdAsync(userId);
+                    <a id="account-link" asp-page="/Account/Acc" asp-route-id="@userId">@(user?.FullName ?? UserManager.GetUserName(User))</a>
                 }
             </nav>
         </div>

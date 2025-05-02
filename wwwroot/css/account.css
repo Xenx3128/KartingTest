@@ -671,4 +671,22 @@
         font-weight: 500 !important;
         font-size: 14px;
     }
+
+    .disabled-link {
+        color: #999;
+        cursor: not-allowed;
+        pointer-events: none;
+        text-decoration: none;
+    }
+
+    .meta .name,
+    .meta .email {
+        display: block;
+        max-width: 120px; /* Adjust based on sidebar width */
+        margin: 0 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
 }

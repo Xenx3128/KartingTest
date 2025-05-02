@@ -73,12 +73,10 @@ namespace TestMVC.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
@@ -114,12 +112,10 @@ namespace TestMVC.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -187,12 +183,10 @@ namespace TestMVC.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("FromWhereFoundOut")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -211,17 +205,11 @@ namespace TestMVC.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("Note")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
-
-                    b.Property<string>("PhoneNum")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
@@ -237,11 +225,6 @@ namespace TestMVC.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -294,21 +277,28 @@ namespace TestMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("OrderStatusId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10, 2)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -391,28 +381,28 @@ namespace TestMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<DateTime>("FinishDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("RaceCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RaceStatusId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("RaceCategoryId");
+
+                    b.HasIndex("RaceStatusId");
 
                     b.ToTable("Races");
                 });
@@ -486,24 +476,6 @@ namespace TestMVC.Migrations
                     b.ToTable("UserCarts");
                 });
 
-            modelBuilder.Entity("TestMVC.Models.UserStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserStatuses");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("TestMVC.Models.ApplicationRole", null)
@@ -557,35 +529,82 @@ namespace TestMVC.Migrations
 
             modelBuilder.Entity("TestMVC.Models.CircleResults", b =>
                 {
-                    b.HasOne("TestMVC.Models.RaceCart", null)
-                        .WithMany()
-                        .HasForeignKey("RaceCartId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TestMVC.Models.Races", b =>
-                {
-                    b.HasOne("TestMVC.Models.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TestMVC.Models.UserCart", b =>
-                {
-                    b.HasOne("TestMVC.Models.RaceCart", null)
+                    b.HasOne("TestMVC.Models.RaceCart", "RaceCart")
                         .WithMany()
                         .HasForeignKey("RaceCartId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("RaceCart");
+                });
+
+            modelBuilder.Entity("TestMVC.Models.Order", b =>
+                {
                     b.HasOne("TestMVC.Models.ApplicationUser", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("TestMVC.Models.OrderStatus", "OrderStatus")
+                        .WithMany()
+                        .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TestMVC.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("OrderStatus");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TestMVC.Models.Races", b =>
+                {
+                    b.HasOne("TestMVC.Models.Order", "Order")
+                        .WithMany("Races")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TestMVC.Models.RaceCategory", "RaceCategory")
+                        .WithMany()
+                        .HasForeignKey("RaceCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TestMVC.Models.RaceStatus", "RaceStatus")
+                        .WithMany()
+                        .HasForeignKey("RaceStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("RaceCategory");
+
+                    b.Navigation("RaceStatus");
+                });
+
+            modelBuilder.Entity("TestMVC.Models.UserCart", b =>
+                {
+                    b.HasOne("TestMVC.Models.RaceCart", "RaceCart")
+                        .WithMany()
+                        .HasForeignKey("RaceCartId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TestMVC.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("RaceCart");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TestMVC.Models.ApplicationRole", b =>
@@ -595,7 +614,14 @@ namespace TestMVC.Migrations
 
             modelBuilder.Entity("TestMVC.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("TestMVC.Models.Order", b =>
+                {
+                    b.Navigation("Races");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,4 @@
-@page
+@page "{id?}"
 @model TestMVC.Pages.AccModel
 @using TestMVC.Models
 @using Microsoft.AspNetCore.Identity
@@ -6,6 +6,9 @@
 @{
     Layout = "_AccountLayout";
     var user = await UserManager.GetUserAsync(User);
+    // Determine if this is the user's own account
+    var authUserId = UserManager.GetUserId(User);
+    bool isOwnAccount = Model.UserId.ToString() == authUserId;
 }
 
 
@@ -46,7 +49,7 @@
             </div>
         </div>
 
-        <div class="profile-info-row"></div>
+        <div class="profile-info-row">
             <div class="profile-info-name">Статус аккаунта</div>
             <div class="profile-info-value">
                 @if (user.LockoutEnd?.DateTime > DateTime.Now)
@@ -60,7 +63,7 @@
             </div>
         </div>
 
-        <div class="profile-info-row"></div>
+        <div class="profile-info-row">
             <div class="profile-info-name">Дата регистрации</div>
             <div class="profile-info-value">
                 <span>@user.RegistrationDate.ToString("yyyy/MM/dd")</span>
@@ -68,6 +71,14 @@
         </div>
 
     </div>
+    <br>
+    @if (isOwnAccount)
+    {
+        <form asp-page="/Account/Logout" method="post" asp-route-returnUrl="@Url.Page("/Index")">
+            <button type="submit" class="red-button-alt">Выйти из аккаунта</button>
+        </form>
+    }
+    
 </div>
 
 
@@ -75,6 +86,7 @@
 
 
 @section Scripts{
+    <partial name="_ValidationScriptsPartial" />
     <script type="module" src='@Url.Content("~/js/registration.js")'></script>
     <script>
         var menu_link = document.getElementById("acc-menu-link-1");
