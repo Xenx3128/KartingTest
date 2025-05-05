@@ -5,6 +5,7 @@ using Serilog;
 using Microsoft.AspNetCore.Identity;
 using TestMVC.Service;
 using TestMVC.Utility;
+using Microsoft.AspNetCore.Http;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -22,7 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     .EnableDetailedErrors()
     .LogTo(message => Log.Information(message), LogLevel.Information));
 
-// Add Identity services (consolidated)
+// Add Identity services
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     // Password requirements
@@ -44,51 +45,73 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddDefaultTokenProviders()
 .AddRoles<ApplicationRole>();
 
+// Add HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
 // Register contexts with proper dependencies
-builder.Services.AddSingleton<AppointmentContext>(sp =>
+builder.Services.AddScoped<AppointmentContext>(sp =>
 {
-    Log.Information("Registering AppointmentContext with connection string.");
-    return new AppointmentContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+    Log.Information("Регистрация AppointmentContext с строкой подключения.");
+    return new AppointmentContext(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<IHttpContextAccessor>());
 });
 
 builder.Services.AddScoped<UserContext>(provider =>
 {
-    Log.Information("Registering UserContext with connection string and Identity services.");
+    Log.Information("Регистрация UserContext с строкой подключения и сервисами Identity.");
     var connectionString = provider.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection");
     var userManager = provider.GetRequiredService<UserManager<ApplicationUser>>();
     var signInManager = provider.GetRequiredService<SignInManager<ApplicationUser>>();
+    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
     
-    return new UserContext(connectionString, userManager, signInManager);
+    return new UserContext(connectionString, userManager, signInManager, httpContextAccessor);
 });
 
-builder.Services.AddSingleton<OrderContext>(sp =>
+builder.Services.AddScoped<OrderContext>(sp =>
 {
-    Log.Information("Registering OrderContext with connection string.");
-    return new OrderContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+    Log.Information("Регистрация OrderContext с строкой подключения.");
+    return new OrderContext(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<IHttpContextAccessor>());
 });
 
-builder.Services.AddSingleton<RaceContext>(sp =>
+builder.Services.AddScoped<RaceContext>(sp =>
 {
-    Log.Information("Registering RaceContext with connection string.");
-    return new RaceContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+    Log.Information("Регистрация RaceContext с строкой подключения.");
+    return new RaceContext(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<IHttpContextAccessor>());
 });
 
-builder.Services.AddSingleton<BreakContext>(sp =>
+builder.Services.AddScoped<BreakContext>(sp =>
 {
-    Log.Information("Registering BreakContext with connection string.");
-    return new BreakContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+    Log.Information("Регистрация BreakContext с строкой подключения.");
+    return new BreakContext(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<IHttpContextAccessor>());
 });
 
-builder.Services.AddSingleton<CartContext>(sp =>
+builder.Services.AddScoped<CartContext>(sp =>
 {
-    Log.Information("Registering CartContext with connection string.");
-    return new CartContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+    Log.Information("Регистрация CartContext с строкой подключения.");
+    return new CartContext(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<IHttpContextAccessor>());
 });
 
-builder.Services.AddSingleton<CircleResultsContext>(sp =>
+builder.Services.AddScoped<CircleResultsContext>(sp =>
 {
-    Log.Information("Registering CircleResultsContext with connection string.");
-    return new CircleResultsContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+    Log.Information("Регистрация CircleResultsContext с строкой подключения.");
+    return new CircleResultsContext(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<IHttpContextAccessor>());
 });
 
 // Logger
@@ -125,7 +148,7 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 
-Log.Information("Application starting...");
+Log.Information("Запуск приложения...");
 try
 {
     app.Run();

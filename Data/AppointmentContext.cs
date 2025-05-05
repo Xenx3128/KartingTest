@@ -6,60 +6,85 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using Serilog;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Threading;
 
 namespace TestMVC.Data
 {
     public class AppointmentContext
     {
         private readonly string _connectionString;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AppointmentContext(string connectionString)
+        public AppointmentContext(string connectionString, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _connectionString = connectionString;
-            Log.Information("AppointmentContext initialized with connection string.");
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+            Log.Information($"{GetUserPrefix()} AppointmentContext инициализирован со строкой подключения.");
         }
 
         private IDbConnection CreateConnection() => new NpgsqlConnection(_connectionString);
 
+        private string GetUserPrefix()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+            {
+                var userId = _userManager.GetUserId(user);
+                var applicationUser = _userManager.FindByIdAsync(userId).GetAwaiter().GetResult();
+                var roles = _userManager.GetRolesAsync(applicationUser).GetAwaiter().GetResult();
+                var role = roles.FirstOrDefault() ?? "NoRole";
+                return $"[{applicationUser?.Email ?? "UnknownEmail"}] [{role}]";
+            }
+            return "[Unknown]";
+        }
+
         public async Task<IEnumerable<DateTime>> GetPlannedRaces(DateTime date)
         {
-            Log.Information("Fetching planned races for date {Date}", date.Date);
+            var prefix = GetUserPrefix();
+            Log.Information($"{prefix} Получение запланированных гонок на дату {date.Date}");
             try
             {
                 using var connection = CreateConnection();
                 var sql = @"SELECT ""StartDate"" FROM ""Races"" WHERE DATE(""StartDate"") = @Date";
                 var result = await connection.QueryAsync<DateTime>(sql, new { Date = date.Date });
-                Log.Information("Retrieved {Count} planned races for date {Date}", result.Count(), date.Date);
+                Log.Information($"{prefix} Получено {result.Count()} запланированных гонок на дату {date.Date}");
                 return result;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to fetch planned races for date {Date}", date.Date);
+                Log.Error(ex, $"{prefix} Failed to fetch planned races for date {date.Date}");
                 throw;
             }
         }
 
         public async Task<IEnumerable<DateTime>> GetTechBreaks(DateTime date)
         {
-            Log.Information("Fetching technical breaks for date {Date}", date.Date);
+            var prefix = GetUserPrefix();
+            Log.Information($"{prefix} Получение технических перерывов на дату {date.Date}");
             try
             {
                 using var connection = CreateConnection();
                 var sql = @"SELECT ""DateStart"" FROM ""TechnicalBreaks"" WHERE DATE(""DateStart"") = @Date";
                 var result = await connection.QueryAsync<DateTime>(sql, new { Date = date.Date });
-                Log.Information("Retrieved {Count} technical breaks for date {Date}", result.Count(), date.Date);
+                Log.Information($"{prefix} Получено {result.Count()} технических перерывов на дату {date.Date}");
                 return result;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to fetch technical breaks for date {Date}", date.Date);
+                Log.Error(ex, $"{prefix} Failed to fetch technical breaks for date {date.Date}");
                 throw;
             }
         }
 
         public async Task<int> CreateOrderAsync(int userId, DateOnly date, List<TimeOnly> times, bool isUniform, List<int> raceCategoryIds)
         {
-            Log.Information("Creating order for user {UserId} on date {Date} with {TimeCount} times", userId, date, times.Count);
+            var prefix = GetUserPrefix();
+            Log.Information($"{prefix} Создание заказа для пользователя {userId} на дату {date} с {times.Count} временами");
             using var connection = CreateConnection();
             connection.Open();
             using var transaction = connection.BeginTransaction();
@@ -72,7 +97,7 @@ namespace TestMVC.Data
 
                 if (orderStatusId == 0)
                 {
-                    Log.Error("Order status 'Pending' not found for user {UserId}", userId);
+                    Log.Error($"{prefix} Order status 'Pending' not found for user {userId}");
                     throw new Exception("Order status 'Pending' not found.");
                 }
 
@@ -97,7 +122,7 @@ namespace TestMVC.Data
 
                 if (raceStatusId == 0)
                 {
-                    Log.Error("Race status 'Planned' not found for order {OrderId", orderId);
+                    Log.Error($"{prefix} Race status 'Planned' not found for order {orderId}");
                     throw new Exception("Race status 'Planned' not found.");
                 }
 
@@ -124,31 +149,34 @@ namespace TestMVC.Data
 
                 await connection.ExecuteAsync(raceSql, raceParams, transaction);
                 transaction.Commit();
-                Log.Information("Order {OrderId} created successfully for user {UserId}", orderId, userId);
+                Log.Information($"{prefix} Заказ {orderId} успешно создан для пользователя {userId}");
                 return orderId;
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
-                Log.Error(ex, "Failed to create order for user {UserId} on date {Date}", userId, date);
-                throw;
+                Log.Error(ex, $"{prefix} Failed to create order for user {userId} on date {date}");
+                throw
+
+;
             }
         }
 
         public async Task<IEnumerable<RaceCategory>> GetRaceCategoriesAsync()
         {
-            Log.Information("Fetching all race categories");
+            var prefix = GetUserPrefix();
+            Log.Information($"{prefix} Получение всех категорий гонок");
             try
             {
                 using var connection = CreateConnection();
                 var sql = @"SELECT ""Id"", ""Category"" FROM ""RaceCategories"" ORDER BY ""Category""";
                 var result = await connection.QueryAsync<RaceCategory>(sql);
-                Log.Information("Retrieved {Count} race categories", result.Count());
+                Log.Information($"{prefix} Получено {result.Count()} категорий гонок");
                 return result;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to fetch race categories");
+                Log.Error(ex, $"{prefix} Failed to fetch race categories");
                 throw;
             }
         }
