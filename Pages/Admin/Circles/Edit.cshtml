@@ -1,0 +1,40 @@
+@page "{id:int}/{userRaceId:int}"
+@model TestMVC.Pages.AdminCircleResults.EditModel
+@{
+    ViewData["Title"] = "Редактировать результат круга";
+    Layout = "_AdminLayout";
+}
+
+<div class="registration-form-wrap">
+    <div class="container">
+        <form method="post" id="circleresulteditform">
+            <input type="hidden" asp-for="Input.Id" />
+            <div class="row">
+                <h4 class="red-heading">Редактирование результата круга</h4>
+                <label asp-for="Input.CircleNum" class="reg-label">Номер круга <span class="required">*</span></label>
+                <div class="input-group">
+                    <input class="form-control" asp-for="Input.CircleNum" type="number" min="1" required>
+                    <span class="text-danger" asp-validation-for="Input.CircleNum"></span>
+                </div>
+                <label asp-for="Input.CircleTime" class="reg-label">Время круга (mm:ss) <span class="required">*</span></label>
+                <div class="input-group">
+                    <input class="form-control" asp-for="Input.CircleTime" type="text" placeholder="Например, 01:30" required>
+                    <span class="text-danger" asp-validation-for="Input.CircleTime"></span>
+                </div>
+            </div>
+
+            <button id="submitForm" type="submit" class="red-button">Сохранить изменения</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./Circles" asp-route-userRaceId="@Model.UserRaceId" class="btn btn-light">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+}

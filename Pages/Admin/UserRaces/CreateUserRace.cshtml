@@ -1,0 +1,67 @@
+@page "{raceId:int}"
+@model TestMVC.Pages.Admin.CreateUserRaceModel 
+@{
+    ViewData["Title"] = "Добавить участника заезда";
+    Layout = "_AdminLayout";
+}
+
+<div class="registration-form-wrap">
+    <div class="container">
+        <form method="post" class="mt-4" id="userRaceForm">
+            <h4 class="red-heading">Добавление участника в заезд #@Model.Race.Id</h4>
+            
+            <!-- User Selection -->
+            <div class="row">
+                <label asp-for="Input.UserId" class="reg-label">Пользователь <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <select asp-for="Input.UserId" id="reg-user" asp-items="Model.Users" required>
+                        <option value="">Выберите пользователя...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span asp-validation-for="Input.UserId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Cart Selection -->
+            <div class="row">
+                <label asp-for="Input.CartId" class="reg-label">Картинг <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <select asp-for="Input.CartId" id="reg-cart" asp-items="Model.Carts" required>
+                        <option value="">Выберите картинг...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <span asp-validation-for="Input.CartId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Position Input -->
+            <div class="row">
+                <label asp-for="Input.Position" class="reg-label">Позиция</label>
+                <div class="input-group input-group-icon">
+                    <input asp-for="Input.Position" type="number" min="1" class="form-control" placeholder="Введите позицию (необязательно)" />
+                    <div class="input-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <span asp-validation-for="Input.Position" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button id="submitForm" type="submit" class="red-button">Добавить участника</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./UserRaces" asp-route-raceId="@Model.Race.Id" class="btn btn-light">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script type="module" src='@Url.Content("~/js/adminUserRaces.js")'></script>
+}

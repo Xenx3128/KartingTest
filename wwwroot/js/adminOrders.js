@@ -47,10 +47,10 @@ var ordersTable = new DataTable('#adminOrdersMain', {
     responsive: true,
     scrollX: true,
     language: {
-        info: 'Заезд _START_-_END_ из _TOTAL_',
+        info: 'Заказ _START_-_END_ из _TOTAL_',
         infoEmpty: 'Тут пока пусто',
-        infoFiltered: '(отфильтровано из _MAX_ заездов)',
-        lengthMenu: 'Показывать _MENU_ заездов на странице',
+        infoFiltered: '(отфильтровано из _MAX_ заказов)',
+        lengthMenu: 'Показывать _MENU_ заказов на странице',
         search: "Поиск:",
         zeroRecords: 'Ничего не найдено - извините'
     },
@@ -68,7 +68,19 @@ var ordersTable = new DataTable('#adminOrdersMain', {
             searchable: false
         }
     ],
-    order: [[2, 'desc']] // Order by Order Date
+    order: [[2, 'desc']],
+    initComplete: function () {
+        this.api().columns([1, 2, 3, 4, 5]).every(function () {
+            let column = this;
+            let footer = $(column.footer()).html('<input type="text" placeholder="Фильтр..." style="width:100%"/>');
+            
+            $('input', column.footer()).on('keyup change clear', function () {
+                if (column.search() !== this.value) {
+                    column.search(this.value).draw();
+                }
+            });
+        });
+    }
 });
 
 // Add event listener for opening and closing details

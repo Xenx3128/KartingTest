@@ -1,0 +1,78 @@
+@using Microsoft.AspNetCore.Identity
+@using TestMVC.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KartON: @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.2.2/af-2.7.0/b-3.2.2/b-colvis-3.2.2/b-html5-3.2.2/b-print-3.2.2/cr-2.0.4/date-1.5.5/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.4/rg-1.5.1/rr-1.5.0/sc-2.4.3/sb-1.8.2/sp-2.3.3/sl-3.0.0/sr-1.4.1/datatables.min.css" rel="stylesheet" integrity="sha384-wUcIOXCfYDR6KT/+U8KpnKD6Hbf24i8YkIItz8jn/xmebCBR70TTd8xYi/QS1hfY" crossorigin="anonymous">
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.2.2/af-2.7.0/b-3.2.2/b-colvis-3.2.2/b-html5-3.2.2/b-print-3.2.2/cr-2.0.4/date-1.5.5/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.4/rg-1.5.1/rr-1.5.0/sc-2.4.3/sb-1.8.2/sp-2.3.3/sl-3.0.0/sr-1.4.1/datatables.min.js" integrity="sha384-sIV9LMsMA6cOm6qFlTzbiRJeaXVf/9koMr1wEwQ7SaRZDyig/dc2sDNeBHkZ7o33" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="~/lib/datatables/ellipsis.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
+    <script src="~/lib/slot-picker/appointment-picker.min.js"></script>
+    <script src="~/lib/air-datepicker/air-datepicker.js"></script>
+    <script src="~/lib/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">
+    <link rel="stylesheet" href="~/lib/air-datepicker/air-datepicker.css">
+
+</head>
+<body>
+    <header class="header-outer">
+        <div class="header-inner responsive-wrapper">
+            <div class="header-logo">
+                <a asp-page="/Index">
+                    <img src="https://static.tildacdn.com/tild3632-3130-4834-b666-646466613131/g10.svg" />
+                </a>
+            </div>
+            <nav class="header-navigation">
+                <a asp-page="/Admin/Users/Users">Пользователи</a>
+                <a asp-page="/Admin/Orders/Orders">Заказы</a>
+                <a asp-page="/Admin/Races/Races">Заезды</a>
+                <a asp-page="/Admin/TechnicalBreaks/Breaks">Тех. перерывы</a>
+                <a asp-page="/Admin/Carts/Carts">Карты</a>
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <a asp-page="/Account/Login">Вход</a>
+                    <a asp-page="/Account/Register" type="button">Регистрация</a>
+                }
+                else
+                {
+                    var userId = UserManager.GetUserId(User);
+                    var user = await UserManager.FindByIdAsync(userId);
+                    <a id="account-link" asp-page="/Account/Acc" asp-route-id="@userId">@(user?.FullName ?? UserManager.GetUserName(User))</a>
+                }
+            </nav>
+        </div>
+    </header>
+
+    <div class="main">
+        @RenderBody()
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,60 @@
+@page
+@model TestMVC.Pages.AdminBreaks.EditModel
+@{
+    ViewData["Title"] = "Редактировать технический перерыв";
+    Layout = "_AdminLayout";
+}
+
+<div class="registration-form-wrap">
+    <div class="container">
+        <form method="post" id="breakeditform">
+            <input type="hidden" asp-for="Input.Id" />
+            <div class="row">
+                <h4 class="red-heading">Редактирование технического перерыва</h4>
+                <label asp-for="Input.Date" class="reg-label">Дата <span class="required">*</span></label>
+                <div class="input-group">
+                    <input id="inputdate" class="form-control" asp-for="Input.Date" type="text" placeholder="Выберите дату" required readonly>
+                    <span class="text-danger" asp-validation-for="Input.Date"></span>
+                </div>
+                <label asp-for="Input.Time" class="reg-label">Время <span class="required">*</span></label>
+                <div class="input-group">
+                    <input id="inputtime" class="form-control" asp-for="Input.Time" type="text" placeholder="Выберите время" required readonly>
+                    <span class="text-danger" asp-validation-for="Input.Time"></span>
+                </div>
+                <label asp-for="Input.Desc" class="reg-label">Описание</label>
+                <div class="input-group">
+                    <input class="form-control" asp-for="Input.Desc" type="text" placeholder="Введите описание">
+                    <span class="text-danger" asp-validation-for="Input.Desc"></span>
+                </div>
+                <label asp-for="Input.BreakStatusId" class="reg-label">Статус <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <select asp-for="Input.BreakStatusId" id="reg-status" asp-items="Model.BreakStatuses" required>
+                        <option value="">Выберите статус...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <span asp-validation-for="Input.BreakStatusId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button id="submitForm" type="submit" class="red-button">Сохранить изменения</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./Breaks" class="btn btn-light">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Inject StartTime into global scope
+        window.breakStartTime = '@ViewData["StartTime"]';
+    </script>
+    <script type="module" src='@Url.Content("~/js/adminBreaks.js")'></script>
+}

@@ -15,11 +15,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Races> Races { get; set; }
     public DbSet<TechnicalBreaks> TechnicalBreaks { get; set; }
     public DbSet<Settings> Settings { get; set; }
-    public DbSet<RaceCart> RaceCarts { get; set; }
-    public DbSet<UserCart> UserCarts { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<UserRace> UserRaces { get; set; }
     public DbSet<CircleResults> CircleResults { get; set; }
     public DbSet<OrderStatus> OrderStatuses { get; set; }
     public DbSet<RaceStatus> RaceStatuses { get; set; }
+    public DbSet<BreakStatuses> BreakStatuses { get; set; }
     public DbSet<RaceCategory> RaceCategories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -43,7 +44,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         // Order -> ApplicationUser (many-to-one)
         modelBuilder.Entity<Order>()
             .HasOne(o => o.User)
-            .WithMany()
+            .WithMany(u => u.Orders)
             .HasForeignKey(o => o.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -61,25 +62,32 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .HasForeignKey(r => r.RaceStatusId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // UserCart -> ApplicationUser (many-to-one)
-        modelBuilder.Entity<UserCart>()
-            .HasOne(uc => uc.User)
+        // UserRace -> ApplicationUser (many-to-one)
+        modelBuilder.Entity<UserRace>()
+            .HasOne(ur => ur.User)
             .WithMany()
-            .HasForeignKey(uc => uc.UserId)
+            .HasForeignKey(ur => ur.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // UserCart -> RaceCart (many-to-one)
-        modelBuilder.Entity<UserCart>()
-            .HasOne(uc => uc.RaceCart)
+        // UserRace -> Races (many-to-one)
+        modelBuilder.Entity<UserRace>()
+            .HasOne(ur => ur.Race)
             .WithMany()
-            .HasForeignKey(uc => uc.RaceCartId)
+            .HasForeignKey(ur => ur.RaceId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // CircleResults -> RaceCart (many-to-one)
+        // UserRace -> Cart (many-to-one)
+        modelBuilder.Entity<UserRace>()
+            .HasOne(ur => ur.Cart)
+            .WithMany()
+            .HasForeignKey(ur => ur.CartId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // CircleResults -> UserRace (many-to-one)
         modelBuilder.Entity<CircleResults>()
-            .HasOne(cr => cr.RaceCart)
+            .HasOne(cr => cr.UserRace)
             .WithMany()
-            .HasForeignKey(cr => cr.RaceCartId)
+            .HasForeignKey(cr => cr.UserRaceId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Identity relationships
@@ -88,11 +96,40 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             .WithOne()
             .HasForeignKey(ur => ur.UserId)
             .IsRequired();
+        
+        // TechnicalBreaks -> CartStatus (many-to-one)
+        modelBuilder.Entity<TechnicalBreaks>()
+            .HasOne(tb => tb.BreakStatus)
+            .WithMany()
+            .HasForeignKey(tb => tb.BreakStatusId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ApplicationRole>()
             .HasMany(r => r.UserRoles)
             .WithOne()
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
+
+
+        modelBuilder.Entity<Order>()
+            .HasIndex(o => o.UserId);
+        modelBuilder.Entity<Order>()
+            .HasIndex(o => o.OrderStatusId);
+        modelBuilder.Entity<Races>()
+            .HasIndex(r => r.OrderId);
+        modelBuilder.Entity<Races>()
+            .HasIndex(r => r.RaceCategoryId);
+        modelBuilder.Entity<Races>()
+            .HasIndex(r => r.RaceStatusId);
+        modelBuilder.Entity<UserRace>()
+            .HasIndex(ur => ur.UserId);
+        modelBuilder.Entity<UserRace>()
+            .HasIndex(ur => ur.RaceId);
+        modelBuilder.Entity<UserRace>()
+            .HasIndex(ur => ur.CartId);
+        modelBuilder.Entity<CircleResults>()
+            .HasIndex(cr => cr.UserRaceId);
+        modelBuilder.Entity<TechnicalBreaks>()
+            .HasIndex(tb => tb.BreakStatusId);
     }
 }

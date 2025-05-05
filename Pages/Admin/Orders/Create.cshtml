@@ -1,7 +1,8 @@
 @page
-@model TestMVC.Pages.Admin.Orders.CreateModel
+@model TestMVC.Pages.AdminOrders.CreateModel
 @{
     ViewData["Title"] = "Создать заказ";
+    Layout = "_AdminLayout";
 }
 
 <div class="orders-wrap">
@@ -69,12 +70,6 @@
 
 <link rel="stylesheet" href="~/css/orders.css">
 <link rel="stylesheet" href="~/css/admin.css">
-<link rel="stylesheet" href="~/lib/slot-picker/appointment-picker.css">
-<link rel="stylesheet" href="~/lib/air-datepicker/air-datepicker.css">
-
-<script src="~/lib/slot-picker/appointment-slot-picker-test.js"></script>
-<script src="~/lib/air-datepicker/air-datepicker.js"></script>
-<script src="~/lib/axios/dist/axios.min.js"></script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

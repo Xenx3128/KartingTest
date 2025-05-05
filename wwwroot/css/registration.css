@@ -34,7 +34,7 @@
         color: #fb3f54;
     }
     input:focus + .input-icon:after,
-    textarea:focus {
+    textarea:focus + .input-icon:after {
         border-right-color: #fb3f54;
     }
     input[type="radio"] {
@@ -145,6 +145,10 @@
         white-space: nowrap;
         overflow: hidden;
     }
+    .input-group-icon textarea {
+        padding-left: 4.4em;
+        height: 6.8em; /* Adjust height for consistency, allows multiple rows */
+    }
     .input-group-icon .input-icon {
         position: absolute;
         top: 0;
@@ -154,6 +158,7 @@
         line-height: 3.4em;
         text-align: center;
         pointer-events: none;
+        z-index: 5; /* Ensure icon is above textarea */
     }
     .input-group-icon .input-icon:after {
         position: absolute;

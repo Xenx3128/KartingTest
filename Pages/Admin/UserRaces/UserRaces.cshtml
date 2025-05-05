@@ -1,0 +1,71 @@
+@page "{raceId:int}"
+@model TestMVC.Pages.Admin.UserRacesModel
+@using System
+@{
+    ViewData["Title"] = "Панель администратора: Участники заезда";
+    Layout = "_AdminLayout";
+    var timeZone = TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time");
+}
+
+<div id="admin-userraces-main-wrap">
+    <div class="row">
+        <h3>Участники заезда #@Model.Race.Id (@Model.Race.RaceCategory?.Category)</h3>
+        <a asp-page="./CreateUserRace" asp-route-raceId="@Model.Race.Id" id="userraces-add-icon" type="button" class="add-btn admin-menu-icon" title="Добавить участника">
+            <i class="fa fa-plus fa-lg"></i>
+        </a>
+    </div>
+
+    <table id="adminUserRacesMain" class="cell-border hover stripe">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Пользователь</th>
+                <th>Email</th>
+                <th>Карт</th>
+                <th>Позиция</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var userRace in Model.UserRaces)
+            {
+                <tr>
+                    <td>@userRace.Id</td>
+                    <td>@(userRace.User?.FullName ?? "Unknown")</td>
+                    <td>@(userRace.User?.Email ?? "Unknown")</td>
+                    <td>@(userRace.Cart?.Name ?? "Not Assigned")</td>
+                    <td>@(userRace.Position?.ToString() ?? "N/A")</td>
+                    <td>
+                        <a asp-page="./EditUserRace" asp-route-id="@userRace.Id" asp-route-raceId="@Model.Race.Id" class="admin-menu-icon" id="userraces-edit-icon" title="Редактировать участника">
+                            <i class="fa fa-edit fa-lg"></i>
+                        </a> |
+                        <a asp-page="/Admin/Circles/Circles" asp-route-userRaceId="@userRace.Id" class="admin-menu-icon" id="userraces-details-icon" title="Результаты кругов">
+                            <i class="fa fa-list-alt fa-lg"></i>
+                        </a> |
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@userRace.Id" asp-route-raceId="@Model.Race.Id" class="d-inline">
+                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="userraces-delete-icon" title="Удалить участника"
+                                    onclick="return confirm('Вы уверены, что хотите удалить этого участника из заезда?')">
+                                <i class="fa fa-trash fa-lg text-danger"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<link rel="stylesheet" href="~/css/admin.css">
+
+@section Scripts {
+    <script type="module" src='@Url.Content("~/js/adminUserRaces.js")'></script>
+}

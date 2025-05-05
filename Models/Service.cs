@@ -17,6 +17,22 @@ public class TechnicalBreaks
     [DataType(DataType.DateTime)]
     public DateTime DateFinish { get; set; }
 
+    [StringLength(50)]
+    public string Desc { get; set; }
+
+    [Required]
+    public int BreakStatusId { get; set; }
+    
+    [ForeignKey("BreakStatusId")]
+    public BreakStatuses BreakStatus { get; set; }
+}
+
+public class BreakStatuses
+{
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+
     [Required]
     [StringLength(50)]
     public string Status { get; set; }

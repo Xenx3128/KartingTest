@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 
-namespace TestMVC.Pages.Admin.Orders
+namespace TestMVC.Pages.AdminOrders
 {
     [Authorize(Roles = "Admin,SuperAdmin")]
     public class EditModel : PageModel

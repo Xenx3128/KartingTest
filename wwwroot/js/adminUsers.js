@@ -18,10 +18,10 @@ var usertable = new DataTable('#adminUsersMain', {
     responsive: true,
     scrollX: true,
     language: {
-        info: 'Заезд _START_-_END_ из _TOTAL_',
+        info: 'Пользователь _START_-_END_ из _TOTAL_',
         infoEmpty: 'Тут пока пусто',
-        infoFiltered: '(отфильтровано из _MAX_ заездов)',
-        lengthMenu: 'Показывать _MENU_ заездов на странице',
+        infoFiltered: '(отфильтровано из _MAX_ пользователей)',
+        lengthMenu: 'Показывать _MENU_ пользователей на странице',
         search: "Поиск:",
         zeroRecords: 'Ничего не найдено - извините'
     },
@@ -38,7 +38,19 @@ var usertable = new DataTable('#adminUsersMain', {
             visible: false
         }
     ],
-    order: [[2, 'asc']] // Order by Registration Date
+    order: [[2, 'asc']],
+    initComplete: function () {
+        this.api().columns([2, 3, 4, 5, 6, 7, 8]).every(function () {
+            let column = this;
+            let footer = $(column.footer()).html('<input type="text" placeholder="Фильтр..." style="width:100%"/>');
+            
+            $('input', column.footer()).on('keyup change clear', function () {
+                if (column.search() !== this.value) {
+                    column.search(this.value).draw();
+                }
+            });
+        });
+    }
 });
 
 // Add event listener for opening and closing details

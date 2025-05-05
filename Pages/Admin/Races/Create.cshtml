@@ -1,0 +1,80 @@
+@page
+@model TestMVC.Pages.AdminRaces.CreateModel
+@{
+    ViewData["Title"] = "Создать заезд";
+    Layout = "_AdminLayout";
+}
+
+<div class="orders-wrap">
+    <div class="container">
+        <form method="post" class="mt-4" id="orderForm">
+            <!-- Order Selection -->
+            <div class="row">
+                <h4 class="red-heading">Выбор заказа</h4>
+                <label asp-for="Input.OrderId" class="reg-label">Заказ <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <select asp-for="Input.OrderId" id="reg-order" asp-items="Model.Orders" required>
+                        <option value="">Выберите заказ...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <span asp-validation-for="Input.OrderId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Date and Time Section -->
+            <div class="row">
+                <h4 class="red-heading">Выбор времени заезда</h4>
+                <div class="input-group">
+                    <input id="inputdate" class="form-control" name="date" asp-for="Input.Date" type="text" placeholder="Выберите дату" required readonly>
+                    <span class="text-danger" asp-validation-for="Input.Date"></span>
+                </div>
+                <div class="input-group">
+                    <input id="inputtime" class="form-control" name="time" type="text" placeholder="Выберите время" required readonly>
+                    <span class="text-danger" asp-validation-for="Input.Times"></span>
+                </div>
+            </div>
+
+            <!-- Race Type Selection -->
+            <div id="RaceTypeGlobalContainer" class="row">
+                <h4 class="red-heading">Тип заезда</h4>
+                <div class="input-group">
+                    <input id="race-type-uniform" type="radio" name="race-type" value="uniform" asp-for="Input.IsUniform" checked>
+                    <label for="race-type-uniform" class="reg-label">Один тип заездов для всех слотов</label>
+                </div>
+                <div class="input-group">
+                    <input id="race-type-divided" type="radio" name="race-type" value="divided" asp-for="Input.IsUniform">
+                    <label for="race-type-divided" class="reg-label">Различные типы заездов</label>
+                </div>
+                <span class="text-danger" asp-validation-for="Input.IsUniform"></span>
+                <div id="RaceTypeContainer" class="mt-2"></div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="row">
+                <h4 class="red-heading">Техника безопасности</h4>
+                <div class="input-group">
+                    <input id="terms" type="checkbox" name="terms" asp-for="Input.TermsAccepted" required>
+                    <label for="terms" class="reg-label">Я прочёл и принимаю технику безопасности</label>
+                    <span class="text-danger" asp-validation-for="Input.TermsAccepted"></span>
+                </div>
+            </div>
+
+            <button id="submitForm" type="submit" class="red-button">Зарегистрировать заезд</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./Races" class="btn btn-light">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/orders.css">
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="module" src='@Url.Content("~/js/adminRaces.js")'></script>
+    <script type="module" src='@Url.Content("~/js/adminOrdersCreate.js")'></script>
+}

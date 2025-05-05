@@ -245,6 +245,45 @@ namespace TestMVC.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TestMVC.Models.BreakStatuses", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BreakStatuses");
+                });
+
+            modelBuilder.Entity("TestMVC.Models.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Desc")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("TestMVC.Models.CircleResults", b =>
                 {
                     b.Property<int>("Id")
@@ -259,12 +298,12 @@ namespace TestMVC.Migrations
                     b.Property<TimeSpan>("CircleTime")
                         .HasColumnType("interval");
 
-                    b.Property<int>("RaceCartId")
+                    b.Property<int>("UserRaceId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RaceCartId");
+                    b.HasIndex("UserRaceId");
 
                     b.ToTable("CircleResults");
                 });
@@ -276,9 +315,6 @@ namespace TestMVC.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
@@ -293,8 +329,6 @@ namespace TestMVC.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("OrderStatusId");
 
@@ -319,22 +353,6 @@ namespace TestMVC.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("OrderStatuses");
-                });
-
-            modelBuilder.Entity("TestMVC.Models.RaceCart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Position")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RaceCarts");
                 });
 
             modelBuilder.Entity("TestMVC.Models.RaceCategory", b =>
@@ -437,23 +455,28 @@ namespace TestMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BreakStatusId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("DateFinish")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateStart")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("Desc")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BreakStatusId");
+
                     b.ToTable("TechnicalBreaks");
                 });
 
-            modelBuilder.Entity("TestMVC.Models.UserCart", b =>
+            modelBuilder.Entity("TestMVC.Models.UserRace", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -461,7 +484,13 @@ namespace TestMVC.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("RaceCartId")
+                    b.Property<int>("CartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Position")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RaceId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
@@ -469,11 +498,13 @@ namespace TestMVC.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RaceCartId");
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("RaceId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserCarts");
+                    b.ToTable("UserRaces");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -529,21 +560,17 @@ namespace TestMVC.Migrations
 
             modelBuilder.Entity("TestMVC.Models.CircleResults", b =>
                 {
-                    b.HasOne("TestMVC.Models.RaceCart", "RaceCart")
+                    b.HasOne("TestMVC.Models.UserRace", "UserRace")
                         .WithMany()
-                        .HasForeignKey("RaceCartId")
+                        .HasForeignKey("UserRaceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("RaceCart");
+                    b.Navigation("UserRace");
                 });
 
             modelBuilder.Entity("TestMVC.Models.Order", b =>
                 {
-                    b.HasOne("TestMVC.Models.ApplicationUser", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("TestMVC.Models.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
@@ -551,7 +578,7 @@ namespace TestMVC.Migrations
                         .IsRequired();
 
                     b.HasOne("TestMVC.Models.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -588,11 +615,28 @@ namespace TestMVC.Migrations
                     b.Navigation("RaceStatus");
                 });
 
-            modelBuilder.Entity("TestMVC.Models.UserCart", b =>
+            modelBuilder.Entity("TestMVC.Models.TechnicalBreaks", b =>
                 {
-                    b.HasOne("TestMVC.Models.RaceCart", "RaceCart")
+                    b.HasOne("TestMVC.Models.BreakStatuses", "BreakStatus")
                         .WithMany()
-                        .HasForeignKey("RaceCartId")
+                        .HasForeignKey("BreakStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BreakStatus");
+                });
+
+            modelBuilder.Entity("TestMVC.Models.UserRace", b =>
+                {
+                    b.HasOne("TestMVC.Models.Cart", "Cart")
+                        .WithMany()
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TestMVC.Models.Races", "Race")
+                        .WithMany()
+                        .HasForeignKey("RaceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -602,7 +646,9 @@ namespace TestMVC.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("RaceCart");
+                    b.Navigation("Cart");
+
+                    b.Navigation("Race");
 
                     b.Navigation("User");
                 });

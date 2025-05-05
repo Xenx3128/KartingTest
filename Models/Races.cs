@@ -36,17 +36,21 @@ public class Races
     public RaceStatus RaceStatus { get; set; }
 }
 
-public class RaceCart
+public class Cart
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    [Required]
-    public int Position { get; set; }
+    [StringLength(50)]
+    public string? Name { get; set; }
+
+    [StringLength(500)]
+    public string? Desc { get; set; }
+
 }
 
-public class UserCart
+public class UserRace
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -59,10 +63,22 @@ public class UserCart
     public ApplicationUser User { get; set; }
 
     [Required]
-    public int RaceCartId { get; set; }
+    public int RaceId { get; set; }
 
-    [ForeignKey("RaceCartId")]
-    public RaceCart RaceCart { get; set; }
+    [ForeignKey("RaceId")]
+    public Races Race { get; set; }
+
+
+    [Required]
+    public int? CartId { get; set; }
+
+    [ForeignKey("CartId")]
+    public Cart? Cart { get; set; }
+
+
+    public int? Position { get; set; }
+
+
 }
 
 public class CircleResults
@@ -72,10 +88,10 @@ public class CircleResults
     public int Id { get; set; }
 
     [Required]
-    public int RaceCartId { get; set; }
+    public int UserRaceId { get; set; }
 
-    [ForeignKey("RaceCartId")]
-    public RaceCart RaceCart { get; set; }
+    [ForeignKey("UserRaceId")]
+    public UserRace UserRace { get; set; }
 
     [Required]
     public int CircleNum { get; set; }

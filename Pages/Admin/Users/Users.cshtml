@@ -2,6 +2,7 @@
 @model TestMVC.Pages.AdminUsersModel
 @{
     ViewData["Title"] = "Панель администратора: Пользователи";
+    Layout = "_AdminLayout";
 }
 
 <div id="admin-users-main-wrap">
@@ -41,7 +42,7 @@
                     <td>@string.Join(", ", await Model.GetUserRolesAsync(user.Id))</td>
                     <td>@status</td>
                     <td>
-                        <a asp-page="/Account/Acc" asp-route-id="@user.Id" class="admin-menu-icon" id="users-details-icon" title="Просмотр аккаунта пользователя">
+                        <a asp-page="/Account/Acc" asp-route-id="@user.Id" class="admin-menu-icon" id="user-details-icon" title="Просмотр аккаунта пользователя">
                             <i class="fas fa-search fa-lg"></i>
                         </a> |
                         <a asp-page="./Edit" asp-route-id="@user.Id" class="admin-menu-icon" id="users-edit-icon" title="Редактировать данные пользователя">
@@ -57,6 +58,20 @@
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
     </table>
 </div>
 

@@ -1,72 +1,29 @@
 let timePicker;
 let datePicker;
-let raceCategories = [];
 
-async function fetchRaceCategories() {
-    try {
-        const response = await axios.get('/api/appointments/categories');
-        raceCategories = response.data;
-    } catch (error) {
-        console.error('Error fetching race categories:', error);
+export function initializePickers(isEditPage = false, initialTime='') {
+    if (isEditPage){
+        timePicker = new AppointmentPicker(document.getElementById('inputtime'), {
+            interval: 15,
+            startTime: 10,
+            endTime: 20,
+            title: 'Свободные слоты',
+            static: false,
+            useSlotTemplate: false
+        });
+        timePicker.setTime(initialTime);
     }
-}
-
-function updateRaceRadioButtons(slots, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = ''; // Clear existing content
-
-    const raceTypeRadios = document.getElementsByName('race-type');
-    const isUniform = Array.from(raceTypeRadios).find(r => r.checked)?.value === 'uniform';
-    
-    const rowCount = isUniform ? 1 : slots.length;
-    
-    for (let i = 0; i < rowCount; i++) {
-        const rowContainer = document.createElement('div');
-        rowContainer.classList.add('row', 'mt-2');
-        container.appendChild(rowContainer);
-
-        const title = document.createElement('h5');
-        title.className = 'reg-label';
-        title.textContent = isUniform ? 'Выберите тип заезда:' : `Слот ${slots[i]}:`;
-        rowContainer.appendChild(title);
-
-        const inputGroup = document.createElement('div');
-        inputGroup.classList.add('input-group');
-        rowContainer.appendChild(inputGroup);
-
-        raceCategories.forEach((category, index) => {
-            const col = document.createElement('div');
-            col.classList.add('col-third');
-
-            const input = document.createElement('input');
-            input.type = 'radio';
-            input.name = isUniform ? 'race-category' : `race-category-${i}`;
-            input.id = `race-category-${i}-${index}`;
-            input.value = category.id;
-            input.classList.add('form-check-input');
-            input.required = true;
-
-            const label = document.createElement('label');
-            label.htmlFor = input.id;
-            label.classList.add('reg-label');
-            label.textContent = category.category;
-
-            col.appendChild(input);
-            col.appendChild(label);
-            inputGroup.appendChild(col);
+    else {
+        timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
+            interval: 15,
+            startTime: 10,
+            endTime: 20,
+            title: 'Свободные слоты',
+            static: false,
+            useSlotTemplate: false
         });
     }
-}
 
-function initializePickers() {
-    timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
-        interval: 15,
-        startTime: 10,
-        endTime: 20,
-        title: 'Свободные слоты',
-        static: false,
-        useSlotTemplate: false
-    });
 
     datePicker = new AirDatepicker(document.getElementById('inputdate'), {
         dateFormat: 'dd MMMM yyyy',
@@ -83,16 +40,29 @@ function initializePickers() {
                     .map(item => item.time);
                 console.log('Disabled times for', selectedDate, ':', disabledTimes); // Debug
                 timePicker.destroy();
-                timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
-                    interval: 15,
-                    startTime: 10,
-                    endTime: 20,
-                    disabled: disabledTimes, // Pass HH:mm strings
-                    title: 'Свободные слоты',
-                    static: false,
-                    useSlotTemplate: false
-                });
-                updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer');
+                if (isEditPage){
+                    timePicker = new AppointmentPicker(document.getElementById('inputtime'), {
+                        interval: 15,
+                        startTime: 10,
+                        endTime: 20,
+                        disabled: disabledTimes,
+                        title: 'Свободные слоты',
+                        static: false,
+                        useSlotTemplate: false
+                    });
+                    timePicker.setTime(initialTime);
+                }
+                else {
+                    timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
+                        interval: 15,
+                        startTime: 10,
+                        endTime: 20,
+                        disabled: disabledTimes, // Pass HH:mm strings
+                        title: 'Свободные слоты',
+                        static: false,
+                        useSlotTemplate: false
+                    });
+                }
             } catch (error) {
                 console.error('Error fetching unavailable times:', error);
             }
@@ -100,88 +70,7 @@ function initializePickers() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await fetchRaceCategories();
-    initializePickers();
-
-    document.getElementById('inputtime').addEventListener('change.appo.picker', () => {
-        const times = timePicker.getTimes();
-        console.log('Selected times:', times); // Debug
-        updateRaceRadioButtons(times, 'RaceTypeContainer');
-    });
-
-    document.getElementsByName('race-type').forEach(radio => {
-        radio.addEventListener('change', () => {
-            updateRaceRadioButtons(timePicker.getTimes(), 'RaceTypeContainer');
-        });
-    });
-
-    document.getElementById('orderForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form);
-
-        const date = datePicker.selectedDates[0];
-        if (!date) {
-            alert('Выберите дату');
-            return;
-        }
-
-        const times = timePicker.getTimes();
-        if (!times || times.length === 0) {
-            alert('Выберите хотя бы одно время');
-            return;
-        }
-
-        const isUniform = formData.get('race-type') === 'uniform';
-        const raceCategoryIds = isUniform
-            ? [parseInt(formData.get('race-category'))]
-            : times.map((_, i) => parseInt(formData.get(`race-category-${i}`)));
-
-        if (raceCategoryIds.some(id => isNaN(id))) {
-            alert('Выберите категорию для каждого слота');
-            return;
-        }
-
-        // Validate and format times as HH:mm
-        const formattedTimes = times
-            .map(t => {
-                try {
-                    const timeObj = TimeOnly.fromTimeString(t);
-                    return timeObj.toString();
-                } catch (error) {
-                    console.error('Invalid time value:', t, error);
-                    return null;
-                }
-            })
-            .filter(t => t !== null);
-
-        if (formattedTimes.length === 0) {
-            alert('Неверный формат времени. Пожалуйста, выберите корректные временные слоты.');
-            return;
-        }
-
-        const data = {
-            date: DateOnly.fromDate(date).toString(),
-            times: formattedTimes,
-            isUniform: isUniform,
-            raceCategoryIds: raceCategoryIds,
-            termsAccepted: formData.get('terms') === 'on'
-        };
-
-        console.log('Submitting data:', data); // Debug
-
-        try {
-            await axios.post('/api/appointments/order', data);
-            window.location.href = '/Index';
-        } catch (error) {
-            console.error('Error submitting order:', error.response?.data || error);
-            alert('Ошибка при регистрации заезда: ' + (error.response?.data?.message || 'Неизвестная ошибка'));
-        }
-    });
-});
-
-// Helper classes for DateOnly and TimeOnly serialization
+// Helper class for DateOnly serialization
 class DateOnly {
     static fromDate(date) {
         if (!(date instanceof Date) || isNaN(date.getTime())) {
@@ -193,38 +82,6 @@ class DateOnly {
             day: date.getDate(),
             toString: function() {
                 return `${this.year}-${this.month.toString().padStart(2, '0')}-${this.day.toString().padStart(2, '0')}`;
-            }
-        };
-    }
-}
-
-class TimeOnly {
-    static fromTimeString(timeString) {
-        if (typeof timeString !== 'string' || !/^\d{2}:\d{2}$/.test(timeString)) {
-            throw new Error('Invalid time format. Expected HH:mm');
-        }
-        const [hour, minute] = timeString.split(':').map(Number);
-        if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-            throw new Error('Invalid time values');
-        }
-        return {
-            hour,
-            minute,
-            toString: function() {
-                return `${this.hour.toString().padStart(2, '0')}:${this.minute.toString().padStart(2, '0')}`;
-            }
-        };
-    }
-
-    static fromDate(date) {
-        if (!(date instanceof Date) || isNaN(date.getTime())) {
-            throw new Error('Invalid time');
-        }
-        return {
-            hour: date.getHours(),
-            minute: date.getMinutes(),
-            toString: function() {
-                return `${this.hour.toString().padStart(2, '0')}:${this.minute.toString().padStart(2, '0')}`;
             }
         };
     }

@@ -1,6 +1,7 @@
 using TestMVC.Data;
 using TestMVC.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Microsoft.AspNetCore.Identity;
 using TestMVC.Service;
 using TestMVC.Utility;
@@ -12,14 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Register the DatabaseService with the connection string from appsettings.json
-var connectionString = builder.Configuration.GetConnectionString("NoDBConnection");
-builder.Services.AddSingleton(new DatabaseService(connectionString));
-connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Register DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    .EnableSensitiveDataLogging()
+    .EnableDetailedErrors()
+    .LogTo(message => Log.Information(message), LogLevel.Information));
 
 // Add Identity services (consolidated)
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -37,7 +38,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     // Lockout settings
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.AllowedForNewUsers = true; // Enables lockout for new users
+    options.Lockout.AllowedForNewUsers = true;
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders()
@@ -45,10 +46,14 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 
 // Register contexts with proper dependencies
 builder.Services.AddSingleton<AppointmentContext>(sp =>
-    new AppointmentContext(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddScoped<UserContext>(provider => 
 {
+    Log.Information("Registering AppointmentContext with connection string.");
+    return new AppointmentContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddScoped<UserContext>(provider =>
+{
+    Log.Information("Registering UserContext with connection string and Identity services.");
     var connectionString = provider.GetRequiredService<IConfiguration>().GetConnectionString("DefaultConnection");
     var userManager = provider.GetRequiredService<UserManager<ApplicationUser>>();
     var signInManager = provider.GetRequiredService<SignInManager<ApplicationUser>>();
@@ -57,11 +62,47 @@ builder.Services.AddScoped<UserContext>(provider =>
 });
 
 builder.Services.AddSingleton<OrderContext>(sp =>
-    new OrderContext(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    Log.Information("Registering OrderContext with connection string.");
+    return new OrderContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddSingleton<RaceContext>(sp =>
+{
+    Log.Information("Registering RaceContext with connection string.");
+    return new RaceContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddSingleton<BreakContext>(sp =>
+{
+    Log.Information("Registering BreakContext with connection string.");
+    return new BreakContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddSingleton<CartContext>(sp =>
+{
+    Log.Information("Registering CartContext with connection string.");
+    return new CartContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddSingleton<CircleResultsContext>(sp =>
+{
+    Log.Information("Registering CircleResultsContext with connection string.");
+    return new CircleResultsContext(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+// Logger
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/sql.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddRazorPages(options =>
 {
-    options.Conventions.AuthorizeFolder("/Admin"); // Secure admin area
+    options.Conventions.AuthorizeFolder("/Admin");
 });
 
 var app = builder.Build();
@@ -84,4 +125,17 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 
-app.Run();
+Log.Information("Application starting...");
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application failed to start.");
+    throw;
+}
+finally
+{
+    Log.CloseAndFlush();
+}

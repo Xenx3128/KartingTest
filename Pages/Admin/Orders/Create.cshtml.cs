@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-namespace TestMVC.Pages.Admin.Orders
+namespace TestMVC.Pages.AdminOrders
 {
     [Authorize(Roles = "Admin,SuperAdmin")]
     public class CreateModel : PageModel
