@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Панель администратора: Пользователи";
     Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
+    // Get current user's ID
+    var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 }
 
 <div id="admin-users-main-wrap">
@@ -30,7 +32,21 @@
         <tbody>
             @foreach (var user in Model.Users)
             {
-                var status = @user.LockoutEnd.HasValue ? "Заблокирован" : "Активен";
+                var status = user.LockoutEnd.HasValue ? "Заблокирован" : "Активен";
+                var userRoles = await Model.GetUserRolesAsync(user.Id);
+                var canEditDelete = false;
+
+                if (User.IsInRole("SuperAdmin"))
+                {
+                    // SuperAdmin can edit/delete User or Admin, but not themselves or other SuperAdmins
+                    canEditDelete = user.Id != currentUserId && !userRoles.Contains("SuperAdmin");
+                }
+                else if (User.IsInRole("Admin"))
+                {
+                    // Admin can edit/delete only User, not themselves
+                    canEditDelete = user.Id != currentUserId && userRoles.Contains("User") && !userRoles.Any(r => r == "Admin" || r == "SuperAdmin");
+                }
+
                 <tr data-from-where="@user.FromWhereFoundOut" data-note="@user.Note">
                     <td></td> <!-- Control column -->
                     <td>@user.Id</td>
@@ -39,21 +55,26 @@
                     <td>@user.Email</td>
                     <td>@user.PhoneNumber</td>
                     <td>@user.BirthDate.ToString("yyyy-MM-dd")</td>
-                    <td>@string.Join(", ", await Model.GetUserRolesAsync(user.Id))</td>
+                    <td>@string.Join(", ", userRoles)</td>
                     <td>@status</td>
                     <td>
                         <a asp-page="/Account/Acc" asp-route-id="@user.Id" class="admin-menu-icon" id="user-details-icon" title="Просмотр аккаунта пользователя">
                             <i class="fas fa-search fa-lg"></i>
-                        </a> |
-                        <a asp-page="./Edit" asp-route-id="@user.Id" class="admin-menu-icon" id="users-edit-icon" title="Редактировать данные пользователя">
-                            <i class="fa fa-edit fa-lg"></i>
-                        </a> |
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id" class="d-inline">
-                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="users-delete-icon" title="Удалить аккаунт пользователя"
-                                    onclick="return confirm('Вы уверены, что хотите удалить этого пользователя?')">
-                                <i class="fa fa-trash fa-lg text-danger"></i>
-                            </button>
-                        </form>
+                        </a>
+                        @if (canEditDelete)
+                        {
+                            <text> | </text>
+                            <a asp-page="./Edit" asp-route-id="@user.Id" class="admin-menu-icon" id="users-edit-icon" title="Редактировать данные пользователя">
+                                <i class="fa fa-edit fa-lg"></i>
+                            </a>
+                            <text> | </text>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id" class="d-inline">
+                                <button type="submit" class="admin-menu-icon btn btn-link p-0" id="users-delete-icon" title="Удалить аккаунт пользователя"
+                                        onclick="return confirm('Вы уверены, что хотите удалить этого пользователя?')">
+                                    <i class="fa fa-trash fa-lg text-danger"></i>
+                                </button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }

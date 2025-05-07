@@ -6,20 +6,14 @@ using System.Diagnostics.CodeAnalysis;
 namespace TestMVC.Models
 {
 
-    public class ApplicationUser : IdentityUser<int> // Inherit from IdentityUser
+    public class ApplicationUser : IdentityUser<int>
     {
-        // Keep all CartUser properties
         [StringLength(255)]
-        public string? FullName { get; set; }  // Replaces UserName
+        public string? FullName { get; set; } 
         
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
         
-        // Identity brings these automatically:
-        // - Email
-        // - PasswordHash
-        // - UserName 
-        // - etc.
 
         [StringLength(255)]
         public string? FromWhereFoundOut { get; set; }
@@ -34,7 +28,6 @@ namespace TestMVC.Models
 
         public virtual ICollection<IdentityUserRole<int>>? UserRoles { get; set; }
 
-        // Navigation property for orders
         public virtual ICollection<Order> Orders { get; set; }
     }
 

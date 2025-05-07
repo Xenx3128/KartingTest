@@ -2,7 +2,7 @@
 @using TestMVC.Models
 @inject UserManager<ApplicationUser> UserManager
 @{
-    Layout = "_Layout";
+    Layout = User.IsInRole("SuperAdmin") || User.IsInRole("Admin") ? "_IndexLayoutAdmins" : "_Layout";
 
     // Get the user ID from the route (e.g., /Account/Acc/{id})
     var userIdStr = Context.Request.RouteValues["id"]?.ToString();

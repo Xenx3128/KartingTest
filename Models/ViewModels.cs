@@ -141,7 +141,7 @@ public class CreateUserViewModel
 
         [Required(ErrorMessage = "Пароль обязателен")]
         [DataType(DataType.Password)]
-        [StringLength(100, MinimumLength = 8, ErrorMessage = "Пароль должен содержать от 8 до 100 символов")]
+        [StringLength(100)]
         public string Password { get; set; }
 
         [StringLength(255, ErrorMessage = "Текст не может превышать 255 символов")]

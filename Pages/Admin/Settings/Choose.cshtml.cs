@@ -12,7 +12,7 @@ using Serilog;
 
 namespace TestMVC.Pages.AdminSettings
 {
-    [Authorize(Roles = "Admin,SuperAdmin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class ChooseModel : PageModel
     {
         private readonly SettingsContext _settingsContext;

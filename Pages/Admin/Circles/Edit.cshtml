@@ -2,7 +2,7 @@
 @model TestMVC.Pages.AdminCircleResults.EditModel
 @{
     ViewData["Title"] = "Редактировать результат круга";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 }
 
 <div class="registration-form-wrap">

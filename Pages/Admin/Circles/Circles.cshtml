@@ -2,7 +2,7 @@
 @model TestMVC.Pages.Admin.CircleResultsModel
 @{
     ViewData["Title"] = "Панель администратора: Результаты кругов";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 }
 
 <div id="admin-circles-main-wrap">

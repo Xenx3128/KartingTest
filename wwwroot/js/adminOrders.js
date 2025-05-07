@@ -22,12 +22,19 @@ function format(data) {
             '<tbody>';
 
     races.forEach(race => {
-        // Extract date and times from startDate and finishDate
-        const startDateTime = new Date(race.startDate);
-        const finishDateTime = new Date(race.finishDate);
-        const date = startDateTime.toISOString().split('T')[0]; // yyyy-MM-dd
-        const startTime = startDateTime.toTimeString().slice(0, 5); // HH:mm
-        const finishTime = finishDateTime.toTimeString().slice(0, 5); // HH:mm
+        // Parse startDate and finishDate, assuming UTC
+        const startDateTime = new Date(race.startDate + 'Z'); // Append 'Z' to treat as UTC
+        const finishDateTime = new Date(race.finishDate + 'Z');
+
+        // Adjust to UTC+05:00 by adding 5 hours (5 * 60 * 60 * 1000 milliseconds)
+        const utcOffsetMs = 5 * 60 * 60 * 1000;
+        const startDateTimeUtcPlus5 = new Date(startDateTime.getTime() + utcOffsetMs);
+        const finishDateTimeUtcPlus5 = new Date(finishDateTime.getTime() + utcOffsetMs);
+
+        // Extract date and times
+        const date = startDateTimeUtcPlus5.toISOString().split('T')[0]; // yyyy-MM-dd
+        const startTime = startDateTimeUtcPlus5.toISOString().slice(11, 16); // HH:mm
+        const finishTime = finishDateTimeUtcPlus5.toISOString().slice(11, 16); // HH:mm
         const timeRange = `${startTime} - ${finishTime}`;
 
         html += '<tr>' +

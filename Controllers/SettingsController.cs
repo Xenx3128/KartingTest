@@ -18,7 +18,6 @@ namespace TestMVC.Controllers
         }
 
         [HttpGet("selected")]
-        [Authorize(Roles = "Admin,SuperAdmin")]
         public async Task<ActionResult<Settings>> GetSelectedSettings()
         {
             var settings = await _settingsContext.GetSelectedSettingsAsync();

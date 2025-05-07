@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TestMVC.Pages.AdminSettings
 {
-    [Authorize(Roles = "Admin,SuperAdmin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class EditModel : PageModel
     {
         private readonly SettingsContext _settingsContext;

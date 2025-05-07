@@ -3,7 +3,7 @@
 @using System.Text.Json
 @{
     ViewData["Title"] = "Панель администратора: Заказы";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 }
 
 <div id="admin-orders-main-wrap">

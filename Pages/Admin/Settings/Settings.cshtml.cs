@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TestMVC.Pages.AdminSettings
 {
-    [Authorize(Roles = "Admin,SuperAdmin")]
+    [Authorize(Roles = "SuperAdmin")]
     public class SettingsModel : PageModel
     {
         private readonly SettingsContext _settingsContext;

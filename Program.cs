@@ -31,6 +31,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
+    
 
     // Sign-in settings
     options.SignIn.RequireConfirmedAccount = true;

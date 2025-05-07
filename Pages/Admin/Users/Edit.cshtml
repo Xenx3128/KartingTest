@@ -3,11 +3,19 @@
 @{
     ViewData["Title"] = "Изменить данные аккаунта пользователя";
     Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
-
 }
 
 <div class="registration-form-wrap">
     <div class="container">
+        @if (!ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            </div>
+        }
         <form method="post">
             <!-- Account Section -->
             <div class="row">
@@ -34,7 +42,6 @@
                     <input asp-for="Input.PhoneNumber"
                            placeholder="Например: +79123456789" 
                            id="reg-phone" 
-                           pattern="^(\+7|7|8)[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$"
                            required>
                     <div class="input-icon">
                         <i class="fa fa-phone"></i>
@@ -160,4 +167,43 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // Get the form and validator
+            var form = $("form");
+            var validator = form.validate();
+
+            // Override validation for password fields
+            $("#reg-password, #reg-confirm-password").each(function () {
+                $(this).rules("add", {
+                    required: false, // Make fields optional
+                    minlength: 8 // Enforce minlength only when filled
+                });
+            });
+
+            // Ensure ConfirmPassword matches Password only when both are filled
+            $("#reg-confirm-password").rules("add", {
+                equalTo: "#reg-password", // Compare with Password
+                messages: {
+                    equalTo: "Пароли не совпадают"
+                }
+            });
+
+            // Custom validation logic to skip comparison if both fields are empty
+            $.validator.addMethod("passwordMatch", function (value, element) {
+                var password = $("#reg-password").val();
+                var confirmPassword = $("#reg-confirm-password").val();
+                // If both fields are empty, validation passes
+                if (!password && !confirmPassword) {
+                    return true;
+                }
+                // Otherwise, enforce matching
+                return password === confirmPassword;
+            }, "Пароли не совпадают");
+
+            $("#reg-confirm-password").rules("add", {
+                passwordMatch: true
+            });
+        });
+    </script>
 }

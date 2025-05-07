@@ -278,6 +278,9 @@ body {
 
 .red-button:hover {
     transform: translateY(-1px);
+    text-decoration: none;
+    color: #fff;
+
 }
 
 .red-button:active {
@@ -328,6 +331,7 @@ body {
 
 .red-button-alt:hover {
     transform: translateY(-1px);
+    text-decoration: none;
 }
 
 .red-button-alt:active {

@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using Serilog;
 
 namespace TestMVC.Pages
 {
@@ -32,8 +34,50 @@ namespace TestMVC.Pages
 
         public bool IsSuperAdmin { get; set; }
 
+        private async Task<bool> CanEditUserAsync(int targetUserId)
+        {
+            var targetUser = await _userManager.FindByIdAsync(targetUserId.ToString());
+            if (targetUser == null)
+            {
+                Log.Warning("Edit attempt for non-existent user ID {Id}", targetUserId);
+                return false;
+            }
+
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUserRoles = await _userManager.GetRolesAsync(currentUser);
+            var targetUserRoles = await _userManager.GetRolesAsync(targetUser);
+
+            bool canEdit = false;
+            if (currentUserRoles.Contains("SuperAdmin"))
+            {
+                // SuperAdmin can edit User or Admin, but not themselves or other SuperAdmins
+                canEdit = targetUserId != currentUserId && !targetUserRoles.Contains("SuperAdmin");
+            }
+            else if (currentUserRoles.Contains("Admin"))
+            {
+                // Admin can edit only User, not themselves
+                canEdit = targetUserId != currentUserId && targetUserRoles.Contains("User") && !targetUserRoles.Any(r => r == "Admin" || r == "SuperAdmin");
+            }
+
+            if (!canEdit)
+            {
+                Log.Warning("Unauthorized edit attempt by UserId {CurrentUserId} (Roles: {CurrentRoles}) on UserId {TargetUserId} (Roles: {TargetRoles})",
+                    currentUserId, string.Join(", ", currentUserRoles), targetUserId, string.Join(", ", targetUserRoles));
+            }
+
+            return canEdit;
+        }
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            // Check if current user is authorized to edit the target user
+            if (!await CanEditUserAsync(id))
+            {
+                ModelState.AddModelError(string.Empty, "Недостаточно прав для редактирования этого пользователя.");
+                return Page();
+            }
+
             var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
             {
@@ -60,13 +104,25 @@ namespace TestMVC.Pages
             var userRoles = await _userManager.GetRolesAsync(user);
             Input.Role = userRoles.FirstOrDefault();
 
+            // Set IsSuperAdmin for role dropdown
+            var currentUser = await _userManager.GetUserAsync(User);
+            IsSuperAdmin = currentUser != null && await _userManager.IsInRoleAsync(currentUser, "SuperAdmin");
+
             await InitializeRoles();
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Check if current user is SuperAdmin
+            // Check if current user is authorized to edit the target user
+            if (!await CanEditUserAsync(Input.Id))
+            {
+                ModelState.AddModelError(string.Empty, "Недостаточно прав для редактирования этого пользователя.");
+                await InitializeRoles();
+                return Page();
+            }
+
+            // Set IsSuperAdmin for role validation
             var currentUser = await _userManager.GetUserAsync(User);
             IsSuperAdmin = currentUser != null && await _userManager.IsInRoleAsync(currentUser, "SuperAdmin");
 
@@ -76,14 +132,13 @@ namespace TestMVC.Pages
                 return Page();
             }
 
-            Console.WriteLine(Input.Id);
             var user = await _userManager.FindByIdAsync(Input.Id.ToString());
             if (user == null)
             {
                 return NotFound();
             }
 
-            // Validate role selection: Regular Admins cannot select "Admin"
+            // Validate role selection
             if (!IsSuperAdmin && Input.Role == "Admin")
             {
                 ModelState.AddModelError("Input.Role", "Только SuperAdmin может назначать роль Admin.");
@@ -102,7 +157,7 @@ namespace TestMVC.Pages
             // Update user properties
             user.FullName = Input.FullName;
             user.Email = Input.Email;
-            user.UserName = Input.Email; // Sync UserName with Email
+            user.UserName = Input.Email;
             user.PhoneNumber = Input.PhoneNumber;
             user.BirthDate = Input.BirthDate.ToUniversalTime();
             user.FromWhereFoundOut = Input.FromWhereFoundOut;
@@ -110,7 +165,7 @@ namespace TestMVC.Pages
             user.AcceptTerms = Input.AcceptTerms;
             user.ReceivePromotions = Input.ReceivePromotions;
             user.LockoutEnd = Input.Status == "Banned" ? DateTimeOffset.MaxValue : null;
-            user.LockoutEnabled = true; // Ensure lockout is enabled
+            user.LockoutEnabled = true;
 
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
@@ -120,6 +175,7 @@ namespace TestMVC.Pages
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
                 await InitializeRoles();
+                Log.Error("Failed to update UserId {Id}: {Errors}", Input.Id, string.Join(", ", updateResult.Errors.Select(e => e.Description)));
                 return Page();
             }
 
@@ -136,13 +192,21 @@ namespace TestMVC.Pages
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                     await InitializeRoles();
+                    Log.Error("Failed to update role for UserId {Id}: {Errors}", Input.Id, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
                     return Page();
                 }
             }
 
             // Update password if provided
-            if (!string.IsNullOrEmpty(Input.Password))
+            if (!string.IsNullOrEmpty(Input.Password) && !string.IsNullOrEmpty(Input.ConfirmPassword))
             {
+                if (Input.Password != Input.ConfirmPassword)
+                {
+                    ModelState.AddModelError("Input.ConfirmPassword", "Пароли не совпадают.");
+                    await InitializeRoles();
+                    return Page();
+                }
+
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var passwordResult = await _userManager.ResetPasswordAsync(user, token, Input.Password);
                 if (!passwordResult.Succeeded)
@@ -152,10 +216,12 @@ namespace TestMVC.Pages
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                     await InitializeRoles();
+                    Log.Error("Failed to reset password for UserId {Id}: {Errors}", Input.Id, string.Join(", ", passwordResult.Errors.Select(e => e.Description)));
                     return Page();
                 }
             }
 
+            Log.Information("UserId {Id} updated by UserId {CurrentUserId}", Input.Id, currentUser.Id);
             return RedirectToPage("/Admin/Users/Users");
         }
 

@@ -1,6 +1,7 @@
 @page
 @model TestMVC.Pages.HomeModel
 @{
+    Layout = User.IsInRole("SuperAdmin") || User.IsInRole("Admin") ? "_IndexLayoutAdmins" : "_Layout";
     ViewData["Title"] = "Домашняя страница";
 }
 

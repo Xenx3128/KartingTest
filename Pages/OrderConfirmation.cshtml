@@ -1,0 +1,53 @@
+@page
+@model TestMVC.Pages.OrderConfirmationModel
+@{
+    Layout = User.IsInRole("SuperAdmin") || User.IsInRole("Admin") ? "_IndexLayoutAdmins" : "_Layout";
+    ViewData["Title"] = "Подтверждение заказа";
+}
+
+<div class="orders-wrap">
+    <div class="container">
+        <div class="mt-4">
+            <h4 class="red-heading">Время успешно забронировано!</h4>
+            <p class="reg-label">Ждём вас на карте!</p>
+            <hr>
+            <div class="row">
+                <h5 class="reg-label">Дата: @Model.Date.ToString("dd MMMM yyyy")</h5>
+            </div>
+            <div class="row">
+                <h5 class="reg-label">Заезды:</h5>
+                <ul class="reg-label">
+                    @if (Model.IsUniform)
+                    {
+                        var category = Model.RaceCategories.FirstOrDefault() ?? "Неизвестная категория";
+                        @foreach (var time in Model.Times)
+                        {
+                            <div>
+                                <b>Время: @time.ToString("HH:mm")</b> - 
+                                <b>Категория: @category</b>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        @for (int i = 0; i < Model.Times.Count && i < Model.RaceCategories.Count; i++)
+                        {
+                            <div>
+                                Время: <b>@Model.Times[i].ToString("HH:mm")</b> - 
+                                Категория: <b>@(Model.RaceCategories[i] ?? "Неизвестная категория")</b>
+                            </div>
+                        }
+                    }
+                </ul>
+            </div>
+
+            <a asp-page="/Index" type="button" class="red-button">На главную</a>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/orders.css">
+
+@section Scripts {
+
+}
