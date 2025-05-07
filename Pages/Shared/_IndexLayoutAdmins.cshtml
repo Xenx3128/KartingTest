@@ -46,23 +46,17 @@
         <div class="header-inner responsive-wrapper">
             <div class="header-logo">
                 <a asp-page="/Index">
-                    <img src="~/img/logo.svg" />
+                    <img src="https://static.tildacdn.com/tild3632-3130-4834-b666-646466613131/g10.svg" />
                 </a>
             </div>
             <nav class="header-navigation">
-                <a asp-page="/Admin/Users/Users">Пользователи</a>
-                <a asp-page="/Admin/Orders/Orders">Заказы</a>
-                <a asp-page="/Admin/Races/Races">Заезды</a>
-                <a asp-page="/Admin/TechnicalBreaks/Breaks">Тех. перерывы</a>
-                <a asp-page="/Admin/Carts/Carts">Карты</a>
-                @*<div class="dropdown">
-                    <a class="dropdown-toggle">Прочее</a>
-                    <div class="dropdown-menu">
-                        <a asp-page="/Admin/Settings/Settings">Настройки</a>
-                        <a asp-page="/Admin/Reports/Reports">Reports</a>
-                        <a asp-page="/Admin/Logs/Logs">Logs</a>
-                    </div>
-                </div>*@
+                <a href="#">Трасса</a>
+                <a href="#">Цены</a>
+                <a href="#">Сертификаты</a>
+                <a href="#">Абонементы</a>
+                <a href="#">Как добраться</a>
+                <a href="#">+7 (342) 243-01-23</a>
+                <a asp-page="/Orders" type="button" id="order-btn">Забронировать</a>
                 @if (!SignInManager.IsSignedIn(User))
                 {
                     <a asp-page="/Account/Login">Вход</a>
@@ -74,7 +68,7 @@
                     var user = await UserManager.FindByIdAsync(userId);
                     <a id="account-link" asp-page="/Account/Acc" asp-route-id="@userId">@(user?.FullName ?? UserManager.GetUserName(User))</a>
                 }
-
+                <a asp-page="/Admin/Users/Users" id="admin-link">Админка</a>
             </nav>
         </div>
     </header>

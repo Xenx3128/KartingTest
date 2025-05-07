@@ -1,0 +1,71 @@
+@page
+@model TestMVC.Pages.AdminSettings.SettingsModel
+@{
+    ViewData["Title"] = "Панель администратора: Настройки";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
+}
+
+<div id="admin-settings-main-wrap">
+    <div class="row">
+        <div class="button-container">
+            <a asp-page="./Create" id="settings-add-icon" class="add-btn admin-menu-icon" title="Добавить настройки">
+                <i class="fa fa-plus fa-lg"></i>
+            </a>
+            <a asp-page="./Choose" id="settings-choose-icon" class="add-btn admin-menu-icon" title="Выбрать настройки">
+                <i class="fa fa-check fa-lg"></i>
+            </a>
+        </div>
+    </div>
+
+    <table id="adminSettingsMain" class="cell-border hover stripe">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Начало дня</th>
+                <th>Конец дня</th>
+                <th>Длительность заезда</th>
+                <th>Выбрано</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var settings in Model.SettingsList)
+            {
+                <tr>
+                    <td>@settings.Id</td>
+                    <td>@settings.DayStart</td>
+                    <td>@settings.DayFinish</td>
+                    <td>@settings.RaceDuration</td>
+                    <td>@(settings.IsSelected ? "Да" : "Нет")</td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@settings.Id" class="admin-menu-icon" id="settings-edit-icon" title="Редактировать настройки">
+                            <i class="fa fa-edit fa-lg"></i>
+                        </a> |
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@settings.Id" class="d-inline">
+                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="settings-delete-icon" title="Удалить настройки"
+                                    onclick="return confirm('Вы уверены, что хотите удалить эти настройки?')">
+                                <i class="fa fa-trash fa-lg text-danger"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+
+@section Scripts {
+    <script type="module" src='@Url.Content("~/js/adminSettings.js")'></script>
+}

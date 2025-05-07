@@ -5,56 +5,48 @@
 @inject UserManager<ApplicationUser> UserManager
 @{
     Layout = "_AccountLayout";
-    var user = await UserManager.GetUserAsync(User);
     // Determine if this is the user's own account
     var authUserId = UserManager.GetUserId(User);
     bool isOwnAccount = Model.UserId.ToString() == authUserId;
 }
-
-
-
 
 <div class="content-panel">
     <h4 class="red-heading">Аккаунт</h4>
     <div class="profile-user-info">
         <div class="profile-info-row">
             <div class="profile-info-name"> Имя </div>
-
             <div class="profile-info-value">
-                <span>@user.FullName</span>
+                <span>@Model.CurrentUser.FullName</span>
             </div>
         </div>
 
         <div class="profile-info-row">
             <div class="profile-info-name"> Электронная почта </div>
-
             <div class="profile-info-value">
-                <span>@user.Email</span>
+                <span>@Model.CurrentUser.Email</span>
             </div>
         </div>
 
         <div class="profile-info-row">
             <div class="profile-info-name"> Номер телефона </div>
-
             <div class="profile-info-value">
-                <span>@(user.PhoneNumber ?? "Не указан")</span>
+                <span>@(Model.CurrentUser.PhoneNumber ?? "Не указан")</span>
             </div>
         </div>
 
         <div class="profile-info-row">
             <div class="profile-info-name"> День рождения </div>
-
             <div class="profile-info-value">
-                <span>@user.BirthDate.ToString("yyyy/MM/dd")</span>
+                <span>@Model.CurrentUser.BirthDate.ToString("yyyy/MM/dd")</span>
             </div>
         </div>
 
         <div class="profile-info-row">
             <div class="profile-info-name">Статус аккаунта</div>
             <div class="profile-info-value">
-                @if (user.LockoutEnd?.DateTime > DateTime.Now)
+                @if (Model.CurrentUser.LockoutEnd?.DateTime > DateTime.Now)
                 {
-                    <span class="text-danger">Заблокирован до @user.LockoutEnd?.DateTime.ToString("yyyy/MM/dd")</span>
+                    <span class="text-danger">Заблокирован</span>
                 }
                 else
                 {
@@ -66,10 +58,9 @@
         <div class="profile-info-row">
             <div class="profile-info-name">Дата регистрации</div>
             <div class="profile-info-value">
-                <span>@user.RegistrationDate.ToString("yyyy/MM/dd")</span>
+                <span>@Model.CurrentUser.RegistrationDate.ToString("yyyy/MM/dd")</span>
             </div>
         </div>
-
     </div>
     <br>
     @if (isOwnAccount)
@@ -78,12 +69,9 @@
             <button type="submit" class="red-button-alt">Выйти из аккаунта</button>
         </form>
     }
-    
 </div>
 
-
 <link rel="stylesheet" href="~/css/account.css">
-
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
@@ -92,5 +80,4 @@
         var menu_link = document.getElementById("acc-menu-link-1");
         menu_link.classList.add("active");
     </script>
-
 }

@@ -46,7 +46,7 @@ namespace TestMVC.Pages
             }
             */
 
-            RaceHistory = await _userContext.GetUserRaceHistoryAsync(user.Id);
+            RaceHistory = await _userContext.GetUserRaceHistoryAsync(UserId);
             return Page();
         }
     }

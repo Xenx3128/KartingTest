@@ -2,7 +2,7 @@
 @model TestMVC.Pages.Admin.EditUserRaceModel
 @{
     ViewData["Title"] = "Редактировать участника заезда";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 }
 
 <div class="registration-form-wrap">

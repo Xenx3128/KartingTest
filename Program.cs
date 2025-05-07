@@ -3,7 +3,6 @@ using TestMVC.Models;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.AspNetCore.Identity;
-using TestMVC.Service;
 using TestMVC.Utility;
 using Microsoft.AspNetCore.Http;
 
@@ -111,6 +110,14 @@ builder.Services.AddScoped<CircleResultsContext>(sp =>
     return new CircleResultsContext(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<IHttpContextAccessor>());
+});
+
+builder.Services.AddScoped<SettingsContext>(sp =>
+{
+    Log.Information("Регистрация SettingsContext с строкой подключения.");
+    return new SettingsContext(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
         sp.GetRequiredService<IHttpContextAccessor>());
 });
 

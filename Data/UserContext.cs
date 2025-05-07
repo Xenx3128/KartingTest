@@ -325,14 +325,14 @@ namespace TestMVC.Data
                         r.""Id"" AS RaceId,
                         r.""StartDate"",
                         r.""FinishDate"",
-                        rc.""Category"" AS RaceCategory,
+                        rc.""Category"" AS Category,
                         rs.""Status"" AS RaceStatus,
                         c.""Name"" AS CartName,
                         ur.""Position""
                     FROM ""UserRaces"" ur
-                    LEFT JOIN ""Races"" r ON ur.""RaceId"" = r.""Id""
-                    LEFT JOIN ""RaceCategories"" rc ON r.""RaceCategoryId"" = rc.""Id""
-                    LEFT JOIN ""RaceStatuses"" rs ON r.""RaceStatusId"" = rs.""Id""
+                    INNER JOIN ""Races"" r ON ur.""RaceId"" = r.""Id""
+                    INNER JOIN ""RaceCategories"" rc ON r.""RaceCategoryId"" = rc.""Id""
+                    INNER JOIN ""RaceStatuses"" rs ON r.""RaceStatusId"" = rs.""Id""
                     LEFT JOIN ""Carts"" c ON ur.""CartId"" = c.""Id""
                     WHERE ur.""UserId"" = @UserId
                     ORDER BY r.""StartDate"" DESC";

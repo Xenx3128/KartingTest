@@ -2,6 +2,7 @@
 @model TestMVC.Pages.AccHistoryModel
 @{
     Layout = "_AccountLayout";
+    var ekaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time");
 }
 
 <div class="content-panel">
@@ -12,7 +13,7 @@
                 <th>Дата заезда</th>
                 <th>Время заезда</th>
                 <th>Категория</th>
-                @*<th>Карт</th>*@
+                <th>Карт</th>
                 <th>Место</th>
             </tr>
         </thead>
@@ -20,11 +21,11 @@
             @foreach (var race in Model.RaceHistory)
             {
                 <tr>
-                    <td>@race.StartDate.ToString("dd.MM.yyyy")</td>
-                    <td>@race.StartDate.ToString("HH:mm")-@race.FinishDate.ToString("HH:mm")</td>
+                    <td>@TimeZoneInfo.ConvertTime(race.StartDate, ekaterinburgTimeZone).ToString("dd.MM.yyyy")</td>
+                    <td>@TimeZoneInfo.ConvertTime(race.StartDate, ekaterinburgTimeZone).ToString("HH:mm")-@TimeZoneInfo.ConvertTime(race.FinishDate, ekaterinburgTimeZone).ToString("HH:mm")</td>
                     <td>@race.Category</td>
-                    @*<td>@(race.IsDoubleSeater ? "Двухместный" : "Одноместный")</td>*@
-                    <td>@race.Position</td>
+                    <td>@(race.CartName ?? "Not Assigned")</td>
+                    <td>@(race.Position?.ToString() ?? "N/A")</td>
                 </tr>
             }
         </tbody>
@@ -38,6 +39,5 @@
     <script>
         var menu_link = document.getElementById("acc-menu-link-2");
         menu_link.classList.add("active");
-
     </script>
 }

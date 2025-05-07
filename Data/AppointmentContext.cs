@@ -50,7 +50,12 @@ namespace TestMVC.Data
             try
             {
                 using var connection = CreateConnection();
-                var sql = @"SELECT ""StartDate"" FROM ""Races"" WHERE DATE(""StartDate"") = @Date";
+                var sql = @"
+                    SELECT r.""StartDate""
+                    FROM ""Races"" r
+                    INNER JOIN ""RaceStatuses"" rs ON r.""RaceStatusId"" = rs.""Id""
+                    WHERE DATE(r.""StartDate"") = @Date
+                    AND rs.""Status"" IN ('Запланирована')";
                 var result = await connection.QueryAsync<DateTime>(sql, new { Date = date.Date });
                 Log.Information($"{prefix} Получено {result.Count()} запланированных гонок на дату {date.Date}");
                 return result;
@@ -69,7 +74,12 @@ namespace TestMVC.Data
             try
             {
                 using var connection = CreateConnection();
-                var sql = @"SELECT ""DateStart"" FROM ""TechnicalBreaks"" WHERE DATE(""DateStart"") = @Date";
+                var sql = @"
+                    SELECT tb.""DateStart""
+                    FROM ""TechnicalBreaks"" tb
+                    INNER JOIN ""BreakStatuses"" bs ON tb.""BreakStatusId"" = bs.""Id""
+                    WHERE DATE(tb.""DateStart"") = @Date
+                    AND bs.""Status"" IN ('Запланирован')";
                 var result = await connection.QueryAsync<DateTime>(sql, new { Date = date.Date });
                 Log.Information($"{prefix} Получено {result.Count()} технических перерывов на дату {date.Date}");
                 return result;
@@ -91,6 +101,24 @@ namespace TestMVC.Data
 
             try
             {
+                // Fetch RaceDuration from Settings
+                var settingsSql = @"
+                    SELECT ""RaceDuration""
+                    FROM ""Settings""
+                    WHERE ""IsSelected"" = TRUE
+                    LIMIT 1";
+                var raceDuration = await connection.QuerySingleOrDefaultAsync<TimeSpan>(
+                    settingsSql, transaction: transaction);
+
+                if (raceDuration == default)
+                {
+                    Log.Error($"{prefix} Selected settings not found for order creation");
+                    throw new Exception("Selected settings not found.");
+                }
+
+                var raceDurationMinutes = raceDuration.TotalMinutes;
+                Log.Information($"{prefix} Using RaceDuration: {raceDurationMinutes} minutes");
+
                 var orderStatusSql = @"SELECT ""Id"" FROM ""OrderStatuses"" WHERE ""Status"" = @Status LIMIT 1";
                 var orderStatusId = await connection.QuerySingleOrDefaultAsync<int>(
                     orderStatusSql, new { Status = "Pending" }, transaction);
@@ -118,12 +146,12 @@ namespace TestMVC.Data
 
                 var raceStatusSql = @"SELECT ""Id"" FROM ""RaceStatuses"" WHERE ""Status"" = @Status LIMIT 1";
                 var raceStatusId = await connection.QuerySingleOrDefaultAsync<int>(
-                    raceStatusSql, new { Status = "Planned" }, transaction);
+                    raceStatusSql, new { Status = "Запланирована" }, transaction);
 
                 if (raceStatusId == 0)
                 {
-                    Log.Error($"{prefix} Race status 'Planned' not found for order {orderId}");
-                    throw new Exception("Race status 'Planned' not found.");
+                    Log.Error($"{prefix} Race status 'Запланирована' not found for order {orderId}");
+                    throw new Exception("Race status 'Запланирована' not found.");
                 }
 
                 var raceSql = @"
@@ -134,7 +162,7 @@ namespace TestMVC.Data
                 for (int i = 0; i < times.Count; i++)
                 {
                     var startDate = date.ToDateTime(times[i]);
-                    var finishDate = startDate.AddMinutes(15);
+                    var finishDate = startDate.AddMinutes(raceDurationMinutes);
                     var categoryId = isUniform ? raceCategoryIds[0] : raceCategoryIds[i];
 
                     raceParams.Add(new
@@ -156,9 +184,7 @@ namespace TestMVC.Data
             {
                 transaction.Rollback();
                 Log.Error(ex, $"{prefix} Failed to create order for user {userId} on date {date}");
-                throw
-
-;
+                throw;
             }
         }
 

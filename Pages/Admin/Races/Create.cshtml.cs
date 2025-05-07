@@ -56,6 +56,7 @@ namespace TestMVC.Pages.AdminRaces
 
         public async Task<IActionResult> OnPostAsync()
         {
+            Console.WriteLine("////////////////////////////////////test");
             if (!ModelState.IsValid)
             {
                 await LoadDropdowns();

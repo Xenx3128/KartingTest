@@ -55,4 +55,7 @@ public class Settings
     [Required]
     [DataType(DataType.Time)]
     public TimeSpan RaceDuration { get; set; }
+
+    [Required]
+    public bool IsSelected { get; set; }
 }

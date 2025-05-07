@@ -2,7 +2,7 @@
 @model TestMVC.Pages.AdminUsersCreateModel
 @{
     ViewData["Title"] = "Создать аккаунт пользователя";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 
 }
 

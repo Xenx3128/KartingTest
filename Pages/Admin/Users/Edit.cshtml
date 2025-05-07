@@ -2,7 +2,7 @@
 @model TestMVC.Pages.AdminUsersEditModel
 @{
     ViewData["Title"] = "Изменить данные аккаунта пользователя";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 
 }
 

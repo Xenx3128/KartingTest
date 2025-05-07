@@ -2,7 +2,7 @@
 @model TestMVC.Pages.AdminRaces.CreateModel
 @{
     ViewData["Title"] = "Создать заезд";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 }
 
 <div class="orders-wrap">

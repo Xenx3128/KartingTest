@@ -4,7 +4,8 @@
 #admin-userraces-main-wrap,
 #admin-carts-main-wrap,
 #admin-breaks-main-wrap,
-#admin-circles-main-wrap
+#admin-circles-main-wrap,
+#admin-settings-main-wrap
   {
     width: 95%;
     padding: 1em 3em 2em 3em;
@@ -20,7 +21,8 @@
 #admin-userraces-main-wrap tbody tr,
 #admin-carts-main-wrap tbody tr,
 #admin-breaks-main-wrap tbody tr,
-#admin-circles-main-wrap tbody tr {
+#admin-circles-main-wrap tbody tr,
+#admin-settings-main-wrap tbody tr {
     font-weight: 500;
     font-size: 14px;
 }
@@ -33,22 +35,10 @@
 .admin-menu-icon:hover {
     color: #0061ab
 }
-/*
-#users-add-icon {
-    color: #0075cf
+
+.button-container {
+    display: flex;
+    gap: 1em; /* Space between buttons */
+    margin-bottom: 1em; /* Space below the button row */
+    justify-content: flex-start; /* Align buttons to the left */
 }
-#users-add-icon:hover {
-    color: #013d6b
-}
-
-
-#users-details-icon {
-    color: #0075cf  
-}
-#users-edit-icon {
-
-}
-#users-delete-icon {
-
-} */
-

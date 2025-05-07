@@ -10,6 +10,21 @@ async function fetchRaceCategories() {
         console.error('Error fetching race categories:', error);
     }
 }
+async function fetchSelectedSettings() {
+    try {
+        const response = await axios.get('/api/settings/selected');
+        console.log('Fetched settings:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching selected settings:', error);
+        return {
+            dayStart: 10,
+            dayFinish: 20,
+            raceDuration: 15
+        };
+    }
+}
+
 
 function updateRaceRadioButtons(slots, containerId) {
     const container = document.getElementById(containerId);
@@ -58,11 +73,13 @@ function updateRaceRadioButtons(slots, containerId) {
     }
 }
 
-function initializePickers() {
+async function initializePickers() {
+    const settings = await fetchSelectedSettings();
+
     timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
-        interval: 15,
-        startTime: 10,
-        endTime: 20,
+        interval: settings.raceDuration,
+        startTime: settings.dayStart,
+        endTime: settings.dayFinish,
         title: 'Свободные слоты',
         static: false,
         useSlotTemplate: false
@@ -70,6 +87,7 @@ function initializePickers() {
 
     datePicker = new AirDatepicker(document.getElementById('inputdate'), {
         dateFormat: 'dd MMMM yyyy',
+        minDate: new Date(),
         onSelect: async ({ date }) => {
             if (!date) return;
             try {
@@ -84,9 +102,9 @@ function initializePickers() {
                 console.log('Disabled times for', selectedDate, ':', disabledTimes); // Debug
                 timePicker.destroy();
                 timePicker = new AppointmentSlotPicker(document.getElementById('inputtime'), {
-                    interval: 15,
-                    startTime: 10,
-                    endTime: 20,
+                    interval: settings.raceDuration,
+                    startTime: settings.dayStart,
+                    endTime: settings.dayFinish,
                     disabled: disabledTimes, // Pass HH:mm strings
                     title: 'Свободные слоты',
                     static: false,
@@ -244,9 +262,7 @@ class DateOnly {
 
 class TimeOnly {
     static fromTimeString(timeString) {
-        if (typeof timeString !== 'string' || !/^\d{2}:\d{2}$/.test(timeString)) {
-            throw new Error('Invalid time format. Expected HH:mm');
-        }
+
         const [hour, minute] = timeString.split(':').map(Number);
         if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
             throw new Error('Invalid time values');

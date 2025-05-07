@@ -2,7 +2,7 @@
 @model TestMVC.Pages.AdminBreaks.EditModel
 @{
     ViewData["Title"] = "Редактировать технический перерыв";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 }
 
 <div class="registration-form-wrap">

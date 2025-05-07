@@ -1,0 +1,53 @@
+@page
+@model TestMVC.Pages.AdminSettings.CreateModel
+@{
+    ViewData["Title"] = "Создать настройки";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
+}
+
+<div class="registration-form-wrap">
+    <div class="container">
+        <form method="post" class="mt-4" id="settingsForm">
+            <div class="row">
+                <h4 class="red-heading">Новые настройки</h4>
+                <label asp-for="Input.DayStart" class="reg-label">Начало дня <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input asp-for="Input.DayStart" type="time" id="reg-daystart" required>
+                    <div class="input-icon">
+                        <i class="fa fa-clock"></i>
+                    </div>
+                    <span asp-validation-for="Input.DayStart" class="text-danger"></span>
+                </div>
+                <label asp-for="Input.DayFinish" class="reg-label">Конец дня <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input asp-for="Input.DayFinish" type="time" id="reg-dayfinish" required>
+                    <div class="input-icon">
+                        <i class="fa fa-clock"></i>
+                    </div>
+                    <span asp-validation-for="Input.DayFinish" class="text-danger"></span>
+                </div>
+                <label asp-for="Input.RaceDuration" class="reg-label">Длительность заезда <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <input asp-for="Input.RaceDuration" type="time" id="reg-raceduration" required>
+                    <div class="input-icon">
+                        <i class="fa fa-stopwatch"></i>
+                    </div>
+                    <span asp-validation-for="Input.RaceDuration" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button id="submitForm" type="submit" class="red-button">Создать настройки</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./Settings" class="btn btn-light">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script type="module" src='@Url.Content("~/js/adminSettings.js")'></script>
+}

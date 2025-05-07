@@ -53,13 +53,16 @@ namespace TestMVC.Pages.AdminOrders
 
         public async Task OnGetAsync()
         {
+            
             await LoadDropdowns();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            Console.WriteLine("//tick");
             if (!ModelState.IsValid)
             {
+                Console.WriteLine("tick");
                 await LoadDropdowns();
                 return Page();
             }
@@ -114,6 +117,7 @@ namespace TestMVC.Pages.AdminOrders
                 timeOnlyList.Add(timeOnly);
             }
 
+            Console.WriteLine("///tick");
             // Create order and races
             try
             {

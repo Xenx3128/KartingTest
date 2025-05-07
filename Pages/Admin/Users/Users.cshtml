@@ -2,7 +2,7 @@
 @model TestMVC.Pages.AdminUsersModel
 @{
     ViewData["Title"] = "Панель администратора: Пользователи";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 }
 
 <div id="admin-users-main-wrap">

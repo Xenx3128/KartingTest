@@ -1,0 +1,40 @@
+@page
+@model TestMVC.Pages.AdminSettings.ChooseModel
+@{
+    ViewData["Title"] = "Выбрать настройки";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
+}
+
+<div class="registration-form-wrap">
+    <div class="container">
+        <form method="post" class="mt-4" id="chooseSettingsForm">
+            <div class="row">
+                <h4 class="red-heading">Выбрать настройки</h4>
+                <label asp-for="Input.SettingsId" class="reg-label">Набор настроек <span class="required">*</span></label>
+                <div class="input-group input-group-icon">
+                    <select asp-for="Input.SettingsId" id="reg-settings" asp-items="Model.SettingsOptions" required>
+                        <option value="">Выберите настройки...</option>
+                    </select>
+                    <div class="input-icon">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <span asp-validation-for="Input.SettingsId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button id="submitForm" type="submit" class="red-button">Выбрать</button>
+            <div class="back-btn-wrap">
+                <a asp-page="./Settings" class="btn btn-light">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/registration.css">
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script type="module" src='@Url.Content("~/js/adminSettings.js")'></script>
+
+}

@@ -2,13 +2,13 @@
 @model TestMVC.Pages.AdminRaces.EditModel
 @{
     ViewData["Title"] = "Редактировать заезд";
-    Layout = "_AdminLayout";
+    Layout = User.IsInRole("SuperAdmin") ? "_SuperAdminLayout" : "_AdminLayout";
 
 }
 
 <div class="registration-form-wrap">
     <div class="container">
-        <form method="post" id="raceeditform">
+        <form method="post" id="raceEditForm">
             <input type="hidden" asp-for="Input.Id" />
             <div class="row">
                 <h4 class="red-heading">Редактирование заезда</h4>

@@ -116,7 +116,8 @@ namespace TestMVC.Models
         public DateTime StartDate { get; set; }
         public DateTime FinishDate { get; set; }
         public string Category { get; set; }
-        public int Position { get; set; }
+        public string CartName { get; set; }
+        public int? Position { get; set; }
     }
 
     
