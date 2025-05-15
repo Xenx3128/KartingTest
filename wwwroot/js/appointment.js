@@ -31,6 +31,7 @@ export async function fetchRaceCategories() {
 
 
 export async function initializePickers(isEditPage = false, initialTime='') {
+    console.log(initialTime);
     const settings = await fetchSelectedSettings();
     if (isEditPage){
         timePicker = new AppointmentPicker(document.getElementById('inputtime'), {

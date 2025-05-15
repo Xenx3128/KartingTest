@@ -42,12 +42,25 @@
                         <a asp-page="/Admin/Circles/Circles" asp-route-userRaceId="@userRace.Id" class="admin-menu-icon" id="userraces-details-icon" title="Результаты кругов">
                             <i class="fa fa-list-alt fa-lg"></i>
                         </a> |
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@userRace.Id" asp-route-raceId="@Model.Race.Id" class="d-inline">
-                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="userraces-delete-icon" title="Удалить участника"
-                                    onclick="return confirm('Вы уверены, что хотите удалить этого участника из заезда?')">
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@userRace.Id" asp-route-raceId="@Model.Race.Id" class="d-inline delete-form">
+                            <button type="button" class="admin-menu-icon btn btn-link p-0 delete-btn" title="Удалить участника" data-userrace-id="@userRace.Id">
                                 <i class="fa fa-trash fa-lg text-danger"></i>
                             </button>
                         </form>
+                        <!-- Modal for this user race -->
+                        <div class="modal" id="delete-modal-@userRace.Id">
+                            <div class="modal__content">
+                                <h1>Удаление участника заезда</h1>
+                                <p>
+                                    Внимание! Удаление участника заезда необратимо. Все связанные данные, включая результаты кругов, будут потеряны.
+                                    Вы уверены, что хотите удалить участника @(userRace.User?.FullName ?? "Unknown") из заезда?
+                                </p>
+                                <div class="modal__footer">
+                                    <button type="button" class="btn btn-danger confirm-delete" data-userrace-id="@userRace.Id">Удалить</button>
+                                    <button type="button" class="btn btn-light modal__close">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
@@ -65,6 +78,7 @@
     </table>
 </div>
 <link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/modalwindow.css">
 
 @section Scripts {
     <script type="module" src='@Url.Content("~/js/adminUserRaces.js")'></script>

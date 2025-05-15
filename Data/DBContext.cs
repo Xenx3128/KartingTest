@@ -38,7 +38,7 @@ namespace TestMVC.Data
                     .HasMany(o => o.Races)
                     .WithOne(r => r.Order)
                     .HasForeignKey(r => r.OrderId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 // Order -> OrderStatus (many-to-one)
                 modelBuilder.Entity<Order>()
@@ -52,7 +52,7 @@ namespace TestMVC.Data
                     .HasOne(o => o.User)
                     .WithMany(u => u.Orders)
                     .HasForeignKey(o => o.UserId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 // Races -> RaceCategory (many-to-one)
                 modelBuilder.Entity<Races>()
@@ -73,28 +73,28 @@ namespace TestMVC.Data
                     .HasOne(ur => ur.User)
                     .WithMany()
                     .HasForeignKey(ur => ur.UserId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 // UserRace -> Races (many-to-one)
                 modelBuilder.Entity<UserRace>()
                     .HasOne(ur => ur.Race)
                     .WithMany()
                     .HasForeignKey(ur => ur.RaceId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 // UserRace -> Cart (many-to-one)
                 modelBuilder.Entity<UserRace>()
                     .HasOne(ur => ur.Cart)
                     .WithMany()
                     .HasForeignKey(ur => ur.CartId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.SetNull);
 
-                // CircleResults -> UserRace (many-to-one)
+                // UserRace -> CircleResults (many-to-one)
                 modelBuilder.Entity<CircleResults>()
                     .HasOne(cr => cr.UserRace)
                     .WithMany()
                     .HasForeignKey(cr => cr.UserRaceId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 // Identity relationships
                 modelBuilder.Entity<ApplicationUser>()

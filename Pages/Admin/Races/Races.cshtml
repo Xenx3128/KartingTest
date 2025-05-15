@@ -45,12 +45,25 @@
                         <a asp-page="/Admin/UserRaces/UserRaces" asp-route-raceId="@race.Id" class="admin-menu-icon" id="races-details-icon" title="Участники заезда">
                             <i class="fa fa-users fa-lg"></i>
                         </a> |
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@race.Id" class="d-inline">
-                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="races-delete-icon" title="Удалить заезд"
-                                    onclick="return confirm('Вы уверены, что хотите удалить этот заезд?')">
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@race.Id" class="d-inline delete-form">
+                            <button type="button" class="admin-menu-icon btn btn-link p-0 delete-btn" title="Удалить заезд" data-race-id="@race.Id">
                                 <i class="fa fa-trash fa-lg text-danger"></i>
                             </button>
                         </form>
+                        <!-- Modal for this race -->
+                        <div class="modal" id="delete-modal-@race.Id">
+                            <div class="modal__content">
+                                <h1>Удаление заезда</h1>
+                                <p>
+                                    Внимание! Удаление заезда необратимо. Все связанные данные, включая результаты кругов, будут потеряны.
+                                    Вы уверены, что хотите удалить заезд от @startDateConv.ToString("dd-MM-yyyy HH:mm")?
+                                </p>
+                                <div class="modal__footer">
+                                    <button type="button" class="btn btn-danger confirm-delete" data-race-id="@race.Id">Удалить</button>
+                                    <button type="button" class="btn btn-light modal__close">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
@@ -69,7 +82,7 @@
     </table>
 </div>
 <link rel="stylesheet" href="~/css/admin.css">
-
+<link rel="stylesheet" href="~/css/modalwindow.css">
 @section Scripts {
     <script type="module" src='@Url.Content("~/js/adminRaces.js")'></script>
 }

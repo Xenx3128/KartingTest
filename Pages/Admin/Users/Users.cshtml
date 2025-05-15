@@ -68,12 +68,25 @@
                                 <i class="fa fa-edit fa-lg"></i>
                             </a>
                             <text> | </text>
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id" class="d-inline">
-                                <button type="submit" class="admin-menu-icon btn btn-link p-0" id="users-delete-icon" title="Удалить аккаунт пользователя"
-                                        onclick="return confirm('Вы уверены, что хотите удалить этого пользователя?')">
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id" class="d-inline delete-form">
+                                <button type="button" class="admin-menu-icon btn btn-link p-0 delete-btn" title="Удалить аккаунт пользователя" data-user-id="@user.Id">
                                     <i class="fa fa-trash fa-lg text-danger"></i>
                                 </button>
                             </form>
+                            <!-- Modal for this user -->
+                            <div class="modal" id="delete-modal-@user.Id">
+                                <div class="modal__content">
+                                    <h1>Удаление аккаунта</h1>
+                                    <p>
+                                        Внимание! Удаляя аккаунт пользователя, все связанные с ним элементы (заказы, история заездов) также будут удалены.<br>
+                                        Чтобы избежать потери данных, рекомендуется вместо удаления установить статус "Заблокирован" через страницу редактирование аккаунта
+                                    </p>
+                                    <div class="modal__footer">
+                                        <button type="button" class="btn btn-danger confirm-delete" data-user-id="@user.Id">Удалить всё равно</button>
+                                        <button type="button" class="btn btn-light modal__close">Отмена</button>
+                                    </div>
+                                </div>
+                            </div>
                         }
                     </td>
                 </tr>
@@ -97,7 +110,9 @@
 </div>
 
 <link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/modalwindow.css">
 
 @section Scripts{
+
     <script type="module" src='@Url.Content("~/js/adminUsers.js")'></script>
 }

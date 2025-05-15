@@ -4,11 +4,11 @@ function format(data) {
         '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
         '<tr>' +
             '<td><strong>Откуда узнали:</strong></td>' +
-            '<td>' + (data.fromWhereFoundOut || 'N/A') + '</td>' +
+            '<td>' + (data.fromWhereFoundOut || 'Нет') + '</td>' +
         '</tr>' +
         '<tr>' +
             '<td><strong>Примечание:</strong></td>' +
-            '<td>' + (data.note || 'N/A') + '</td>' +
+            '<td>' + (data.note || 'Нет') + '</td>' +
         '</tr>' +
         '</table>'
     );
@@ -25,6 +25,33 @@ var usertable = new DataTable('#adminUsersMain', {
         search: "Поиск:",
         zeroRecords: 'Ничего не найдено - извините'
     },
+    dom: '<"dt-top"<"dt-length"l><"dt-right"<"dt-buttons"B><"dt-search"f>>>rtip',
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            text: 'Excel',
+            title: 'Пользователи',
+            exportOptions: {
+                columns: [2, 3, 4, 5, 6, 7, 8] // Export only visible data columns (exclude control and ID)
+            }
+        },
+        {
+            extend: 'csvHtml5',
+            text: 'CSV',
+            title: 'Пользователи',
+            exportOptions: {
+                columns: [2, 3, 4, 5, 6, 7, 8] // Export only visible data columns
+            }
+        },
+        {
+            extend: 'pdfHtml5',
+            text: 'PDF',
+            title: 'Пользователи',
+            exportOptions: {
+                columns: [2, 3, 4, 5, 6, 7, 8] // Export only visible data columns
+            }
+        },
+    ],
     columnDefs: [
         {
             className: 'dt-control',
@@ -71,4 +98,47 @@ usertable.on('click', 'td.dt-control', function (e) {
         row.child(format(rowData)).show();
         tr.classList.add('shown');
     }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Handle delete button click to show modal
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.getAttribute('data-user-id');
+            const modal = document.getElementById(`delete-modal-${userId}`);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        });
+    });
+
+    // Handle modal close button
+    document.querySelectorAll('.modal__close').forEach(button => {
+        button.addEventListener('click', function () {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        });
+    });
+
+    // Handle confirm delete button
+    document.querySelectorAll('.confirm-delete').forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.getAttribute('data-user-id');
+            const form = document.querySelector(`form.delete-form [data-user-id="${userId}"]`).closest('form');
+            if (form) {
+                form.submit(); // Submit the form programmatically
+            }
+        });
+    });
+
+    // Close modal when clicking outside the modal content
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    });
 });

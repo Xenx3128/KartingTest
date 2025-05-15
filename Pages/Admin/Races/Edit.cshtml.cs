@@ -57,9 +57,10 @@ namespace TestMVC.Pages.AdminRaces
                 return NotFound();
             }
 
-            // Convert StartDate to Ekaterinburg time
+            // Convert StartDate and FinishDate to Ekaterinburg time
             var ekaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time");
             var startDateEkaterinburg = TimeZoneInfo.ConvertTimeFromUtc(race.StartDate, ekaterinburgTimeZone);
+            var finishDateEkaterinburg = TimeZoneInfo.ConvertTimeFromUtc(race.FinishDate, ekaterinburgTimeZone);
 
             Input = new InputModel
             {
@@ -71,8 +72,11 @@ namespace TestMVC.Pages.AdminRaces
                 RaceStatusId = race.RaceStatusId
             };
 
-            // Pass StartTime to ViewData for JavaScript
+            // Pass StartTime, Date, and FinishTime to ViewData for display
             ViewData["StartTime"] = startDateEkaterinburg.ToString("HH:mm");
+            ViewData["RaceDate"] = startDateEkaterinburg.ToString("dd-MM-yyyy");
+            ViewData["StartTimeDisplay"] = startDateEkaterinburg.ToString("HH:mm");
+            ViewData["FinishTimeDisplay"] = finishDateEkaterinburg.ToString("HH:mm");
 
             await LoadDropdowns();
             return Page();

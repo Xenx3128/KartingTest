@@ -60,12 +60,25 @@
                         <a asp-page="./Edit" asp-route-id="@order.Id" class="admin-menu-icon" id="orders-edit-icon" title="Редактировать заказ">
                             <i class="fa fa-edit fa-lg"></i>
                         </a> |
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@order.Id" class="d-inline">
-                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="orders-delete-icon" title="Удалить заказ"
-                                    onclick="return confirm('Вы уверены, что хотите удалить этот заказ?')">
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@order.Id" class="d-inline delete-form">
+                            <button type="button" class="admin-menu-icon btn btn-link p-0 delete-btn" title="Удалить заказ" data-order-id="@order.Id">
                                 <i class="fa fa-trash fa-lg text-danger"></i>
                             </button>
                         </form>
+                        <!-- Modal for this order -->
+                        <div class="modal" id="delete-modal-@order.Id">
+                            <div class="modal__content">
+                                <h1>Удаление заказа</h1>
+                                <p>
+                                    Внимание! Удаление заказа необратимо. Все связанные данные, включая заезды, будут потеряны.
+                                    Вы уверены, что хотите удалить заказ пользователя @order.User.Email от @order.OrderDate.ToString("yyyy-MM-dd HH:mm")?
+                                </p>
+                                <div class="modal__footer">
+                                    <button type="button" class="btn btn-danger confirm-delete" data-order-id="@order.Id">Удалить</button>
+                                    <button type="button" class="btn btn-light modal__close">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
@@ -85,6 +98,7 @@
 </div>
 
 <link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/modalwindow.css">
 
 @section Scripts {
     <script type="module" src='@Url.Content("~/js/adminOrders.js")'></script>

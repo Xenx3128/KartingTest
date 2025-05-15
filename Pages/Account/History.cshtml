@@ -25,7 +25,7 @@
                     <td>@TimeZoneInfo.ConvertTime(race.StartDate, ekaterinburgTimeZone).ToString("HH:mm")-@TimeZoneInfo.ConvertTime(race.FinishDate, ekaterinburgTimeZone).ToString("HH:mm")</td>
                     <td>@race.Category</td>
                     <td>@(race.CartName ?? "Not Assigned")</td>
-                    <td>@(race.Position?.ToString() ?? "N/A")</td>
+                    <td>@(race.Position?.ToString() ?? "Нет")</td>
                 </tr>
             }
         </tbody>

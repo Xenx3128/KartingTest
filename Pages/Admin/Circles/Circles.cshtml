@@ -16,7 +16,6 @@
     <table id="adminCircleResultsMain" class="cell-border hover stripe">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Номер круга</th>
                 <th>Время круга</th>
                 <th>Действия</th>
@@ -26,25 +25,38 @@
             @foreach (var result in Model.CircleResults)
             {
                 <tr>
-                    <td>@result.Id</td>
                     <td>@result.CircleNum</td>
                     <td>@result.CircleTime.ToString(@"mm\:ss")</td>
                     <td>
                         <a asp-page="./Edit" asp-route-id="@result.Id" asp-route-userRaceId="@Model.UserRace.Id" class="admin-menu-icon" id="circleresults-edit-icon" title="Редактировать результат">
                             <i class="fa fa-edit fa-lg"></i>
                         </a> |
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@result.Id" asp-route-userRaceId="@Model.UserRace.Id" class="d-inline">
-                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="circleresults-delete-icon" title="Удалить результат"
-                                    onclick="return confirm('Вы уверены, что хотите удалить этот результат круга?')">
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@result.Id" asp-route-userRaceId="@Model.UserRace.Id" class="d-inline delete-form">
+                            <button type="button" class="admin-menu-icon btn btn-link p-0 delete-btn" title="Удалить результат" data-result-id="@result.Id">
                                 <i class="fa fa-trash fa-lg text-danger"></i>
                             </button>
                         </form>
+                        <!-- Modal for this circle result -->
+                        <div class="modal" id="delete-modal-@result.Id">
+                            <div class="modal__content">
+                                <h1>Удаление результата круга</h1>
+                                <p>
+                                    Внимание! Удаление результата круга необратимо. 
+                                    Вы уверены, что хотите удалить результат круга №@result.CircleNum для пользователя @Model.UserRace.User.Email?
+                                </p>
+                                <div class="modal__footer">
+                                    <button type="button" class="btn btn-danger confirm-delete" data-result-id="@result.Id">Удалить</button>
+                                    <button type="button" class="btn btn-light modal__close">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+<link rel="stylesheet" href="~/css/modalwindow.css">
 <link rel="stylesheet" href="~/css/admin.css">
 
 @section Scripts {

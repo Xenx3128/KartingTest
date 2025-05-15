@@ -52,9 +52,10 @@ namespace TestMVC.Pages.AdminBreaks
                 return NotFound();
             }
 
-            // Convert DateStart to Ekaterinburg time
+            // Convert DateStart and DateFinish to Ekaterinburg time
             var ekaterinburgTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time");
             var startDateEkaterinburg = TimeZoneInfo.ConvertTimeFromUtc(breakItem.DateStart, ekaterinburgTimeZone);
+            var finishDateEkaterinburg = TimeZoneInfo.ConvertTimeFromUtc(breakItem.DateFinish, ekaterinburgTimeZone);
 
             Input = new InputModel
             {
@@ -65,8 +66,11 @@ namespace TestMVC.Pages.AdminBreaks
                 BreakStatusId = breakItem.BreakStatusId
             };
 
-            // Pass StartTime to ViewData for JavaScript
+            // Pass StartTime, Date, and FinishTime to ViewData for display
             ViewData["StartTime"] = startDateEkaterinburg.ToString("HH:mm");
+            ViewData["BreakDate"] = startDateEkaterinburg.ToString("dd-MM-yyyy");
+            ViewData["StartTimeDisplay"] = startDateEkaterinburg.ToString("HH:mm");
+            ViewData["FinishTimeDisplay"] = finishDateEkaterinburg.ToString("HH:mm");
 
             await LoadDropdowns();
             return Page();

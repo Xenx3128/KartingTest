@@ -29,13 +29,40 @@ $(document).ready(function() {
         const table = new DataTable('#adminBreaksMain', {
             responsive: true,
             language: {
-                info: 'Заезд _START_-_END_ из _TOTAL_',
+                info: 'Перерыв _START_-_END_ из _TOTAL_',
                 infoEmpty: 'Тут пока пусто',
-                infoFiltered: '(отфильтровано из _MAX_ заездов)',
-                lengthMenu: 'Показывать _MENU_ заездов на странице',
+                infoFiltered: '(отфильтровано из _MAX_ перерывов)',
+                lengthMenu: 'Показывать _MENU_ перерывов на странице',
                 search: "Поиск:",
                 zeroRecords: 'Ничего не найдено - извините'
             },
+            dom: '<"dt-top"<"dt-length"l><"dt-right"<"dt-buttons"B><"dt-search"f>>>rtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    title: 'Тех перерывы',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4] // Export only visible data columns (exclude control and ID)
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    title: 'Тех перерывы',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4] // Export only visible data columns
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    title: 'Тех перерывы',
+                    exportOptions: {
+                        columns: [1, 2, 3, 4] // Export only visible data columns
+                    }
+                },
+            ],
             columnDefs: [
                 {
                     targets: -1, // Actions column
@@ -58,4 +85,37 @@ $(document).ready(function() {
             }
         });
     }
+
+    // Handle delete button click to show modal
+    $('.delete-btn').on('click', function() {
+        const breakId = $(this).data('break-id');
+        const modal = $(`#delete-modal-${breakId}`);
+        if (modal.length) {
+            modal.addClass('active');
+        }
+    });
+
+    // Handle modal close button
+    $('.modal__close').on('click', function() {
+        const modal = $(this).closest('.modal');
+        if (modal.length) {
+            modal.removeClass('active');
+        }
+    });
+
+    // Handle confirm delete button
+    $('.confirm-delete').on('click', function() {
+        const breakId = $(this).data('break-id');
+        const form = $(`.delete-form .delete-btn[data-break-id="${breakId}"]`).closest('form');
+        if (form.length) {
+            form[0].submit(); // Submit the form programmatically
+        }
+    });
+
+    // Close modal when clicking outside the modal content
+    $('.modal').on('click', function(e) {
+        if (e.target === this) {
+            $(this).removeClass('active');
+        }
+    });
 });

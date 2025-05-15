@@ -12,6 +12,9 @@
             <input type="hidden" asp-for="Input.Id" />
             <div class="row">
                 <h4 class="red-heading">Редактирование заезда</h4>
+                <div class="reg-label">
+                    Заезд @ViewData["RaceDate"], @ViewData["StartTimeDisplay"] - @ViewData["FinishTimeDisplay"]
+                </div>
                 <label asp-for="Input.OrderId" class="reg-label">Заказ <span class="required">*</span></label>
                 <div class="input-group input-group-icon">
                     <select asp-for="Input.OrderId" id="reg-order" asp-items="Model.Orders" required>

@@ -11,6 +11,9 @@
             <input type="hidden" asp-for="Input.Id" />
             <div class="row">
                 <h4 class="red-heading">Редактирование технического перерыва</h4>
+                <div class="reg-label">
+                    Технический перерыв @ViewData["BreakDate"], @ViewData["StartTimeDisplay"] - @ViewData["FinishTimeDisplay"]
+                </div>
                 <label asp-for="Input.Date" class="reg-label">Дата <span class="required">*</span></label>
                 <div class="input-group">
                     <input id="inputdate" class="form-control" asp-for="Input.Date" type="text" placeholder="Выберите дату" required readonly>

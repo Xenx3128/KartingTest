@@ -40,12 +40,25 @@
                         <a asp-page="./Edit" asp-route-id="@breakItem.Id" class="admin-menu-icon" id="breaks-edit-icon" title="Редактировать перерыв">
                             <i class="fa fa-edit fa-lg"></i>
                         </a> |
-                        <form method="post" asp-page-handler="Delete" asp-route-id="@breakItem.Id" class="d-inline">
-                            <button type="submit" class="admin-menu-icon btn btn-link p-0" id="breaks-delete-icon" title="Удалить перерыв"
-                                    onclick="return confirm('Вы уверены, что хотите удалить этот технический перерыв?')">
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@breakItem.Id" class="d-inline delete-form">
+                            <button type="button" class="admin-menu-icon btn btn-link p-0 delete-btn" title="Удалить перерыв" data-break-id="@breakItem.Id">
                                 <i class="fa fa-trash fa-lg text-danger"></i>
                             </button>
                         </form>
+                        <!-- Modal for this technical break -->
+                        <div class="modal" id="delete-modal-@breakItem.Id">
+                            <div class="modal__content">
+                                <h1>Удаление технического перерыва</h1>
+                                <p>
+                                    Внимание! Удаление технического перерыва необратимо.
+                                    Вы уверены, что хотите удалить технический перерыв от @startDateConv.ToString("dd-MM-yyyy HH:mm")?
+                                </p>
+                                <div class="modal__footer">
+                                    <button type="button" class="btn btn-danger confirm-delete" data-break-id="@breakItem.Id">Удалить</button>
+                                    <button type="button" class="btn btn-light modal__close">Отмена</button>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             }
@@ -64,6 +77,7 @@
 </div>
 
 <link rel="stylesheet" href="~/css/admin.css">
+<link rel="stylesheet" href="~/css/modalwindow.css">
 
 @section Scripts {
     <script type="module" src='@Url.Content("~/js/adminBreaks.js")'></script>

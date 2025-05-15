@@ -42,3 +42,34 @@
     margin-bottom: 1em; /* Space below the button row */
     justify-content: flex-start; /* Align buttons to the left */
 }
+
+/* DataTables custom layout */
+.dt-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.dt-length {
+    flex: 0 0 auto;
+}
+
+.dt-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dt-buttons {
+    flex: 0 0 auto;
+}
+
+.dt-search {
+    flex: 0 0 auto;
+}
+
+/* Ensure search input has reasonable width */
+.dt-search input {
+    width: 200px;
+}
